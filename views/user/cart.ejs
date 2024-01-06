@@ -1,0 +1,371 @@
+<%-include("../layout/userHeader.ejs")-%>
+
+
+<section >
+
+  
+    <div class="container-fluid ps-5 pe-5 pt-5 d-flex">
+
+      <div class="col-7">
+        <div >
+          <% if (userAddresses && userAddresses.Addresses) { %>
+            <div class=" p-2" style="background-color: rgba(235, 235, 235, 0.381);
+                            
+                            border: 2px dotted #f161074b;
+                            padding: 5px;
+                            margin-bottom: 15px;
+                            display: flex;
+                            
+                            font-weight: bold;
+                            
+                ">
+            <h6>
+             
+                <div id="addressSection">
+                    <% let mainAddress = userAddresses.Addresses.find(address => address.mainAdrs === true); %>
+                    <% let displayAddress = mainAddress ? [mainAddress] : [userAddresses.Addresses[0]]; %>
+                    <% displayAddress.forEach(address => { %>
+                        <div>
+                            Delivery To : <strong><%= address.name %></strong>
+                        </div>
+                        <div style="padding-left: 90px; padding-top: 5px;">
+                            <%= address.Adrs %>, <%= address.locality %>,
+                            <%= address.city %>,
+                            <%= address.state %>,
+                        </div>
+                        <div style="padding-left: 90px; padding-top: 5px;">
+                            <%= address.state %>, <%= address.pincode %>
+                        </div>
+                        <div>
+                            <!-- Display other address properties as needed -->
+                        </div>
+                    <% }); %>
+                </div>
+           
+            
+             
+            </h6>
+            </div>
+            <% } %>
+        </div>
+     <!-- form -->
+     <% if (cartData && cartData.products) { %>
+        <div>
+
+            <div class="col-12 p-3" style="background-color: rgba(235, 235, 235, 0.381);
+                            
+            border: 2px dotted #f161074b;
+            padding: 5px;
+            margin-bottom: 15px;
+            display: flex;
+           
+            font-weight: bold;
+            
+            ">
+                  <a style="color: #f35800;" type="button" class="" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <i class="fa-solid fa-plus" style="color: #f35800;"></i> <strong>Add New Address</strong>
+                  </a>
+        </div>
+        <% if (error && error.length > 0) { %>
+
+          <div class="alert alert-danger">
+         
+             <ul>
+         
+               <% error.forEach(function(errorMessage) { %>
+         
+                 <li><%= errorMessage %></li>
+         
+               <% }); %>
+         
+             </ul>
+         
+          </div>
+         
+         <% } %>
+
+
+                  <!-- Button trigger modal -->
+
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel"><strong>Add New Address</strong> </h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div>
+          <form action="/cart/add-address" method="post" id="addressForm">
+            
+                <div class="modal-body">
+
+           
+                    <div class="container mx-4">
+                      
+                    <div class="d-flex gap-3 pe-3">
+                        <input type="text" placeholder="Name" class="form-control" name="name">
+                        
+                    </div>
+                    <div class="d-flex gap-3 pt-4 pe-3">
+                        <input class="form-control" type="text" placeholder="PIN CODE" name="zip">
+                        <input class="form-control" type="text" placeholder="Locality" name="locality">
+                    </div>
+                    <div class="d-flex gap-3 pt-4 pe-3">
+                        <textarea class="form-control" name="Address" id="" placeholder="Address (Area and Street)" cols="47" rows="4"></textarea>
+                        
+                    </div>
+                    <div class="d-flex gap-3 pt-4 pe-3">
+                        <input class="form-control" type="text" placeholder="City / District / Town" name="place">
+                        <input class="form-control" type="text" placeholder="State" name="state">
+                    </div>
+                    <div class="d-flex gap-3 pt-4 pe-3">
+                        <input class="form-control" type="text" placeholder="Landmark" name="Lmark">
+                        <input class="form-control" type="text" placeholder="Alternate Phone" name="altNum">
+                    </div>
+                    <div class="d-flex gap-3 pt-4 pe-3">
+                        
+                    <h6>Address Type : </h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="Radios" id="exampleRadios1" value="Home" >
+                            <label class="form-check-label" for="exampleRadios1">
+                               Home
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="Radios" id="exampleRadios2" value="Work" >
+                            <label class="form-check-label" for="exampleRadios2">
+                                Work
+                            </label>
+                        </div>
+                    </div>
+        
+        
+                    </div>
+                
+        
+        
+                 
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" class="btn " style="background: #f35800; color: white;">Save </button>
+                
+                </div>
+
+            </form>
+        </div>
+       
+        
+      </div>
+    </div>
+  </div>
+        </div>
+<!-- form end -->
+
+
+  <% cartData.products.forEach(product => { %>
+<div style="border: 1px solid #f359006c; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.242); margin-bottom: 20px;">
+
+  
+     
+  <div class="d-flex">
+    <div>
+        <img src="/assests/productsUploads/<%= product.image %>" class="rounded-2 p-4" width="200px" height="240px" alt="User Image">
+    </div>
+    <div class="p-4">
+        <div class="d-flex">
+            <h5 class=""><strong><%= product.name %></strong></h5>
+        
+           
+            <button onclick="conformDelete('<%= product._id %>')" class="btn" style="margin-left: 20px;">
+                <i class="fa-regular fa-trash-can" style="color: #f35800; font-size: larger;"></i>
+            </button>
+        </div>
+        <h6>Size: <%= product.size %></h6>
+        <!-- Remove the static quantity display, as it will be dynamic in the input field -->
+        <h6>Price: <strong>₹ <%= product.price %> </strong></h6>
+        
+        <div class="quantity-input d-flex">
+          <h6 class="pt-2">Qty:</h6>
+          <form action="/cart/update-quantity" id="myForm" method="post">
+           
+            <div>
+              <button type="submit" class="quantity-button btn" onclick="decrementQuantity(this)">
+                <i class="fa-solid fa-square-minus h4" style="color: #f35800;"></i>
+            </button>
+            
+            <input type="number" style="border: 1px solid #f359007d; padding: 2px; width: 50px;" 
+               name="quantity" value="<%= product.quantity %>" min="1" max="<%= product.stock %>">
+           <input type="hidden" value="<%= product.stock %>" name="stock"> 
+            <input type="hidden" value="<%= product._id %>" name="productID">
+            
+            <button type="submit" class="quantity-button btn" onclick="incrementQuantity(this)">
+                <i class="fa-solid fa-square-plus h4" style="color: #f35800;"></i>
+            </button>
+            </div>
+          </form>
+      </div>
+    </div>
+</div>
+
+  
+
+</div>
+<% }); %>
+<% } else { %>
+  <h4 class="text-center">Your cart is empty.</h4>
+<% } %>
+
+
+      
+  
+
+    </div>
+    <% if (cartData && cartData.products) { %>
+    <div class="col-5 "> 
+      <div class="px-5  mx-5" style=" border: 1px solid #f359004d; box-shadow: 0px 4px 8px rgba(82, 82, 82, 0.1);">
+
+        <!-- ... Other product details ... -->
+      <div class="mt-5" >
+       <span style="font-weight:600; color: rgb(176, 176, 176);">COUPONS</span> 
+        <div class="d-flex ">
+           <h6 class=""><strong>Apply Cuopons</strong></h6>
+           <button> APPLY</button>
+        </div> 
+      </div> 
+     
+      <div class="mt-5 ">
+        <span style="font-weight:600; color: rgb(155, 153, 153);"> PRICE DETAILS</span>
+       
+        <div class="d-flex gap-5">
+          <span id="itemsCount" style="font-weight: bold;"> 
+            Items Price (<%= calculateTotalItemsCount(cartData.products) %> items):</span>
+          <span id="totalPrice" class="ms-4" style="padding-left: 100px; font-weight: bold;">
+            ₹ <%= calculateTotalPrice(cartData.products) %>
+          </span>
+        </div>
+        
+        <div class="d-flex ">
+          <span style="font-weight: bold;">Delivery Charges</span>
+          <span class="ms-4" style="padding-left: 180px; font-weight: bold;">
+            ₹.40.00
+          </span>
+        </div>
+        <div class="px-0">
+          <hr style="border-top: 4px solid #bbb; border-radius: 5px; width: 430px;" />
+        </div>
+        <div class="d-flex gap-5">
+          <h5 style="font-weight: bold;">Total Price:
+          <span class="mx-4" style="padding-left: 190px; font-weight: bold;">
+            ₹ <%= totalPrice %>
+           
+          </span></h5>
+        </div>
+      </div>
+     
+      
+      
+
+        <div class="mt-5 text-center mb-5">
+        <a href="/cart/address" class="btn text-white btn-b ms-2 me-2" style="background: #f35800;font-weight: 600;">PLACE ORDER</a>
+        </div>
+       
+
+       
+    </div>
+   
+    
+    </div>
+    <% } else { %>
+      <div>
+        <a href="/" class="btn text-white btn-b ms-2 me-2" style="background: #f35800;font-weight: 600;">COUNTINUE SHOPPING</a>
+  
+      </div>
+       <% } %>
+    </div>
+   
+    
+</section>
+  
+
+
+
+
+
+
+<script>
+    const myModal = document.getElementById('myModal')
+const myInput = document.getElementById('myInput')
+
+myModal.addEventListener('shown.bs.modal', () => {
+  myInput.focus()
+})
+</script>
+
+<script>
+  function conformDelete(pdt_id){
+    if(confirm("Are you sure want to delete this item?")){
+      window.location.href="/cart/delItem/"+pdt_id;
+    }
+  }
+</script>
+
+
+
+
+
+<!-- **************************** AJAX  ******************* -->
+
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+
+ 
+
+
+<script>
+
+function updateQuantity(quantity, productID, count) {
+    console.log("Updating quantity for product ID:", productID, "with count:", count);
+
+    // Convert quantity to a number
+    const updatedQuantity = parseInt(quantity);
+
+
+ }
+
+
+function incrementQuantity(button) {
+    const input = button.parentNode.querySelector('input');
+    const stockLimit = parseInt(input.getAttribute('max'));
+    const currentQuantity = parseInt(input.value);
+    console.log("hai");
+
+    // if (currentQuantity < stockLimit) {
+
+        input.stepUp();
+        const itemQty = input.value;
+        const productID = button.parentNode.querySelector('input[name="productID"]').value;
+        updateQuantity(itemQty, productID, 1);
+    
+}
+
+
+  function decrementQuantity(button) {
+    const input = button.parentNode.querySelector('input');
+    input.stepDown();
+    const itemQty = input.value;
+    const productID = button.parentNode.querySelector('input[name="productID"]').value;
+    updateQuantity(itemQty, productID, -1);
+  }
+
+</script>
+
+
+
+
+<%-include("../layout/userFooter.ejs")-%>

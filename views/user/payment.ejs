@@ -1,0 +1,278 @@
+<%-include("../layout/userHeader.ejs")-%>
+
+
+<section >
+
+    <div class="container-fluid ps-5 pe-5 pt-5 d-flex">
+
+        <div class="col-7">
+            <div style="border: 1px solid #f359006c; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.242); margin-bottom: 20px;">
+               <div class="d-flex">
+                <div>
+                  <h5 class="ms-5 mt-5"><strong>Choose Payment Mode</strong></h5>
+                <div>
+                    <nav id="sidebarMenu" class="collapse d-lg-block sidebar-payment collapse " >
+                        <div class=""  style="margin-bottom: 50px; ">
+                          <div class="list-group list-group-flush ms-5 mt-5" >
+                            <a
+                              href="#"
+                              class="list-group-item list-group-item-action py-2 ripple side"
+                              
+                            >
+                            <i class="fa-solid fa-box me-2" style="color: #f35800;"></i><span>Recommennded</span>
+                            </a>
+                            
+                            <a href="#" class="list-group-item list-group-item-action py-2 ripple side">
+                              <i class="fa-regular fa-heart me-2" style="color: #f35800;"></i><span>COD</span>
+                            </a>
+                            
+                            <a href="" class="list-group-item list-group-item-action py-2 ripple side" aria-current="true" 
+                              ><i class="fa-regular fa-money-bill-1 me-2" style="color: #f35800;"></i><span>Razorpay</span></a
+                            >
+                           
+                            <a href="#" class="list-group-item list-group-item-action py-2 ripple side">
+                              <i class="fa-solid fa-wallet me-2" style="color: #f35800;"></i><span>Wallet</span>
+                            </a>
+                          
+                            
+                          </div>
+                        </div>
+                      </nav>
+
+                </div>
+                </div>
+                <div class="content ">
+                  <div class="row">
+                    <div class="container  mb-5"> 
+                     <strong> Recommennded Payment Option</strong>
+                    
+                     <div class="form-check pt-5">
+                      <input class="form-check-input" type="radio" name="paymentMethod" value="COD" onchange="showBlock()" id="codmethod">
+                      <label class="form-check-label ps-2 fw-bold" for="exampleRadios1">Cash On Delivery</label>
+                  
+                      <div class="mt-5 text-center mb-5">
+                        <button type="button" class="btn text-white btn-b ms-2 me-2 fw-bold " id="conformBlock" style="background: #f35800; display: none;" onclick="checkPaymentMethod()">CONFORM ORDER</button>
+                    </div>
+                       
+                  </div>
+
+                  <div class="form-check pt-5">
+                    <input class="form-check-input" type="radio" name="paymentMethod" value="Razorpay" id="rzp-button1" onchange="showBlock()">
+                    <label class="form-check-label ps-2 fw-bold" for="exampleRadios1">Razorpay</label>
+                 </div>
+                
+                 
+
+                 
+                    </div>
+                  </div>
+                </div>
+               </div>
+            </div>
+        </div>
+<!-- ***********************************************  MODals    ********************************** -->
+
+<!-- ***********************    RIGHT DIV   ************************************* -->
+      
+  
+
+        <% if (cartData && cartData.products) { %>
+          <input type="hidden" value="<%= cartData._id %>" name="cart">
+            <div class="col-5 "> 
+              <div class="px-5  mx-5" style=" border: 1px solid #f359004d; box-shadow: 0px 4px 8px rgba(82, 82, 82, 0.1);">
+        
+                <form action="/orderList/orderConformed" method="post" id="comformationForm">
+                 
+              <div class="mt-5" >
+               <span style="font-weight:600; color: rgb(176, 176, 176);">Order Summury</span> 
+               <div class="d-flex flex-wrap">
+                <% cartData.products.forEach((product, index) => { %>
+                    <div class="col-2   ms-2">
+                        <img src="/assests/productsUploads/<%= product.image %>" class="rounded-2 p-4" width="120px" height="120px" alt="Product Image">
+                       <span class="pt-0 ms-5  text-center">₹<%= product.price %></span>
+                       <input type="hidden" value="<%= product.product_id %>" name="pdt_Id"> 
+                     
+                    </div>
+                    <% if ((index + 1) % 6 === 0) { %>
+                        </div><div class="d-flex flex-wrap">
+                    <% } %>
+                <% }); %>
+            </div>
+            
+                </div> 
+              
+             
+              <div class="mt-5 ">
+                <span style="font-weight:600; color: rgb(155, 153, 153);"> PRICE DETAILS</span>
+               
+                <div class="d-flex gap-5">
+                  <span style="font-weight: bold;"> Items Price (<%= calculateTotalItemsCount(cartData.products) %> items):</span>
+                  <span class="ms-4" style="padding-left: 100px; font-weight: bold;"">
+                    ₹ <%= calculateTotalPrice(cartData.products) %>
+                  </span>
+                </div>
+                <div class="d-flex ">
+                  <span style="font-weight: bold;">Delivery Charges</span>
+                  <span class="ms-4" style="padding-left: 180px; font-weight: bold;">
+                    ₹.40.00
+                  </span>
+                </div>
+                <div class="px-0">
+                  <hr style="border-top: 4px solid #bbb; border-radius: 5px; width: 430px;" />
+                </div>
+                <div class="d-flex gap-5">
+                  <h5 style="font-weight: bold;">Total Price:
+                  <span class="mx-4" style="padding-left: 190px; font-weight: bold;">
+                    <input type="hidden" value="<%= totalPrice %>" name="total">
+                    ₹ <%= totalPrice %>
+                  </span></h5>
+                </div>
+              </div>
+    
+              <div>
+                <h6>
+                    <% if (userAddresses && userAddresses.Addresses) { %>
+                      <div id="addressSection">
+                          <% let mainAddress = userAddresses.Addresses.find(address => address.mainAdrs === true); %>
+                          <% let displayAddress = mainAddress ? [mainAddress] : [userAddresses.Addresses[0]]; %>
+                          <% displayAddress.forEach(address => { %>
+                            <div class="pt-5 pb-2">
+                                <span style="font-weight:600; color: rgb(176, 176, 176);">DELIVERY ADDRESS</span> 
+                            </div>
+                              <div style="font-weight: bold;">
+                             <%= address.name %>
+                              </div>
+                              <div style=" padding-top: 5px; font-weight: bold;">
+                                  <%= address.Adrs %>, <%= address.locality %>,
+                                  <%= address.city %>,
+                                  <%= address.state %>,
+                              </div>
+                              <div style=" padding-top: 5px; font-weight: bold;">
+                                  <%= address.state %>, <%= address.pincode %>
+                              </div>
+                              <div>
+                                <input type="hidden" name="addressName" value="<%= address.name %>">
+                                  <input type="hidden" name="addressAdrs" value="<%= address.Adrs %>">
+                                  <input type="hidden" name="addressLocality" value="<%= address.locality %>">
+                                  <input type="hidden" name="addressCity" value="<%= address.city %>">
+                                  <input type="hidden" name="addressState" value="<%= address.state %>">
+                                  <input type="hidden" name="addressPincode" value="<%= address.pincode %>">
+                                                                <!-- Display other address properties as needed -->
+                              </div>
+                          <% }); %>
+                      </div>
+                  <% } %>
+                  
+                   
+                  </h6>
+              </div>
+             
+              <!-- **************************** -->
+
+              
+        
+              <!-- <div class="mt-5 text-center mb-5">
+                <button type="button" class="btn text-white btn-b ms-2 me-2 fw-bold " id="conformBlock" style="background: #f35800; " onclick="checkPaymentMethod()">CONFORM ORDER</button>
+            </div>
+                -->
+              </form>
+               
+            </div>
+            
+           
+            
+            </div>
+            <% } else { %>
+              <div>
+                <a href="/" class="btn text-white btn-b ms-2 me-2" style="background: #f35800;font-weight: 600;">COUNTINUE SHOPPING</a>
+          
+              </div>
+               <% } %>
+            </div>
+
+
+
+    </div>
+  
+
+ 
+
+
+
+
+
+      
+  
+
+    
+  
+   
+    
+</section>
+  
+
+
+<script>
+  function showBlock() {
+    var conformBlock = document.getElementById("conformBlock");
+
+    if (document.getElementById("codmethod").checked) {
+      conformBlock.style.display = 'block';
+    } else  if(document.getElementById("rzp-button1").checked){
+      conformBlock.style.display = 'none';
+    } else {
+      conformBlock.style.display = 'none';
+    }
+  }
+</script>
+
+
+
+<script>
+  function checkPaymentMethod() {
+      const codRadioButton = document.querySelector('input[name="paymentMethod"][value="COD"]');
+      const razoRadioButton = document.querySelector('input[name="paymentMethod"][value="Razorpay"]');
+      if (codRadioButton.checked) {
+          document.getElementById('comformationForm').submit();
+      }
+      else if(razoRadioButton.checked){
+
+      } else {
+          alert('Please select a Payment method.');
+      }
+  }
+</script>
+
+
+
+
+
+
+<!-- <script>
+  var options = {
+     "key": "<%= process.env.RAZORPAY_ID_KEY %>",
+     "amount": "<%= totalPrice * 100 %>", // Amount in paise
+     "currency": "INR",
+     // ... other options
+  };
+
+  var rzp1 = new Razorpay(options);
+
+  rzp1.on('payment.failed', function (response) {
+     // Handle payment failure
+     console.error(response.error);
+     alert('Payment failed');
+  });
+
+  document.getElementById('rzp-button1').onclick = function (e) {
+     rzp1.open();
+     e.preventDefault();
+  }
+</script> -->
+
+
+
+
+
+
+<%-include("../layout/userFooter.ejs")-%>

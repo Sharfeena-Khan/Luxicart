@@ -1,0 +1,132 @@
+
+
+
+a {
+    font-size:14px;
+    font-weight:700;
+    color : #f35800;
+    text-decoration: none;
+    
+  }
+ 
+  .form-control {
+    outline:none !important;
+    box-shadow: none !important;
+  }
+  @media screen and (max-width:540px){
+    .centerOnMobile {
+      text-align:center
+    }
+  }
+
+
+
+
+  /*----------------------- SIDE BAR  ----------------------------*/
+
+  
+  @media (min-width: 991.98px) {
+    main {
+      padding-left: 240px;
+    }
+  }
+  
+  /* Sidebar */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    padding: 58px 0 0; /* Height of navbar */
+    box-shadow: 0 2px 5px 0 rgb(0 0 0 / 5%), 0 2px 10px 0 rgb(0 0 0 / 5%);
+    width: 240px;
+    z-index: 600;
+  }
+  
+  @media (max-width: 991.98px) {
+    .sidebar {
+      width: 100%;
+    }
+  }
+  .sidebar .active {
+    border-radius: 5px;
+    box-shadow: 0 2px 5px 0 rgb(0 0 0 / 16%), 0 2px 10px 0 rgb(0 0 0 / 12%);
+  }
+  
+  .sidebar-sticky {
+    position: relative;
+    top: 0;
+    height: calc(100vh - 48px);
+    padding-top: 0.5rem;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+  }
+
+  .side{
+    background: rgba(128, 128, 128, 0.16);
+    
+  }
+  .side .active{
+    background: white;
+    font-weight:900;
+    border-left: 4px solid #000;
+    color: #000;
+    padding-left: 50px;
+    
+  }
+
+  /*----------------------- SIDE BAR  ----------------------------*/
+  
+
+   div.content {
+      margin-top: 50px;
+      margin-left: 60px;
+      padding: 1px 16px;
+      height: 1000px;
+    }
+
+    input[type=radio]:checked {
+      background-color: #f35800;
+
+    }
+    /* **************************************** */
+    
+    .sidebar-payment{
+  
+      top: 0;
+      bottom: 0;
+      left: 0;
+      padding: 5px 0 0; /* Height of navbar */
+      box-shadow: 0 2px 5px 0 rgb(0 0 0 / 5%), 0 2px 10px 0 rgb(0 0 0 / 5%);
+      width: 240px;
+      
+    }
+    
+    @media (max-width: 991.98px) {
+      .sidebar-payment {
+        width: 100%;
+      }
+    }
+    .sidebar-payment .active {
+      border-radius: 5px;
+      box-shadow: 0 2px 5px 0 rgb(0 0 0 / 16%), 0 2px 10px 0 rgb(0 0 0 / 12%);
+    }
+    
+    .sidebar-payment-sticky {
+      position: relative;
+      top: 0;
+      /* height: calc(100vh - 48px); */
+     
+      overflow-x: hidden;
+      overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+    }
+
+    .form-check-input:hover{
+      background-color: #f3590045;
+      border: none;
+    }
+
+    .form-check-input:checked{
+      background-color: #f35800;
+      border: none;
+    }

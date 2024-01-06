@@ -1,0 +1,105 @@
+
+<%-include("../layout/adminHeader.ejs")-%>
+
+
+<section>
+    <div class="content ">
+      <div class="row">
+        <div class="container d-flex mb-5">
+          <div >
+            <h5><strong> Products</strong> </h5>
+           <span class="opacity-50"> Dashboard > Order List</span> 
+          </div>
+          
+        </div>
+
+      </div>
+        <table class="table">
+            <colgroup>
+                
+                <col style="width: 100px;" /> <!-- Column for Product -->
+                <col style="width: 140px;" /> <!-- Column for SKU -->
+                <col style="width: 90px;" /> <!-- Column for Category -->
+                <col style="width: 100px;" />  <!-- Column for Stock -->
+                <col style="width: 100px;" />  <!-- Column for Price -->
+                <col style="width: 70px;" />  <!-- Column for Status -->
+               
+                <col style="width: 30px;" /> <!-- Column for Action -->
+              </colgroup>
+            <thead>
+              <tr>
+                <th scope="col">Order ID</th>
+                <th scope="col">Product</th>
+                <th scope="col">Date</th>
+                <th scope="col">Customer</th>
+                <th scope="col">Total Price</th>
+               
+                <th scope="col">Status</th>
+                
+              </tr>
+            </thead>
+            <tbody>
+              <% orderData.forEach(function(product){ %>
+                <tr>
+                  <td class=" fw-bold">
+                    <a href="" style="text-decoration: none; color: #f35800;"> <%= String(product._id).slice(-5) %></a>
+                    </td>
+                  <td class="">
+                    <% product.items.forEach(function(product) { %>
+                      <ul style="list-style: none;">
+                        <li>
+                          <img src="/assests/productsUploads/<%= product.img1 %>" alt="" width="50" height="50" class="me-3">
+                        </li>
+                      </ul>
+                      <% }); %>
+                   
+                  </td>
+                  
+                  <td>
+                    <% 
+                      const orderDate = new Date(product.OrderDate); // Access item.OrderDate instead of orderData.OrderDate
+                      const formattedOrderDate = orderDate.toLocaleDateString();
+                    %>
+                    <%= formattedOrderDate %>
+                  </td>
+                  <td class="px-4"> <%= product.user_id?.FirstName %>
+                  </td>
+                
+                  <td> <% product.items.forEach(function(product){ %>
+                    <ul class="px-4" style="list-style: none;">
+                      <li class="mb-5 "> ₹ <%= product. price %></li>
+                    </ul>
+                 <%  }) %>
+                </td>
+                <td>
+                  <% 
+                    const deliveryDate = new Date(product.deliveryDate); // Use item.deliveryDate instead of orderData.deliveryDate
+                    const currentDate = new Date();
+                    const productStatus = deliveryDate < currentDate ? 'Delivered' : 'Out for Delivery';
+                  %>
+                  <%= productStatus %>
+                </td>
+                
+                 
+                </tr>
+              <% }) %>
+            </tbody>
+            
+          </table>
+
+    </div>
+   
+           
+        
+   
+</section>
+
+
+
+<script>
+  function conformDelete(pdt_id){
+    if(confirm("Are you sure want to delete this item?")){
+      window.location.href="/admin/adminPanel/products/dltPdt/"+pdt_id;
+    }
+  }
+</script>

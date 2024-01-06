@@ -1,0 +1,288 @@
+<%-include("../layout/userHeader.ejs")-%>
+
+
+<section >
+
+    <div class="container ">
+
+     
+
+
+<!-- ***********************    Order Summary   ************************************* -->
+      
+<div class="container-fluid ps-5 pe-5 pt-5  text-center  col-10  " >
+
+  <form id="checkout-form">
+       
+        <% if (cartData && cartData.products) { %>
+          <input type="hidden" value="<%= cartData._id %>" name="cart">
+            <div class="mx-5"> 
+              <div class="container p-5 mb-5" style="box-shadow:  0px 4px 10px rgba(0, 0, 0, 0.242); ">
+        
+                
+                 
+              <div class="mt-5" >
+               <span style="font-weight:bolder; color:#f35800; font-size: xx-large;">Order Summury</span> 
+              
+            
+                </div> 
+                <!-- price  block -->
+             <div class="">
+
+              <div class="mt-5 ">
+                <div class="d-flex gap-5 mb-2">
+                  <span style="font-weight:bold; color:#777676; font-style: oblique;"> PRICE DETAILS</span>
+               
+                </div>
+               
+                <div class="d-flex gap-5">
+                  <span style="font-weight: bold;"> Items Price (<%= calculateTotalItemsCount(cartData.products) %> items):</span>
+                  <span class="ms-4" style="padding-left: 100px; font-weight: bold;"">
+                    ₹ <%= calculateTotalPrice(cartData.products) %>
+                  </span>
+                </div>
+                <div class="d-flex ">
+                  <span style="font-weight: bold;">Delivery Charges</span>
+                  <span class="ms-4" style="padding-left: 180px; font-weight: bold;">
+                    ₹.40.00
+                  </span>
+                </div>
+                <div class="px-0">
+                  <hr style="border-top: 4px solid #bbb; border-radius: 5px; width: 430px;" />
+                </div>
+                <div class="d-flex gap-5">
+                  <h5 style="font-weight: bold;">Total Price:
+                  <span class="mx-4" style="padding-left: 190px; font-weight: bold;">
+                    <input type="hidden" value="<%= totalPrice %>" name="total">
+                    ₹ <%= totalPrice %>
+                  </span></h5>
+                </div>
+              </div>
+
+              <div class="">
+                <div>
+                  <h5 class=" mt-5"><strong>Choose Payment Mode</strong></h5>
+                
+                   
+
+               
+                </div>
+               
+                  <div class="row  ">
+                    <div class="container mt-3 mb-5  ps-5 ms-5"> 
+                      
+                     <div class="d-flex gap-3 ">
+                      
+                        <div class="form-check">
+                          <input class="form-check-input   js-radioInput" type="radio" name="radio" 
+                          value="razorpay" id="flexRadioDefault1">
+                          <label class="form-check-label  fw-bold form-check-inline " for="flexRadioDefault1" 
+                          style="color: #f35800;"> Pay Online
+                           </label>
+                        </div>
+
+                        <div class="form-check">
+                          <input class="form-check-input  js-radioInput" type="radio" 
+                          name="radio" value="COD" id="flexRadioDefault2" checked>
+                          <label class="form-check-label form-check-inline fw-bold" 
+                          for="flexRadioDefault2" style="color: #f35800;"> Cash on Delivery
+                             </label>
+                        </div>
+
+                        <div class="form-check">
+                          <input class="form-check-input  js-radioInput" 
+                           type="radio" name="radio" value="wallet" id="walletRadio" >
+                          <label class="form-check-label form-check-inline  fw-bold" 
+                          for="flexRadioDefault3" style="color: #f35800;" >
+                            <div class="d-flex align-items-center">
+                              <span class="fw-bold"> Wallet Balance: <span id="walletBalance">₹<%= user.wallet %></span></span>
+                            </div>
+                          </label>
+                        </div>
+                     </div>
+
+                        <div class="row mb-5 mt-4 text-center ">
+                          <div class="col-md-7 col-lg-6 p-2  ms-5">
+                            <button id="my_button" type="submit"  
+                            class="btn btn-block  btn-lg text-white ms-4" 
+                            style="  border-radius:30px; background: #f35800;">
+                            Checkout</button>
+                          </div>
+                        </div>
+                      </form>
+                   
+                     </div>
+
+                    </div>
+                  </div>
+               
+               </div>
+    
+             
+             </div>
+             
+             
+              <!-- **************************** -->
+
+              
+        
+        
+              
+               
+            </div>
+            
+           
+            
+            </div>
+            <% } else { %>
+              <div>
+                <a href="/" class="btn text-white btn-b ms-2 me-2" style="background: #f35800;font-weight: 600;">COUNTINUE SHOPPING</a>
+          
+              </div>
+               <% } %>
+    </div>
+      </div>
+
+      
+            </div>
+
+
+          
+
+    </div>
+  
+
+ 
+
+
+
+
+
+      
+  
+
+    
+ 
+   
+    
+</section>
+  
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+
+
+
+
+<!-- **************************************************************** -->
+
+
+
+
+
+
+<!-- *********************************************------------------------------- -->
+
+
+<script>
+  var orderId 
+  $("#checkout-form").submit((e)=>{
+    e.preventDefault()
+    $.ajax({
+      url:'/orderList/orderPlaced',
+      method: 'post' ,
+      data: $('#checkout-form').serialize() ,
+      success: (response)=>{
+        console.log(response);
+        alert(response)
+        if( $('input[name="radio"]:checked').val() === 'COD'){
+          location.href = "/orderList/orderConformed"
+        }
+        else if( $('input[name="radio"]:checked').val() === 'razorpay'){
+         razorpayPayment(response);
+        
+        }
+        else if( $('input[name="radio"]:checked').val() === 'wallet'){
+          if (response.insufficientBalance) {
+            alert('Insufficient wallet balance. Order cannot be placed.');
+          } else {
+            location.href = "/orderList/orderConformed";
+          }
+
+          
+        }
+       
+       
+      }
+
+    })
+    
+  })
+
+  function razorpayPayment(order){
+    var options = {
+      "key": "<%= process.env.RAZORPAY_ID_KEY %>",
+      "amount": "<%= totalPrice * 100 %>",
+      "currency": "INR",
+      "name": "Luxicart",
+    
+    
+    "order_id": order.razorpayOrder.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "handler": function (response){
+        alert(response.razorpay_payment_id);
+        alert(response.razorpay_order_id);
+        alert(response.razorpay_signature)
+
+        verifyPayment(response, order)
+    },
+   
+    "theme": {
+        "color": "#f35800"
+    }
+};
+var rzp1 = new Razorpay(options);
+rzp1.on('payment.failed', function (response){
+        alert(response.error.code);
+        alert(response.error.description);
+        alert(response.error.source);
+        alert(response.error.step);
+        alert(response.error.reason);
+        alert(response.error.metadata.order_id);
+        alert(response.error.metadata.payment_id);
+});
+rzp1.open();
+  }
+
+  function verifyPayment(payment, order){
+    $.ajax({
+      url: '/orderList/razorpay-payment-confirmation' , 
+      method : 'post',
+      contentType: 'application/json',  // Add this line
+      data: JSON.stringify({
+            razorpay_payment_id: payment.razorpay_payment_id,
+            razorpay_order_id: payment.razorpay_order_id,
+            razorpay_signature: payment.razorpay_signature,
+          }),
+          success: function (confirmationResponse) {
+        // ... (success logic)
+        console.log(confirmationResponse);
+        if (confirmationResponse.success) {
+          console.log(confirmationResponse);
+          location.href = "/orderList/orderConformed";
+        }
+      },
+    })
+  }
+
+</script>
+
+
+<!-- ------------------------------------------------------------------------------------------- -->
+
+
+
+<!-- **************************************************************** -->
+
+
+
+
+<%-include("../layout/userFooter.ejs")-%>

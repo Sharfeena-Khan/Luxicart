@@ -1,0 +1,115 @@
+<%-include("../layout/adminHeader.ejs")-%>
+<section>
+    <div class="content ">
+      <div class="row">
+        <div class="container d-flex mb-5">
+          <div >
+            <h5><strong> Customers</strong> </h5>
+           <span class="opacity-50"> Dashboard > Customers List</span> 
+          </div>
+          <div class="ms-auto me-5"> 
+           <a href="/admin/add-customer" class="btn text-white me-auto " 
+           style="background: #f35800;"><i class="fa-regular fa-plus" 
+           style="color: #ffffff;"></i> Add Customer</a>
+          </div>
+        </div>
+
+      </div>
+        <table class="table" id="myTable">
+            <colgroup>
+                <col style="width: 10px;" /> <!-- Column for the checkbox icon -->
+                <col style="width: 158px;" /> <!-- Column for name -->
+                <col style="width: 180px;" /> <!-- Column for email -->
+                <col style="width: 100px;" /> <!-- Column for phn -->
+                <col style="width: 80px;" />  <!-- Column for dob -->
+               
+                <col style="width: 80px;" />  <!-- Column for Status -->
+               
+                <col style="width: 130px;" /> <!-- Column for Action -->
+              </colgroup>
+            <thead>
+              <tr>
+                <th scope="col"><i class="fa-solid fa-square-check" style="color: #f35800;"></i></th>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Phone No</th>
+                <th scope="col">DOB</th>
+                <th scope="col">Status</th>
+                <th scope="col">Action</th>
+                
+                
+               
+              </tr>
+            </thead>
+            <tbody>
+                <% userList.forEach(function(data) { %>
+                <tr>
+                  <th scope="row"><input type="checkbox"></th>
+                  <td colspan="1">
+                    <img src="/assests/profile/<%= data.image %>" alt="" width="50" height="50" class="me-3">
+                    <%= data.name %>
+                  </td>
+                  <td class="pt-3"><%= data.email %></td>
+                  <td class="pt-3"><%= data.phone%></td>
+                  <td class="pt-3"><%= data.DOB%></td>
+                  
+                  <td class="pt-3"><%= data.status%></td> 
+                  
+                  <td colspan="2">
+                    <!-- <% if (data.status === "Active") { %>
+                      <button class="block-button px-3 me-3" data-userid="<%= data._id %>" style="background: #f35800; color: #ffffff; border: none; border-radius: 4px;">Block</button>
+                    <% } else if (data.status === "Blocked") { %>
+                      <button class="unblock-button px-2 me-3" data-userid="<%= data._id %>" style="background: #f35800; color: #ffffff;  border: none; border-radius: 4px;">Unblock</button>
+                    <% } %> -->
+                    <% if (data.status === "Active") { %>
+                      <form action="/admin/adminPanel/customer/block" method="POST">
+                        <input type="hidden" name="userId" value="<%= data._id %>">
+                        <button onclick="conformBlock('<%= data._id %>')" type="submit" class="block-button px-3 me-3" style="background: #f35800; color: #ffffff; border: none; border-radius: 4px;">Block</button>
+                      </form>
+                    <% } else if (data.status === "Blocked") { %>
+                      <form action="/admin/adminPanel/customer/unblock" method="POST">
+                        <input type="hidden" name="userId" value="<%= data._id %>">
+                        <button onclick="conformUnBlock('<%= data._id %>')" type="submit" class="unblock-button px-2 me-3" style="background: #f35800; color: #ffffff; border: none; border-radius: 4px;">Unblock</button>
+                      </form>
+                    <% } %>
+                    
+
+                    <!-- <i class="fa-solid fa-pen-to-square" style="color: #4a5153;"></i> -->
+                  </td>
+                  <!-- <td class="pt-3"> <i class="fa-solid fa-pen-to-square" style="color: #4a5153;"></i> </td> -->
+                </tr>
+                <% }); %>
+        
+            </tbody>
+          </table>
+
+    </div>
+   
+           
+        
+   
+</section>
+
+<script>
+  function conformBlock(user_id){
+    if(confirm("Are you sure want to Block this User?")){
+      window.location.href="/admin/adminPanel/customer/block/"+user_id;
+    }
+  }
+</script>
+
+<script>
+  function conformUnBlock(user_id){
+    if(confirm("Are you sure want to Unblock this User?")){
+      window.location.href="/admin/adminPanel/customer/block/"+user_id;
+    }
+  }
+</script>
+
+<script>
+  $(document).ready( function () {
+    $('#myTable').DataTable();
+} );
+</script>
+
+<%-include("../layout/adminFooter.ejs")-%>

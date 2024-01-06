@@ -1,0 +1,143 @@
+<%-include("../layout/userHeader.ejs")-%>
+
+
+
+
+<section>
+
+   
+  <img src="/assests/banner1.jpg" alt="" width="100%">
+
+</section>
+
+<div>
+  <% if (error && error.length > 0) { %>
+
+    <div class="alert" style="margin-top: 70px; color: #f35800;">
+      <% error.forEach(function(errorMessage) { %>
+       
+         <script>
+           alert('<%= errorMessage %>');
+         </script>
+        
+      <% }); %>
+    </div>
+
+  <% } %>
+</div>
+
+
+
+<section>
+<div class="container-fluid ps-5 pe-5">
+ 
+<div class="my-5 ">
+ <span> <h5><strong>Ethnic Wear</strong> </h5> </span> 
+ <span class="d-flex gap-3">
+  <!--  --><% EthnicWear.forEach(product => { %>
+  <div class="" style="width: 185px; height: 250px;">
+     <a href="/itemDisplay/<%= product._id%>">
+      <img src="/assests/productsUploads/<%= product.image %>" 
+      class="card-img-top " alt="..."  width="auto" height="250px" style="border-radius: 5px;">
+      
+     </a>
+  </div>
+  <% }); %>
+ </span>
+</div>
+
+
+
+<div class="my-5 ">
+  <span> <h5><strong>Black Collection</strong> </h5> </span> 
+  <span class="d-flex gap-4">
+   <!--  --><% black.forEach(product => { %>
+   <div class="" style="width: 188px; height: 250px;">
+      <a href="/itemDisplay/<%= product._id%>">
+       <img src="/assests/productsUploads/<%= product.image %>" 
+       class="card-img-top " alt="..."  width="auto" height="250px" style="border-radius: 5px;">
+       
+      </a>
+   </div>
+   <% }); %>
+  </span>
+ </div>
+
+
+
+<div class="my-5 ">
+  <span> <h5><strong>Casual Wear</strong> </h5> </span> 
+  <span class="d-flex gap-3">
+   <!--  --><% CasualWear.forEach(product => { %>
+   <div class="" style="width: 185px; height: 250px;">
+      <a href="/itemDisplay/<%= product._id%>">
+       <img src="/assests/productsUploads/<%= product.image %>" 
+       class="card-img-top " alt="..."  width="auto" height="250px" style="border-radius: 5px;">
+       
+      </a>
+   </div>
+   <% }); %>
+  </span>
+ </div>
+</section>
+ 
+
+
+ <section>
+   
+  <img src="/assests/banner2.jpg" alt="" width="100%">
+
+</section>
+
+
+
+
+
+<section>
+  <div class="container-fluid ps-5 pe-5">
+
+    <div class="my-5 ">
+      <span> <h5><strong>Office Wear</strong> </h5> </span> 
+      <span class="d-flex gap-3">
+       <!--  --><% OfficeWear.forEach(product => { %>
+       <div class="" style="width: 185px; height: 250px;">
+          <a href="/itemDisplay/<%= product._id%>">
+           <img src="/assests/productsUploads/<%= product.image %>" 
+           class="card-img-top " alt="..."  width="auto" height="250px" style="border-radius: 5px;">
+           
+          </a>
+       </div>
+       <% }); %>
+      </span>
+     </div>
+
+  </div>
+
+
+
+
+</div>
+</section>
+
+
+
+
+
+
+
+<!-- <script>
+  // This script will run when the dashboard page loads
+  if (window.history && window.history.pushState) {
+    window.history.pushState('forward', null, './#no-back'); // Create a new history entry
+    
+    // Disable the back button (may not work in all browsers)
+    window.onpopstate = function (event) {
+      if (event.state === 'forward') {
+        window.history.pushState('forward', null, './#no-back');
+      }
+    };
+  }
+</script> -->
+
+
+<%-include("../layout/userFooter.ejs")-%>

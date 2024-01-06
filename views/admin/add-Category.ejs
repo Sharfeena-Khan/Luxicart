@@ -1,0 +1,102 @@
+
+<%-include("../layout/adminHeader.ejs")-%>
+
+
+<section>
+    <div class="content ">
+      <div class="row">
+        <div class="container d-flex mb-5">
+          <div >
+            <h5><strong> Add Category</strong> </h5>
+           <span class="opacity-50"> Dashboard > Categorise > Add Category</span> 
+          </div>
+
+
+          <div>
+            <form method="POST" action="/admin/adminPanel/category" enctype="multipart/form-data">
+
+            <div class=" " style="margin-left: 700px;"> 
+
+             <button type="submit" class="btn text-white  "style="background: #f35800;"><i class="fa-regular fa-plus" style="color: #ffffff;"></i> Add Category</button>
+                
+             <!-- <a href="" class="btn text-white me-auto " id="submitLink" style="background: #f35800;"><i class="fa-regular fa-plus" style="color: #ffffff;"></i> Add Category</a> -->
+            </div>
+          </div>
+  
+        </div>
+        <div class="mb-3">
+          <%
+                         if(typeof message !== 'undefined'){
+                          %>
+                         <h5 class="text-danger fw-bold text-center mb-3 " id="invalidUser-msg"><%= message %></h5>
+                         <%
+                          }
+               %>
+        </div>
+         <div class="container d-flex">
+          
+          <div >
+              <h6> <strong>Thumnail</strong></h6>
+              <label for="product-image" class="form-label">Photo</label>
+  <!--.............................................................................-->
+  <div class="col-md-12">
+      <div class="col-md-12">
+          <div class="btn-container text-center mt-3">
+              <span>
+                  <i class="fa-solid fa-image fa-4x" style="color: #f35800; " ></i>
+              </span>
+             
+              <p>Click to add an image</p>
+              <span class="upload-btn-wrapper">
+                  <label class="btn" for="fileup" style="background: #f35800; color: #ffffff; " >Add Image</label>
+                  <input type="file" name="image" id="fileup" accept="image/*">
+              </span>
+              
+          </div>
+          <!--<button type="submit">Add Product</button> -->
+      </div>
+      
+  </div>
+          </div>
+          <div class="col-7 mx-auto">
+              
+                  <h6> <strong> General Information</strong></h6>
+                  
+                      
+        <div class="mb-3">
+          <label for="product-name"  class="form-label">Category  Name</label>
+          <input type="text" class="form-control" id="productName" name="name"  placeholder="Type Category name here">
+          
+        </div>
+        <div class="mb-5">
+          <label for="discription" class="form-label">Discription</label>
+          <textarea class="form-control" rows="5" name="discription" id="comment"></textarea>
+        </div>
+          </div>
+        </form>
+      
+  
+      </div>
+
+
+          </div>
+          
+   
+           
+        
+   
+</section>
+
+
+<script>
+  function userhidemsg(){
+const msg= document.getElementById("invalidUser-msg")
+if(msg){
+setTimeout(()=>{
+msg.style.display = "none"
+}, 3000)
+}
+}
+window.onload= userhidemsg;
+</script>
+

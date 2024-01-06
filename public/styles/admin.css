@@ -1,0 +1,183 @@
+.fixed-top{
+    position: fixed;
+              top: 0;
+              left: 0;
+              right: 0;
+              z-index: 1000;
+  }
+    
+    /* Sidebar */
+    .sidebar {
+     
+      position: fixed;
+      top: 80px;
+      bottom: 0;
+      left: 0;
+      padding: 58px 0 0; /* Height of navbar */
+      box-shadow: 0 2px 5px 0 rgb(0 0 0 / 5%), 0 2px 10px 0 rgb(0 0 0 / 5%);
+      width: 240px;
+      z-index: 600;
+    }
+    
+    @media (max-width: 991.98px) {
+      .sidebar {
+        width: 100%;
+      }
+    }
+    .sidebar .active {
+      border-radius: 5px;
+      box-shadow: 0 2px 5px 0 rgb(0 0 0 / 16%), 0 2px 10px 0 rgb(0 0 0 / 12%);
+      ;
+    }
+    
+    .sidebar-sticky {
+      position: relative;
+      top: 0;
+      height: calc(100vh - 48px);
+      padding-top: 0.5rem;
+      overflow-x: hidden;
+      overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+    }
+    .side{
+      background: rgba(128, 128, 128, 0.16);
+      
+    }
+    .side .active{
+      background: white;
+      font-weight:900;
+      border-left: 4px solid #000;
+      color: #000;
+      padding-left: 50px;
+      
+  
+    }
+    .active {
+      border-left: 4px solid #000;
+      color: #000;
+      padding-left: 50px;
+    }
+   
+    div.content {
+      margin-top: 140px;
+      margin-left: 300px;
+      padding: 1px 16px;
+      height: 1000px;
+    }
+    
+    /****************************************************************/
+  
+    
+      
+     
+      
+      
+      
+      
+      /*this sets the actual file input to overlay our button*/ 
+      #fileup{
+      opacity: 0;
+      -moz-opacity: 0;
+      filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0);
+      width:200px;
+      cursor: pointer;
+      position:absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 40px;
+      height: 50px;
+      }
+      
+    .btn-container{
+      border: 2px dotted rgba(128, 128, 128, 0.299);
+      padding: 30px;
+    }
+
+
+
+    /*---------------------------------------------image ---------------------
+
+
+    .upload {
+      &__box {
+        padding: 140px;
+      }
+      &__inputfile {
+        width: .1px;
+        height: .1px;
+        opacity: 0;
+        overflow: hidden;
+        position: absolute;
+        z-index: -1;
+      }
+      
+      &__btn {
+        display: inline-block;
+        font-weight: 600;
+        color: #fff;
+        text-align: center;
+        min-width: 116px;
+        padding: 5px;
+        transition: all .3s ease;
+        cursor: pointer;
+        border: 2px solid;
+        background-color: #4045ba;
+        border-color: #4045ba;
+        border-radius: 10px;
+        line-height: 26px;
+        font-size: 14px;
+        
+        &:hover {
+          background-color: unset;
+          color: #4045ba;
+          transition: all .3s ease;
+        }
+        
+        &-box {
+          margin-bottom: 10px;
+        }
+      }
+      
+      &__img {
+        &-wrap {
+          display: flex;
+          flex-wrap: wrap;
+          margin: 0 -10px;
+        }
+        
+        &-box {
+          width: 200px;
+          padding: 0 10px;
+          margin-bottom: 12px;
+        }
+        
+        &-close {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.5);
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            text-align: center;
+            line-height: 24px;
+            z-index: 1;
+            cursor: pointer;
+    
+            &:after {
+              content: '\2716';
+              font-size: 14px;
+              color: white;
+            }
+          }
+      }
+    }
+    
+    .img-bg {
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+      position: relative;
+      padding-bottom: 100%;
+    }
+
+*/

@@ -1,0 +1,159 @@
+<%-include("../layout/userHeader.ejs")-%>
+
+<section>
+    <div class="container-md  d-flex">
+      <!-- filter box -->
+        <div class="col-sm-2  my-5  p-4" style="border: 2px solid #f359003f; border-radius: 4px;">
+         <div class="d-flex">
+          <h4 class="fw-bold">Filters</h4>
+          <span class="mx-auto">
+            <button id="applyFiltersBtn" class="btn text-white ps-3 pe-3 ms-4 fw-bold" style="background: #f35800;" >APPLY </button>
+
+          </span>
+         </div>
+          <div>
+           <h6 class="fw-bold"> Categories</h6>
+
+           <% if (category && category.length > 0) { %>
+           <% category.forEach(category => { %>
+            <div class="form-check">
+              <input class="form-check-input me-2 " type="checkbox" value="" id="<%= category._id %>" >
+              <label class="form-check-label" for="<%= category._id %>">
+                <%= category.name %>
+              </label>
+            </div>         
+           <% }) %>
+
+         
+        <% } %>
+          </div>
+          <hr>
+            <!-- 2. price -->
+          <div>
+            <h6 class="fw-bold"> Price</h6>
+ 
+          
+             <div class="form-check">
+               <input class="form-check-input me-2 " type="checkbox" value="" id="" >
+               <label class="form-check-label" for="">
+                 Rs.499 to Rs.999
+               </label>
+             </div>     
+             <div class="form-check">
+              <input class="form-check-input me-2 " type="checkbox" value="" id="" >
+              <label class="form-check-label" for="">
+                Rs.999 to Rs.1499
+              </label>
+            </div>  
+            <div class="form-check">
+              <input class="form-check-input me-2 " type="checkbox" value="" id="" >
+              <label class="form-check-label" for="">
+                Rs.1499 to Rs.1999
+              </label>
+            </div>  
+            <div class="form-check">
+              <input class="form-check-input me-2 " type="checkbox" value="" id="" >
+              <label class="form-check-label" for="">
+                Rs.1999 to Rs.2499
+              </label>
+            </div>  
+            <div class="form-check">
+              <input class="form-check-input me-2 " type="checkbox" value="" id="" >
+              <label class="form-check-label" for="">
+                Rs.2499 to Rs.2999
+              </label>
+            </div>   
+            <div class="form-check">
+              <input class="form-check-input me-2 " type="checkbox" value="" id="" >
+              <label class="form-check-label" for="">
+                Rs.2999 to Rs.3499
+              </label>
+            </div>   
+            <div class="form-check">
+              <input class="form-check-input me-2 " type="checkbox" value="" id="" >
+              <label class="form-check-label" for="">
+                Rs.3499 to Rs.3999
+              </label>
+            </div>  
+            <div class="form-check">
+              <input class="form-check-input me-2 " type="checkbox" value="" id="" >
+              <label class="form-check-label" for="">
+                Rs.3999 and above
+              </label>
+            </div>      
+        
+           </div>
+           <hr>
+           
+           <!-- 3. Discount -->
+           <div>
+            <h6 class="fw-bold"> Discount Range</h6>
+            <div class="form-check">
+              <input class="form-check-input me-2 " type="checkbox" value="" id="" >
+              <label class="form-check-label" for="">
+                30% and above
+              </label>
+            </div>   
+            <div class="form-check">
+              <input class="form-check-input me-2 " type="checkbox" value="" id="" >
+              <label class="form-check-label" for="">
+                40% and above
+              </label>
+            </div>   
+            <div class="form-check">
+              <input class="form-check-input me-2 " type="checkbox" value="" id="" >
+              <label class="form-check-label" for="">
+                50% and above
+              </label>
+            </div>   
+            <div class="form-check">
+              <input class="form-check-input me-2 " type="checkbox" value="" id="" >
+              <label class="form-check-label" for="">
+                60% and above
+              </label>
+            </div>   
+            <div class="form-check">
+              <input class="form-check-input me-2 " type="checkbox" value="" id="" >
+              <label class="form-check-label" for="">
+                70% and above
+              </label>
+            </div>    
+ 
+            
+            
+           
+           </div>
+
+
+
+        </div>
+        <!-- filter END -->
+
+        <!-- display block -->
+        <div class="col-lg-10 col-md-4 col-sm-2 mx-5 mx-sm-2">
+            <div class=" text-center ">
+                <span class="d-flex  gap-4 ">
+                  <% keyMatch.forEach((product, index) => { %>
+                    <div class="product-card mx-3 my-5" style="width: 185px; height: 250px;">
+                      <a href="/itemDisplay/<%= product._id %>">
+                        <img src="/assests/productsUploads/<%= product.image %>" class="card-img-top mx-3" alt="..." width="auto" height="250px" style="border-radius: 5px;">
+                        <p class="ms-5 text-black"><%= product.name %></p> 
+                        <h6>Price: <strong>₹ <%= product.price %> </strong></h6>
+        
+                      </a>
+                    </div>
+                    <% if ((index + 1) % 5 === 0) { %>
+                      </span>
+                      <span class="d-flex flex-wrap gap-4">
+                    <% } %>
+                  <% }); %>
+                </span>
+              </div>
+              
+        </div>
+    </div>
+
+</section>
+
+
+<%-include("../layout/userFooter.ejs")-%>

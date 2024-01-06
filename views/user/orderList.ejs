@@ -1,0 +1,147 @@
+<%-include("../layout/userHeader.ejs")-%>
+
+<header>
+    <!-- Sidebar -->
+    <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse " >
+      <div class="position-sticky"  style="margin-top: 100px; ">
+        <div class="list-group list-group-flush ms-5 mt-5" >
+          <a
+            href="/orderList"
+            class="list-group-item list-group-item-action py-2 ripple side" aria-current="true" style="color: #f35800; background: white;"
+            
+          >
+          <i class="fa-solid fa-box me-2" ></i><span>Order</span>
+          </a>
+          <a href="#" class="list-group-item list-group-item-action py-2 ripple side">
+            <i class="fa-regular fa-heart me-2" style="color: #f35800;"></i><span>Wishlist</span>
+          </a>
+          <a href="/userProfile" class="list-group-item list-group-item-action py-2 ripple side" 
+            ><i class="fa-solid fa-user me-2" style="color: #f35800;" ></i><span>Profile</span></a
+          >
+          <a href="/adrsPage" class="list-group-item list-group-item-action py-2 ripple side"
+            ><i class="fa-sharp fa-solid fa-map-location-dot me-2" ></i><span>Address</span></a
+          >
+          <a href="#" class="list-group-item list-group-item-action py-2 ripple side">
+            <i class="fa-solid fa-wallet me-2" style="color: #f35800;"></i><span>Wallet</span>
+          </a>
+          <a href="/logout" class="list-group-item list-group-item-action py-2 ripple side">
+            <i class="fa-solid fa-arrow-right-from-bracket me-2" style="color: #f35800;"></i><span>Logout</span>
+          </a>
+          
+        </div>
+      </div>
+    </nav>
+    <!-- Sidebar -->
+  
+    <!-- Navbar -->
+  
+    <!-- Navbar -->
+</header>
+
+<main style="margin-top: 58px;">
+
+
+    <div class="content ">
+      <div class="row">
+        <div class="container mb-5  " >
+            <h4 class="fw-bold pt-2 ps-4">All Orders</h4>
+            <div class="pt-3 col-9" 
+            style="border: 1px solid #f359006c; 
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.242); margin-bottom: 20px;">
+
+<% if (orderData) { %>
+  
+    <% orderData.items.forEach(product => { %>
+      
+      <div class="d-flex mb-2 me-4">
+      <div class="mx-2">
+        <input type="hidden" value="<%= product._id %>" name="id">
+
+        <img src="/assests/productsUploads/<%= product.img1 %>" class="rounded-2 p-4" width="150px" height="170px" alt="Product Image">
+      </div>
+      <div>
+        <div class="mx-1 fw-bold">
+         <a href="/orderList/itemDetails" class="fs-5"> <%= product.productName %> </a> 
+        </div>
+        <div class="mx-2 pt-2 d-flex align-items-center ">
+          <h6 class="fw-bold  pt-2">Order Placed :</h6>
+          <span class="ps-2">
+            <% 
+              const orderDate = new Date(orderData.orderDate); 
+              const formattedOrderDate = orderDate.toLocaleDateString();
+            %>
+            <%= formattedOrderDate %>
+          </span>
+        </div>
+        <div class="mx-2 d-flex align-items-center">
+          <h6 class="fw-bold pt-2 pe-2"> Price :</h6>
+          ₹<%= product.price %>
+        </div>
+        <div class="mx-2 d-flex align-items-center">
+          <% if (orderData && orderData.deliveryDate) { %>
+            <h6 class="fw-bold pt-2 pe-2">Delivery On :</h6>
+            <%= orderData.deliveryDate.toLocaleDateString() %>
+          <% } %>
+          
+        
+        </div>
+        <div class="mx-2 d-flex align-items-center">
+          <h6 class="fw-bold pt-2 pe-2">Status :</h6>
+        <p class="fw-bold pt-3" style="color: #f35800;"> <%= product.orderStatus %></p> 
+        
+          
+
+        </div>
+      </div>
+      <div class="ms-auto mt-4">
+        <% if (product.orderStatus !== "Canceled" && product.orderStatus !== "Returned" && product.orderStatus !== "Delivered" ) { %>
+          <button onclick="conformDelete('<%= product._id %>')" class="my-2 btn text-white px-4" style="background: #f35800; font-weight: 600;">Cancel Order</button>
+        <% } %>
+        <div>
+          <% if (product.orderStatus == "Delivered") { %>
+       <button onclick="conformReturn('<%= product._id %>')"  class=" my-2 btn text-white  px-4 " style="background: #f35800;font-weight: 600;">Return Order</button> 
+       <% } %>
+      </div>
+      </div>
+   
+</div>
+<hr>
+
+<% }); %>
+  
+<% } %>
+
+
+
+
+            
+           
+
+
+            </div>
+        </div>
+
+      </div>
+    </div>
+</main>
+
+<script>
+  function conformDelete(id){
+    if(confirm("Are you sure want to Cancle this item?")){
+      window.location.href="/orderList/delOrder/"+id;
+    }
+  }
+</script>
+
+
+<script>
+  function conformReturn(id){
+    if(confirm("Are you sure want to Return this item?")){
+      window.location.href="/orderList/return/"+id;
+    }
+  }
+</script>
+
+
+
+<%-include("../layout/userFooter.ejs")-%>

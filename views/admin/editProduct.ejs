@@ -1,0 +1,391 @@
+
+<%-include("../layout/adminHeader.ejs")-%>
+
+
+
+<section>
+    <div class="content ">
+      <div class="row">
+        <div class="container d-flex mb-5  ">
+          <div   >
+            <h5><strong> Products</strong> </h5>
+           <span class="opacity-50"> Dashboard > Product List  > <strong>Edit Product</strong></span> 
+          </div>
+
+          <div>
+            <% if (error && error.length > 0) { %>
+                <div class=" " style="margin-top: 70px; color: #f35800;">
+                    <ul class="" style="display: inline-flex; gap: 20px;">
+                        <% error.forEach(function(errorMessage) { %>
+                            <li id="errDiv"><%= errorMessage %></li>
+                        <% }); %>
+                    </ul>
+                </div>
+            <% } %>
+        </div>
+        
+          
+
+
+
+
+
+
+          <div>
+
+            <form  action="/admin/adminPanel/products/updatPrdt" method="POST">
+              <input type="hidden" name="ID" value="<%= products._id %>">
+        
+
+                <div class=" " style="position:fixed; background: #ffffff; left: 1266px;"> 
+                    <button type="submit" class="btn text-white  " style="background: #f35800;"><i class="fa-regular fa-plus" style="color: #ffffff;"></i> Save Product</button>
+                   </div>
+                 </div>
+         
+         
+               </div>
+               <div class="container d-flex">
+                 <div class="col-7">
+                     <h6> <strong> General Information</strong></h6>
+                     
+                         
+           <div class="mb-3">
+             <label for="product-name"  class="form-label">Product Name</label>
+             <input type="text" class="form-control" id="productName" name="name" value="<%= products.name %>">
+             
+           </div>
+           <div class="mb-5">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" rows="5" name="description" id="comment"><%= products.description %></textarea>
+        </div>
+
+
+        <!--  -->
+        <div class="mt-5">
+          <h6> <strong> Pricing</strong></h6>
+          <label for="product-rice"  class="form-label">Base Price</label>
+          <input type="text" class="form-control" id="productPrice" name="price" value="<%= products.price %>">
+          
+          <div class="container d-flex">
+            <div class="col-6 me-2">
+             <label for="product-discountType" class="form-label mt-3">Discount Type</label>
+<select class="form-select" name="discountType" aria-label="Default select example">
+   <option value="" <% if (products.discountType === '') { %>selected<% } %>>Select</option>
+   <option value="1" <% if (products.discountType === '1') { %>selected<% } %>>Clearance Sale</option>
+   <option value="2" <% if (products.discountType === '2') { %>selected<% } %>>Season</option>
+   <option value="3" <% if (products.discountType === '3') { %>selected<% } %>>Free Shipping</option>
+</select>
+
+        
+            </div>
+            <div class="col-6 ms-2">
+              <label for="product-diacountPercentage"  class="form-label mt-3">Discount Percentage</label>
+              <select class="form-select" name="percentage" aria-label="Default select example">
+               <option value="" <% if (products.discountPercentage === '') { %>selected<% } %>>Select</option>
+               <option value="1" <% if (products.discountPercentage === '1') { %>selected<% } %>>70% or more</option>
+               <option value="2" <% if (products.discountPercentage === '2') { %>selected<% } %>>60% or more</option>
+               <option value="3" <% if (products.discountPercentage === '3') { %>selected<% } %>>50% or more</option>
+               <option value="4" <% if (products.discountPercentage === '4') { %>selected<% } %>>40% or more</option>
+               <option value="5" <% if (products.discountPercentage === '5') { %>selected<% } %>>30% or more</option>
+           </select>
+           
+            </div>
+            
+          </div>
+        </div>
+        <div class="mt-5 mb-5 pb-5">
+          <h6> <strong> Inventory</strong></h6>
+          <div class="container d-flex">
+            <div class="col-6 me-2">
+              <label for="product-sku"   class="form-label mt-3">SKU</label>
+              <input type="text" class="form-control" id="product-SKU" name="SKU" value="<%= products.sku %>">
+            </div>
+            <div class="col-6 ms-2">
+              <label for="product-Quantity"  class="form-label mt-3">Quantity</label>
+              <input type="text" class="form-control" id="productQty" name="Qty" value="<%= products.stock %>">
+            </div>
+          </div>
+        </div>
+        
+        </div>
+        
+                </div>
+        
+        
+                <div>
+        
+                  <div class="ms-5">
+                    <h6> <strong> Category</strong></h6>
+                    
+                        
+                    <div class="mb-3">
+                     <label for="product-category" class="form-label">Product Category</label>
+                     <select class="form-select" name="category" aria-label="Default select example">
+                       <option value="" <% if (!categories || categories.length === 0) { %>selected<% } %>>Select the Category</option>
+                       <% if (categories && categories.length > 0) { %>
+                           <% categories.forEach(category => { %>
+                               <option value="<%= category.name %>" <% if (products.category === category.name) { %>selected<% } %>><%= category.name %></option>
+                           <% }); %>
+                       <% } %>
+                   </select>
+                   
+                   </div>
+                   
+            <label for="product-status"  class="form-label mt-3">Status</label>
+            <select class="form-select" name="status" aria-label="Default select example">
+             <option value="" <% if (!products.status) { %>selected<% } %>>Select</option>
+             <option value="Draft" <% if (products.status === 'Draft') { %>selected<% } %>>Draft</option>
+             <option value="Out of stock" <% if (products.status === 'Out of stock') { %>selected<% } %>>Out of stock</option>
+             <option value="Published" <% if (products.status === 'Published') { %>selected<% } %>>Published</option>
+         </select>
+         
+            
+          </div> 
+
+
+
+
+           </form>
+
+
+
+
+         </div>
+        
+          <!-- **********************************************
+            ***************************************
+            *******************************
+            **** -->
+         
+         <h6> <strong> Media</strong></h6>
+                     
+         
+         <div class="mb-3">
+         <label for="product-image" class="form-label"> Main Photo</label>
+         <!--.............................................................................-->
+         <div class="col-md-12">
+          <span>
+            <img src="/assests/productsUploads/<%= products.image %>" alt="" width="150px" height="auto">
+            <a style="background: #f35800; color: #ffffff;" type="button" class="btn" data-bs-toggle="modal" data-bs-target="#exampleModal">
+              <strong>Add New Images</strong>
+            </a>
+            <div class="mt-5 mb-5">
+              <h6>Sub-Images</h6>
+               
+              <% if (products.images && products.images.length > 0) { %>
+               
+                    <% products.images.forEach(image => { %>
+                        
+                            <img src="/assests/productsUploads/<%= image %>" width="80px" height="auto" alt="Product Image">
+                        
+                    <% }) %>
+                
+            <% } %>
+             </div>
+              
+             
+         </div>
+
+         <!-- ******************** -->
+
+         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel"><strong>Add/ Change Images</strong> </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+      
+              <div>
+                <form action="/admin/adminPanel/products/updatPrdtImage" method="post" id="addressForm" enctype="multipart/form-data">
+                  
+                      <div class="modal-body">
+                        <input type="hidden" name="IMG_ID" value="<%= products._id %>">
+                 
+                          <div class="container mx-4">
+                            
+                          <div class="d-flex gap-3 pe-3">
+
+                            <span id="imageContainer">
+                              <% if (products.image) { %>
+                                <img src="/assests/productsUploads/<%= products.image %>" alt="" width="150px" height="auto">
+                              <% } else { %>
+                                <img src="#" alt="" width="150px" height="auto" id="previewImage" style="display:none;">
+                              <% } %>
+                              <input type="file" class="form-control" name="main_IMG" id="imageInput" onchange="previewMainImage(this)">
+                            </span>
+                              <div class="col-md-12">
+                                <div class="btn-container mt-3">
+                                  <p>Click to add sub images</p>
+                                  <span class="upload-btn-wrapper">
+                                      <input type="file" multiple="multiple" name="sub_Img" accept="image/jpeg, image/png, image/jpg" id="subImageInput">
+                                  </span>
+                              </div>
+                              
+                              <div id="selectedImagesContainer">
+                                  <!-- Display selected images here -->
+                              </div>
+                            
+                              
+                          </div>
+                         
+                         
+                         
+                          </div>
+              
+              
+                       
+                      
+              
+              
+                       
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn " style="background: #f35800; color: white;">Save </button>
+                      
+                      </div>
+      
+                  </form>
+              </div>
+            </div>
+              
+            </div>
+          </div>
+
+        
+        </div>
+
+         <!-- ******************* -->
+
+       
+         
+       
+
+
+         
+         
+               </div>
+       
+
+
+
+      </div>
+      
+
+    </div>
+   
+           
+        
+   
+</section>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    // Function to display selected images
+    function displaySelectedImages() {
+        const fileInput = document.getElementById('fileup');
+        const imagePreviewContainer = document.getElementById('image-preview-container');
+
+        // Clear any previously displayed images
+        imagePreviewContainer.innerHTML = '';
+
+        // Get the selected files
+        const selectedFiles = fileInput.files;
+
+        // Loop through the selected files and display them
+        for (let i = 0; i < selectedFiles.length; i++) {
+            const file = selectedFiles[i];
+
+            // Create an image element for each selected image
+            const imageElement = document.createElement('img');
+            imageElement.src = URL.createObjectURL(file);
+            imageElement.className = 'selected-image';
+            
+            // Append the image to the image preview container
+            imagePreviewContainer.appendChild(imageElement);
+        }
+    }
+
+    // Add an event listener to the file input to trigger the displaySelectedImages function when files are selected
+    const fileInput = document.getElementById('fileup');
+    fileInput.addEventListener('change', displaySelectedImages);
+</script>
+
+
+
+<script>
+  const myModal = document.getElementById('myModal')
+const myInput = document.getElementById('myInput')
+
+myModal.addEventListener('shown.bs.modal', () => {
+myInput.focus()
+})
+</script>
+
+<script>
+  $(document).ready(function() {
+      $('#imageInput').change(function() {
+          var input = this;
+          var url = URL.createObjectURL(input.files[0]);
+
+          // Update the image source
+          $('#imageContainer img').attr('src', url);
+      });
+  });
+</script>
+
+
+<script>
+  $(document).ready(function() {
+      $('#subImageInput').change(function() {
+          var input = this;
+          var files = input.files;
+
+          // Clear previous selected images
+          $('#selectedImagesContainer').empty();
+
+          // Display the selected images
+          for (var i = 0; i < files.length; i++) {
+              var url = URL.createObjectURL(files[i]);
+              $('#selectedImagesContainer').append('<img src="' + url + '" alt="Selected Image" width="50px" height="auto">');
+          }
+      });
+  });
+</script>
+
+
+
+<script>
+  function previewMainImage(input) {
+    const previewImage = document.getElementById('previewImage');
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        previewImage.src = e.target.result;
+        previewImage.style.display = 'block';
+      };
+      reader.readAsDataURL(input.files[0]);
+    } else {
+      previewImage.src = '#';
+      previewImage.style.display = 'none';
+    }
+  }
+</script>
+
+
+<script>
+  function hideMsg(){
+    const msg = document.getElementById("errDiv")
+    if(msg){
+      setTimeout(()=>{
+        msg.style.display = "none"
+      },4000)
+    }
+  }
+ window.onload =  hideMsg()
+
+</script>
+
+<%-include("../layout/adminFooter.ejs")-%>

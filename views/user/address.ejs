@@ -1,0 +1,294 @@
+<%-include("../layout/userHeader.ejs")-%>
+
+
+<section >
+
+  
+    <div class="container-fluid ps-5 pe-5 pt-5 d-flex">
+
+      <div class="col-7">
+        <div >
+            <div class=" p-2" style="background-color: rgba(235, 235, 235, 0.381);
+                            
+                            border: 2px dotted #f161074b;
+                            padding: 5px;
+                            margin-bottom: 15px;
+                            display: flex;
+                            
+                            font-weight: bold;
+                            
+                ">
+           <h6>
+            <% if (userAddresses && userAddresses.Addresses) { %>
+                <div id="addressSection" class="">
+                    <% userAddresses.Addresses.forEach(address => { %>
+                      <div class="d-flex pt-1 pb-3">
+                        <div class="pe-3">
+                          <input type="radio" name="addressRadio" <% if (address.mainAdrs) { %>checked<% } %> value="<%= address._id %>" onchange="updateMainAddress('<%= address._id %>')">
+                        </div>
+                        <div class="">
+                            <div class="">
+                               <strong><%= address.name %></strong>
+                            </div>
+                            <div class="pt-1">
+                                <%= address.Adrs %>, <%= address.locality %>,
+                                <%= address.city %>,
+                                <%= address.state %>,
+                            </div>
+                            <div>
+                                <%= address.state %>, <%= address.pincode %>
+                            </div>
+                            <div>
+                                <!-- Display other address properties as needed -->
+                            </div>
+                        </div>
+                      </div>
+                    <% }); %>
+                </div>
+            <% } %>
+        </h6>
+            </div>
+        </div>
+     <!-- form -->
+        <div>
+
+            <div class="col-12 p-3" style="background-color: rgba(235, 235, 235, 0.381);
+                            
+            border: 2px dotted #f161074b;
+            padding: 5px;
+            margin-bottom: 15px;
+            display: flex;
+           
+            font-weight: bold;
+            
+            ">
+                  <a style="color: #f35800;" type="button" class="" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <i class="fa-solid fa-plus" style="color: #f35800;"></i> <strong>Add New Address</strong>
+                  </a>
+        </div>
+
+
+                  <!-- Button trigger modal -->
+
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel"><strong>Add New Address</strong> </h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div>
+          <form action="/cart/add-address" method="post" id="addressForm">
+            
+                <div class="modal-body">
+           
+                    <div class="container mx-4">
+                       
+                    <div class="d-flex gap-3 pe-3">
+                        <input type="text" placeholder="Name" class="form-control" name="name">
+                        
+                    </div>
+                    <div class="d-flex gap-3 pt-4 pe-3">
+                        <input class="form-control" type="text" placeholder="PIN CODE" name="zip">
+                        <input class="form-control" type="text" placeholder="Locality" name="locality">
+                    </div>
+                    <div class="d-flex gap-3 pt-4 pe-3">
+                        <textarea class="form-control" name="Address" id="" placeholder="Address (Area and Street)" cols="47" rows="4"></textarea>
+                        
+                    </div>
+                    <div class="d-flex gap-3 pt-4 pe-3">
+                        <input class="form-control" type="text" placeholder="City / District / Town" name="place">
+                        <input class="form-control" type="text" placeholder="State" name="state">
+                    </div>
+                    <div class="d-flex gap-3 pt-4 pe-3">
+                        <input class="form-control" type="text" placeholder="Landmark" name="Lmark">
+                        <input class="form-control" type="text" placeholder="Alternate Phone" name="altNum">
+                    </div>
+                    <div class="d-flex gap-3 pt-4 pe-3">
+                        
+                    <h6>Address Type : </h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="Radios" id="exampleRadios1" value="Home" >
+                            <label class="form-check-label" for="exampleRadios1">
+                               Home
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="Radios" id="exampleRadios2" value="Work" >
+                            <label class="form-check-label" for="exampleRadios2">
+                                Work
+                            </label>
+                        </div>
+                    </div>
+        
+        
+                    </div>
+                
+        
+        
+                 
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" class="btn " style="background: #f35800; color: white;">Save </button>
+                
+                </div>
+
+            </form>
+        </div>
+       
+        
+      </div>
+    </div>
+  </div>
+        </div>
+<!-- form end -->
+
+
+
+
+
+
+<form id="paymentForm" action="/cart/payment" method="post">
+
+    </div>
+    <% if (cartData && cartData.products) { %>
+      
+        <div class="col-5 "> 
+          <div class="px-5  mx-5" style=" border: 1px solid #f359004d; box-shadow: 0px 4px 8px rgba(82, 82, 82, 0.1);">
+    
+            <!-- ... Other product details ... -->
+          <div class="mt-5" >
+           <span style="font-weight:600; color: rgb(176, 176, 176);">COUPONS</span> 
+            <div class="d-flex ">
+               <h6 class=""><strong>Apply Cuopons</strong></h6>
+               <button> APPLY</button>
+            </div> 
+          </div> 
+         
+          <div class="mt-5 ">
+            <span style="font-weight:600; color: rgb(155, 153, 153);"> PRICE DETAILS</span>
+           
+            <div class="d-flex gap-5">
+              <span style="font-weight: bold;"> Items Price (<%= calculateTotalItemsCount(cartData.products) %> items):</span>
+              <span class="ms-4" style="padding-left: 100px; font-weight: bold;"">
+                ₹ <%= calculateTotalPrice(cartData.products) %>
+              </span>
+            </div>
+            <div class="d-flex ">
+              <span style="font-weight: bold;">Delivery Charges</span>
+              <span class="ms-4" style="padding-left: 180px; font-weight: bold;">
+                ₹.40.00
+              </span>
+            </div>
+            <div class="px-0">
+              <hr style="border-top: 4px solid #bbb; border-radius: 5px; width: 430px;" />
+            </div>
+            <div class="d-flex gap-5">
+              <h5 style="font-weight: bold;">Total Price:
+              <span class="mx-4" style="padding-left: 190px; font-weight: bold;">
+                ₹ <%= totalPrice %>
+              </span></h5>
+            </div>
+          </div>
+         
+          
+          
+    
+            <div class="mt-5 text-center mb-5">
+              <button type="button" class="btn text-white btn-b ms-2 me-2" style="background: #f35800; font-weight: 600;" onclick="validateAndSubmit()">COUNTINUE</button>
+            </div>
+           
+    
+           
+        </div>
+</form>
+       
+        
+        </div>
+        <% } else { %>
+          <div>
+            <a href="/" class="btn text-white btn-b ms-2 me-2" style="background: #f35800;font-weight: 600;">COUNTINUE SHOPPING</a>
+      
+          </div>
+           <% } %>
+        </div>
+   
+    
+</section>
+  
+
+
+
+<!-- modal -->
+<script>
+    const myModal = document.getElementById('myModal')
+const myInput = document.getElementById('myInput')
+
+myModal.addEventListener('shown.bs.modal', () => {
+  myInput.focus()
+})
+</script>
+<!-- end modal -->
+
+
+
+
+
+
+
+<!-- **************************** AJAX  ******************* -->
+
+<!-- Add this script to handle the radio button change event -->
+
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script>
+  function updateMainAddress(addressId){
+    $.ajax({
+      url :"/cart/updateMainAddress/" + addressId,
+      method : "post",
+      data:{
+        mainAdrs : true
+      },
+      success: function(response) {
+          // Handle the successful response from the server
+          console.log(response);
+        },
+        error: function(xhr, status, error) {
+          // Handle errors
+          console.error(xhr.responseText);
+        }
+    })
+
+  }
+</script>
+
+
+<script>
+  function validateAndSubmit() {
+      // Check if an address is selected
+      const selectedAddress = document.querySelector('input[name="addressRadio"]:checked');
+
+      if (!selectedAddress) {
+          // If no address is selected, show an alert or any other form of user feedback
+          alert("Please choose an address before proceeding.");
+      } else {
+          // If an address is selected, submit the form
+          document.getElementById("paymentForm").submit();
+      }
+  }
+</script>
+
+
+
+
+
+<%-include("../layout/userFooter.ejs")-%>

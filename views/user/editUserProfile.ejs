@@ -1,0 +1,131 @@
+<%-include("../layout/userHeader.ejs")-%>
+
+
+<!--Main Navigation-->
+<header>
+    <!-- Sidebar -->
+    <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse " >
+      <div class="position-sticky"  style="margin-top: 100px; ">
+        <div class="list-group list-group-flush ms-5 mt-5" >
+          <a
+            href="#"
+            class="list-group-item list-group-item-action py-2 ripple side"
+            
+          >
+          <i class="fa-solid fa-box me-2" style="color: #f35800;"></i><span>Order</span>
+          </a>
+          <a href="#" class="list-group-item list-group-item-action py-2 ripple side">
+            <i class="fa-regular fa-heart me-2" style="color: #f35800;"></i><span>Wishlist</span>
+          </a>
+          <a href="/userProfile" class="list-group-item list-group-item-action py-2 ripple side" aria-current="true" style="color: #f35800; background: white;"
+            ><i class="fa-solid fa-user me-2" ></i><span>Profile</span></a
+          >
+          <a href="/adrsPage" class="list-group-item list-group-item-action py-2 ripple side"
+            ><i class="fa-sharp fa-solid fa-map-location-dot me-2" style="color: #f35800;"></i><span>Address</span></a
+          >
+          <a href="#" class="list-group-item list-group-item-action py-2 ripple side">
+            <i class="fa-solid fa-wallet me-2" style="color: #f35800;"></i><span>Wallet</span>
+          </a>
+          <a href="/logout" class="list-group-item list-group-item-action py-2 ripple side">
+            <i class="fa-solid fa-arrow-right-from-bracket me-2" style="color: #f35800;"></i><span>Logout</span>
+          </a>
+          
+        </div>
+      </div>
+    </nav>
+    <!-- Sidebar -->
+  
+    <!-- Navbar -->
+  
+    <!-- Navbar -->
+  </header>
+  <!--Main Navigation-->
+  
+  <!--Main layout-->
+  <main style="margin-top: 58px;">
+
+
+    <div class="content ">
+      <div class="row">
+        <div class="container  mb-5">
+          <form action="/updateProfile" method="post" >
+
+            <input type="hidden" name="ID" value="<%= userData._id %>">
+          <div class="mb-3 col-6  d-flex">
+            <h4 ><strong> Personal Information</strong> </h4>     
+          </div>
+         <div class="mb-3 col-6 gap-4 d-flex">
+            
+            <input type="text" class="form-control" id="productName" name="Fname"   placeholder="First Name" value="<%= userData.FirstName %>" >
+            <input type="text" class="form-control" id="productName" name="Lname" value="<%= userData.LastName %>"  >
+            
+          </div>
+          <h6 class="pt-3">  Your Gender</h6>
+          <div class="mb-3 col-6 gap-4 d-flex">
+           
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="Radios" id="exampleRadios1" value="male" <% if (userData.gender === "male") { %>checked<% } %>>
+              <label class="form-check-label" for="exampleRadios1">
+                  Male
+              </label>
+          </div>
+          <div class="form-check">
+              <input class="form-check-input" type="radio" name="Radios" id="exampleRadios2" value="female" <% if (userData.gender === "female") { %>checked<% } %>>
+              <label class="form-check-label" for="exampleRadios2">
+                  Female
+              </label>
+          </div>
+          <div class="form-check">
+              <input class="form-check-input" type="radio" name="Radios" id="exampleRadios3" value="other" <% if (userData.gender === "other") { %>checked<% } %>>
+              <label class="form-check-label" for="exampleRadios3">
+                  Other
+              </label>
+          </div>
+          
+          </div>
+          <h5 class="pt-3"> <strong>Email</strong> </h5>
+
+          <div class="mb-3 col-6 ">
+
+            <input type="email" class="form-control" id="productName" name="email" value="<%= userData.email %>">
+
+          </div>
+
+         
+
+          <h5 class="pt-3"> <strong>Mobile Number</strong> </h5>
+          <div class="mb-3 col-6 ">
+
+            <input type="tel" class="form-control" id="productName" name="phn" value="<%= userData.phone%>">
+
+          </div>
+
+          <div class="d-grid  col-4 mt-5 " style="margin-left: 100px;">
+            <button type="submit" class="btn text-white btn-b  ms-0" style="background: #f35800;"><strong>Update</strong></button>
+       
+        </div>
+        </form>
+
+        </div>
+
+
+      </div>
+    </div>
+
+
+  </main>
+  <!--Main layout-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+<%-include("../layout/userFooter.ejs")-%>

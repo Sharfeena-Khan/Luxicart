@@ -1,0 +1,121 @@
+<%-include("../layout/userHeader.ejs")-%>
+
+
+<!--Main Navigation-->
+<header>
+    <%-include("../layout/userSidebar.ejs")-%>
+  
+    <!-- Navbar -->
+  
+    <!-- Navbar -->
+  </header>
+  <!--Main Navigation-->
+  
+  <!--Main layout-->
+  <main style="margin-top: 58px;">
+
+
+    <div class="content ">
+      <div class="row">
+        <div class="container  mb-5"> 
+
+            <form action="/editpic" method="post" enctype="multipart/form-data">
+                <h5 class="pt-3"> <strong>Edit Profile Photo</strong> </h5>
+
+            <div class="mb-3 col-6 ">
+     <!-- Display current user's image -->
+     <img src="/assests/profile/<%= userData.image %>" class="rounded-circle"  width="140px" height="120px" alt="User Image">
+                      
+     <!-- Input for selecting a new image file -->
+     <input type="file" class="form-control" name="image"> 
+     <button type="submit" class="btn text-white btn-b  ms-0" style="background: #f35800;">Change Picture</button>        
+          </div>
+        
+
+
+            </form>
+
+        </div>
+        <div class=" opacity-25">
+            <div class="mb-3 col-6 gap-4 d-flex">
+                <h4 ><strong> Personal Information</strong> </h4>
+    
+                <span style="margin-left: 300px;">
+                  <a style="text-decoration: underline;" href="/editprofile/<%= userData._id %>"  >Edit</a>
+                  </span>
+                
+                 
+              </div>
+             <div class="mb-3 col-6 gap-4 d-flex">
+                
+                <input type="text" class="form-control" id="productName" name="Fname" placeholder="<%= userData.FirstName %>" disabled>
+                <input type="text" class="form-control" id="productName" name="Lname" placeholder="<%= userData.LastName %>" disabled>
+                
+              </div>
+              <h6 class="pt-3">  Your Gender</h6>
+              <div class="mb-3 col-6 gap-4 d-flex">
+               
+                <div class="form-check " >
+                  <input class="form-check-input" type="radio" name="Radios"  value="male" disabled >
+                  <label class="form-check-label" for="exampleRadios1">
+                    Male
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="Radios"  value="female" disabled>
+                  <label class="form-check-label" for="exampleRadios2">
+                   Female
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="Radios"  value="others"  disabled>
+                  <label class="form-check-label" for="exampleRadios3">
+                    Other
+                  </label>
+                </div>
+              </div>
+              <h5 class="pt-3"> Email </h5>
+    
+              <div class="mb-3 col-6 ">
+    
+                <input type="email" class="form-control" id="productName" name="email" placeholder=" <%= userData.email %>" disabled>
+    
+              </div>
+    
+              
+    
+            
+    
+              <h5 class="pt-3"> Mobile Number </h5>
+              <div class="mb-3 col-6 ">
+    
+                <input type="tel" class="form-control" id="productName" name="phn" placeholder="<%= userData.phone%>" disabled>
+    
+              </div>
+    
+    
+    
+            </div>
+        </div>
+
+
+      </div>
+    </div>
+
+
+  </main>
+  <!--Main layout-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+<%-include("../layout/userFooter.ejs")-%>

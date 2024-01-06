@@ -1,0 +1,59 @@
+<%-include("../layout/userHeader.ejs")-%>
+
+<section>
+    <div class="container-fluid ps-5 pe-5 pt-5  text-center mb-5 col-8 ">
+       <div class="container p-5" style="box-shadow:  0px 4px 10px rgba(0, 0, 0, 0.242);">
+        <div class="text-center">
+            
+            <h4 class="fw-bold" style="color: #f35800;"><i class="fa-regular fa-circle-check" style="color: #f35800;"></i>
+             Order Confirmed</h4> 
+             <p>Your order is confirmed. You will receive <br> an order confirmation email/SMS
+                 shortly with expected delivery date for your items. </p>
+         </div>
+         <div> 
+            
+             <div>
+                 <% if (userAddresses && userAddresses.Addresses) { %>
+                     <div id="addressSection">
+                         <% let mainAddress = userAddresses.Addresses.find(address => address.mainAdrs === true); %>
+                         <% let displayAddress = mainAddress ? [mainAddress] : [userAddresses.Addresses[0]]; %>
+                         <% displayAddress.forEach(address => { %>
+                           <div class="pt-5 pb-2">
+                               <span style="font-weight:600; color: rgb(176, 176, 176);">DELIVERY ADDRESS</span> 
+                           </div>
+                             <div style="font-weight: bold;">
+                            <%= address.name %>
+                             </div>
+                             <div style=" padding-top: 5px; font-weight: bold;">
+                                 <%= address.Adrs %>, <%= address.locality %>,
+                                 <%= address.city %>,
+                                 <%= address.state %>,
+                             </div>
+                             <div style=" padding-top: 5px; font-weight: bold;">
+                                 <%= address.state %>, <%= address.pincode %>
+                             </div>
+                             <div>
+                                 
+                             </div>
+                         <% }); %>
+                     </div>
+                 <% } %>
+             </div>
+ 
+             <img src="/assests/boy-transformed.png" alt="" width="250px">
+         </div>
+         <div>
+             <a href="/" class="btn text-white btn-b ms-2 me-2" style="background: #f35800;">COUNTINUE SHOPPING</a>
+            <a href="/orderList" class="btn text-white btn-b ms-2 me-2" style="background: #f35800;">VIEW ORDER</a>
+         </div>
+       </div>
+
+    </div>
+</section>
+
+
+
+
+
+
+<%-include("../layout/userFooter.ejs")-%>

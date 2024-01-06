@@ -1,0 +1,91 @@
+
+<%-include("../layout/adminHeader.ejs")-%>
+
+
+<section>
+    <div class="content ">
+      <div class="row">
+        <div class="container d-flex mb-5">
+          <div >
+            <h5><strong> Products</strong> </h5>
+           <span class="opacity-50"> Dashboard > Product List</span> 
+          </div>
+          <div class="ms-auto me-5"> 
+           <a href="/admin/adminPanel/products/add-product" class="btn text-white me-auto " style="background: #f35800;"><i class="fa-regular fa-plus" style="color: #ffffff;"></i> Add Product</a>
+          </div>
+        </div>
+
+      </div>
+        <table class="table" id="myTable">
+            <colgroup>
+                <col style="width: 10px;" /> <!-- Column for the checkbox icon -->
+                <col style="width: 200px;" /> <!-- Column for Product -->
+                <col style="width: 50px;" /> <!-- Column for SKU -->
+                <col style="width: 90px;" /> <!-- Column for Category -->
+                <col style="width: 70px;" />  <!-- Column for Stock -->
+                <col style="width: 70px;" />  <!-- Column for Price -->
+                <col style="width: 70px;" />  <!-- Column for Status -->
+               
+                <col style="width: 30px;" /> <!-- Column for Action -->
+              </colgroup>
+            <thead>
+              <tr>
+                <th scope="col"><i class="fa-solid fa-square-check" style="color: #f35800;"></i></th>
+                <th scope="col">Product</th>
+                <th scope="col">SKU</th>
+                <th scope="col">Category</th>
+                <th scope="col">Stock</th>
+                <th scope="col">Price</th>
+                <th scope="col">Status</th>
+                
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% products.forEach(function(products) { %>
+                <tr>
+                  <th scope="row"><input type="checkbox"></th>
+                  <td colspan="1">
+                    <img src="/assests/productsUploads/<%= products.image %>" alt="" width="50" height="50" class="me-3">
+                    <%= products.name %>
+                  </td>
+                  <td class="pt-3"><%= products.sku %></td>
+                  <td class="pt-3"><%= products.category%></td>
+                  <td class="pt-3"><%= products.stock%></td>
+                  <td class="pt-3">₹ <%= products.price%></td>
+                  <td class="pt-3"><%= products.status%></td>
+                  
+                  <td class="pt-3">
+                     <a href="/admin/adminPanel/products/edit-products/<%= products._id %>"><i class="fa-solid fa-pen-to-square" style="color: #4a5153;"></i></a>
+                     <button onclick="conformDelete('<%= products._id %>')" class="btn" style="margin-left: 20px;"><i class="fa-regular fa-trash-can ps-2" style="color: #f35800; font-size:medium;"></i></button>
+                    
+                     
+                  </td>
+                </tr>
+                <% }); %>
+        
+            </tbody>
+          </table>
+
+    </div>
+   
+           
+        
+   
+</section>
+
+
+
+<script>
+  function conformDelete(pdt_id){
+    if(confirm("Are you sure want to delete this item?")){
+      window.location.href="/admin/adminPanel/products/dltPdt/"+pdt_id;
+    }
+  }
+</script>
+
+<script>
+  $(document).ready( function () {
+    $('#myTable').DataTable();
+} );
+</script>

@@ -1,0 +1,106 @@
+<%-include("../layout/userHeader.ejs")-%>
+
+
+<section class="mt-5 mb-5">
+    <div class="col d-flex " style="padding-left: 150px"; >
+        <div class="col-4  ms-5 ps-5" >
+            <img class="ms-0 ps-0" src="/assests/registerPage-image.png" alt="" width="1050px">
+        </div>
+        
+        <div class="col-8  ms-5 mt-5 pt-2  "  >
+          <div class="ms-5">
+            <%
+                                    if(typeof message !== 'undefined'){
+                                      %>
+                                      <h5 class="text-warning ms-5 " id="invalidUser-msg"><%= message %></h5>
+                                      <%
+                                    }
+                                    %>
+          </div>
+            <form action="/pswdOtp-verified" method="post" >
+                <div class="form-group col-6 mb-3 ms-5 text-center " style="padding-top:80px; ">
+                    <p>Check your email for OTP and enter the OTP here.</p>
+                </div>
+                <div class="form-group col-6 ms-5 ">
+                  <input type="text" name="otp" class="form-control" id="exampleInputPassword1" 
+                  placeholder="Enter Your OTP" required>
+                  <input type="hidden"  value="<%= User._id %>" name="id">
+                    <!-- <span>
+                      <p id="countdown" class="mt-2"></p>
+                       <a href="/resendOtp"  class="btn mt-2 fw-bold    " 
+                       style=" color: #f35800; margin-left: 346px;"> Resend OTP</a> 
+             
+                    </span> -->
+                 </div>
+                <div class="ms-5 ps-3" style="padding-top:50px;">
+                             
+                <div class="d-grid  col-6">
+                    <button type="submit" class="btn text-white btn-b  ms-0" 
+                    style="background: #f35800;"><strong>Verify</strong></button>
+               
+                </div>
+
+                </div>
+                
+              </form>
+             
+
+              
+        </div>
+    </div>
+</section>
+
+<script>
+    function userhidemsg(){
+  const msg= document.getElementById("invalidUser-msg")
+  if(msg){
+  setTimeout(()=>{
+  msg.style.display = "none"
+  }, 4000)
+  }
+  }
+  window.onload= userhidemsg;
+  </script>
+
+
+<script>
+  // Set the timer duration in seconds
+  var timerDuration = 30;
+  
+  // Function to update the countdown timer
+  function updateCountdown() {
+      $('#countdown').text(timerDuration + ' seconds remaining');
+      timerDuration--;
+
+      // Check if the timer has reached 0
+      if (timerDuration < 0) {
+          // Disable the Resend OTP link or perform any desired action
+          $('.btn').attr('disabled', true);
+          $('#countdown').text('Time expired');
+      } else {
+          // Update the countdown every second
+          setTimeout(updateCountdown, 1000);
+      }
+  }
+
+  // Initial call to start the countdown
+  updateCountdown();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<%-include("../layout/userFooter.ejs")-%>

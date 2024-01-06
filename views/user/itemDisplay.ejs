@@ -1,0 +1,245 @@
+<%-include("../layout/userHeader.ejs")-%>
+
+
+<section>
+    <div class="container-fluid ps-5 pe-5 pt-5 mb-5">
+      <div class="container-fluid d-flex">
+        <div class="col-2">
+            <% if (product.images && product.images.length > 0) { %>
+                <% product.images.forEach((image, index) => { %>
+                    <ul id="sub-img-list" style="list-style: none;">
+                        <li>
+                            <img
+                                src="/assests/productsUploads/<%= image %>"
+                                class="sub-img"
+                                width="80px"
+                                height="auto"
+                                alt="Product Image"
+                                data-index="<%= index %>"
+                            />
+                        </li>
+                    </ul>
+                <% }) %>
+            <% } %>
+        </div>
+              
+              <div class="col-4">
+                <img
+                  src="/assests/productsUploads/<%= product.image %>"
+                  id="main-img"
+                  class="rounded-2"
+                  width="330px"
+                  height="500px"
+                  alt="User Image"
+                />
+              
+            
+            <div class="d-flex   px-5 mt-3">
+                    <form id="addToCartForm" action="/cart/addtoCart/<%= product._id %>" method="post">
+    <button type="submit" id="addtocart" name="addToCart" class="btn  text-white px-5 " style="background: #f35800;">
+        <i class="fa-solid fa-cart-shopping me-1  "></i> ADD TO CART
+    </button>
+   
+    
+    
+  
+     </div>
+
+        </div>
+        <div class="col-6">
+            <div class="d-flex gap-4">
+              <span><h5><strong> <%= product.name %> </strong></h5>
+              </span>
+              <span>
+                <!-- Add these lines for debugging -->
+
+
+
+               
+                <a href="#" class="btn text-white btn-b ms-0 px-3 wishlist-btn" 
+                  id="white" style="background:#f35800;" data-product-id="<%= product._id %>">
+                  <i class="fa-sharp fa-solid fa-heart me-1" style="color:#ffffff;"></i>
+               </a>
+               
+                 
+                    <!-- <a href="" class="btn text-white btn-b ms-0 px-3" style="background:#b6b5b500;" id="red">
+                      <i class="fa-sharp fa-solid fa-heart me-1 fs-4" style="color:#d20000; display: none;"></i>
+                    </a>
+                 -->
+              </span>
+              
+              
+            </div>
+
+            <h6>Base Price</h6>
+            <p><strong> ₹ <%= product.price %> </strong> </p>
+            <div class="d-flex">
+                <span>
+                    <h6>Color</h6>
+                </span>
+                <div class=" d-flex gap-3 ps-5 opacity-50">
+                    <img src="/assests/productsUploads/<%= product.image %>" alt=""  width="50px" height="50px" ><img src="/assests/productsUploads/<%= product.image %>" alt=""  width="50px" height="50px" ><img src="/assests/productsUploads/<%= product.image %>" alt=""  width="50px" height="50px" ><img src="/assests/productsUploads/<%= product.image %>" alt=""  width="50px" height="50px" ><img src="/assests/productsUploads/<%= product.image %>" alt=""  width="50px" height="50px" ><img src="/assests/productsUploads/<%= product.image %>" alt=""  width="50px" height="50px" >
+                
+                </div>
+
+               
+        </div>
+        <div class="d-flex pt-5">
+          <div class="d-flex">
+            <span>
+              <h6 class="pe-5 pt-2">Size:</h6>
+          </span>
+         
+
+              <!-- ********************************************************** -->
+
+              <!-- <div class="d-flex gap-3 ps-5 text-center"> -->
+                
+                <select class="ms-2 text-center" id="sizeDropdown" name="size" style="background-color: rgba(241, 239, 238, 0.75);
+                                                        border: 2px solid #f161079b;
+                                                        padding: 5px;
+                                                        
+                                                        font-weight: bold;">
+                  <option value="S">S</option>
+                  <option value="M">M</option>
+                  <option value="L">L</option>
+                  <option value="XL">XL</option>
+                  <option value="XXL">XXL</option>
+                </select>
+              </div>
+
+              <div class="d-flex">
+                <span>
+                  <h6 class="ms-5 pt-2 pe-2">Quantity:</h6>
+              </span>
+             
+                <div class="quantity-input">
+                    <button type="button" class="quantity-button btn" onclick="decrementQuantity(this)" ><i class="fa-solid fa-square-minus h4" style="color: #f35800;"></i></button>
+                    <input type="number" style="border: 1px solid #f359007d; padding: 2px; width: 50px;" id="quantity" name="qty" value="1"  min="1" max="<%= product.stock %>">
+                    <button type="button" class="quantity-button btn" onclick="incrementQuantity(this)" ><i class="fa-solid fa-square-plus h4" style="color: #f35800;"></i></button>
+                </div>
+
+              </div>
+            
+          </div>
+           
+                
+
+
+
+
+<!-- ****************************************************************************** -->
+              <!-- </div> -->
+            </form>
+        
+    <!-- </div>  -->
+    <div class="pt-4">
+        <h6 style="font-weight: 600;">Available Offers</h6>
+       <div class="d-flex gap-3">
+        <i class="fa-sharp fa-solid fa-tag" style="color: #f35800; width: 5px; height: auto;"></i> <p style="font-size: x-small;">Bank Offer10% Instant Discount on ICICI Bank Credit Card, up to ₹1250 on orders of ₹5,000 and above T&C</p>
+       </div>
+       <div class="d-flex gap-3">
+        <i class="fa-sharp fa-solid fa-tag" style="color: #f35800; width: 5px; height: auto;"></i> <p style="font-size: x-small;">Bank Offer10% Instant Discount on ICICI Bank Credit Card, up to ₹1250 on orders of ₹5,000 and above T&C</p>
+       </div>
+       <div class="d-flex gap-3">
+        <i class="fa-sharp fa-solid fa-tag" style="color: #f35800; width: 5px; height: auto;"></i> <p style="font-size: x-small;">Bank Offer10% Instant Discount on ICICI Bank Credit Card, up to ₹1250 on orders of ₹5,000 and above T&C</p>
+       </div>
+       <div class="d-flex gap-3">
+        <i class="fa-sharp fa-solid fa-tag" style="color: #f35800; width: 5px; height: auto;"></i> <p style="font-size: x-small;">Bank Offer10% Instant Discount on ICICI Bank Credit Card, up to ₹1250 on orders of ₹5,000 and above T&C</p>
+       </div>
+       
+    </div>
+    <div class="pt-2">
+        <h6><strong>Delivery Available?</strong></h6><i class="fa-solid fa-truck fa-bounce" style="color: #000000;"></i>
+        <input type="text" name="pincode" style="border: 1px solid #f359008f;"> 
+        <p class="pt-2" style="font-size: x-small;">Please enter PIN code to check delivery time & Pay on Delivery Availability</p>
+    </div>
+        </div>
+    </div>
+
+</section>
+
+
+<script>
+    function incrementQuantity(button) {
+        var input = button.parentNode.querySelector('input');
+        input.stepUp();
+    }
+
+    function decrementQuantity(button) {
+        var input = button.parentNode.querySelector('input');
+        input.stepDown();
+    }
+</script>
+
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+      // Function to update the main image
+      function updateMainImage(index) {
+        var mainImage = $('#main-img');
+        var subImages = $('.sub-img');
+  
+        var newSrc = subImages.eq(index).attr('src');
+        mainImage.attr('src', newSrc);
+      }
+  
+      // Hover event for sub-images
+      $('.sub-img').hover(function () {
+        var index = $(this).data('index');
+        updateMainImage(index);
+      });
+  
+      // Click event for sub-images
+      $('.sub-img').click(function () {
+        var index = $(this).data('index');
+        updateMainImage(index);
+      });
+    });
+  </script>
+
+
+
+
+
+
+<script>
+$(document).ready(function() {
+  $('.wishlist-btn').on('click', function(e) {
+    e.preventDefault();
+    
+    var productId = $(this).data('product-id');
+    var wishlistUrl = "/cart/Wishlist/" + productId; // Adjust the URL based on your server implementation
+    
+    $.ajax({
+      type: 'get',
+      url: "/cart/Wishlist/<%= product._id %>",
+      success: function(response) {
+        if (response.success) {
+          // Update the heart icon color after successful addition
+          $(e.target).css('background', '#00ff00'); // Change to your desired color
+          $(e.target).find('i').css('color', '#ffffff'); // Change to your desired color
+        } else {
+          alert('Failed to add item to wishlist sddf.');
+        }
+      },
+      error: function(err) {
+        console.error('Error adding item to wishlist:', err);
+        alert('Failed to add item to wishlist.');
+      }
+    });
+  });
+});
+</script>
+
+
+
+<%-include("../layout/userFooter.ejs")-%>
