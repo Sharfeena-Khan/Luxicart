@@ -1,13 +1,32 @@
 <%-include("../layout/userHeader.ejs")-%>
 
+
 <section>
+
+  <span class=" float-end ps-1 mt-3 me-4" style="border:1px solid #f359003f; border-radius: 4px;"> 
+    Sort by: <span class="dropdown">
+      <button class="btn dropdown-toggle fw-bold pt-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      
+      </button>
+      <ul class="dropdown-menu">
+        <li><button class="dropdown-item" type="button">Price: Low to High</button></li>
+        <li><button class="dropdown-item" type="button">Price: High to Low</button></li>
+       
+      </ul>
+    </span>
+  </span>
     <div class="container-md  d-flex">
       <!-- filter box -->
-        <div class="col-sm-2  my-5  p-4" style="border: 2px solid #f359003f; border-radius: 4px;">
+        <div class="col-sm-2  my-5  p-4" style="border: 2px solid #f359003f; border-radius: 4px; ">
          <div class="d-flex">
           <h4 class="fw-bold">Filters</h4>
+          <form action="/filterItems" method="post" id="filterForm">
+
+            <input type="hidden" value="<%= searchKey %>"  name="query">
+
           <span class="mx-auto">
-            <button id="applyFiltersBtn" class="btn text-white ps-3 pe-3 ms-4 fw-bold" style="background: #f35800;" >APPLY </button>
+            <button id="applyFiltersBtn" type="submit" class="btn text-white ps-3 pe-3 ms-4 fw-bold" 
+            style="background: #f35800; border-radius: 50px;" >APPLY </button>
 
           </span>
          </div>
@@ -17,7 +36,7 @@
            <% if (category && category.length > 0) { %>
            <% category.forEach(category => { %>
             <div class="form-check">
-              <input class="form-check-input me-2 " type="checkbox" value="" id="<%= category._id %>" >
+              <input class="form-check-input me-2 " type="checkbox" value="<%= category.name %>" id="<%= category._id %>" name="category">
               <label class="form-check-label" for="<%= category._id %>">
                 <%= category.name %>
               </label>
@@ -31,108 +50,110 @@
             <!-- 2. price -->
           <div>
             <h6 class="fw-bold"> Price</h6>
- 
-          
-             <div class="form-check">
-               <input class="form-check-input me-2 " type="checkbox" value="" id="" >
-               <label class="form-check-label" for="">
-                 Rs.499 to Rs.999
-               </label>
-             </div>     
-             <div class="form-check">
-              <input class="form-check-input me-2 " type="checkbox" value="" id="" >
-              <label class="form-check-label" for="">
-                Rs.999 to Rs.1499
-              </label>
-            </div>  
-            <div class="form-check">
-              <input class="form-check-input me-2 " type="checkbox" value="" id="" >
-              <label class="form-check-label" for="">
-                Rs.1499 to Rs.1999
-              </label>
-            </div>  
-            <div class="form-check">
-              <input class="form-check-input me-2 " type="checkbox" value="" id="" >
-              <label class="form-check-label" for="">
-                Rs.1999 to Rs.2499
-              </label>
-            </div>  
-            <div class="form-check">
-              <input class="form-check-input me-2 " type="checkbox" value="" id="" >
-              <label class="form-check-label" for="">
-                Rs.2499 to Rs.2999
-              </label>
-            </div>   
-            <div class="form-check">
-              <input class="form-check-input me-2 " type="checkbox" value="" id="" >
-              <label class="form-check-label" for="">
-                Rs.2999 to Rs.3499
-              </label>
-            </div>   
-            <div class="form-check">
-              <input class="form-check-input me-2 " type="checkbox" value="" id="" >
-              <label class="form-check-label" for="">
-                Rs.3499 to Rs.3999
-              </label>
-            </div>  
-            <div class="form-check">
-              <input class="form-check-input me-2 " type="checkbox" value="" id="" >
-              <label class="form-check-label" for="">
-                Rs.3999 and above
-              </label>
-            </div>      
-        
+           
+            <div class="d-flex">
+              <span>
+                <label for="product-diacountPercentage" class="form-label mt-3">Min</label>
+                <select class="form-select" id="minPrice" name="minPrice" 
+                aria-label="Default select example" onchange="updateMaxOptions()">
+                  <!-- <option selected>Select</option> -->
+                  <option selected value="499">Rs.499</option>
+                  <option value="999">Rs.999</option>
+                  <option value="1499">Rs.1499</option>
+                  <option value="1999">Rs.1999</option>
+                  <option value="2499">Rs.2499</option>
+                  <option value="2999">Rs.2999</option>
+                  <option value="3499">Rs.3499</option>
+                  <option value="3999">Rs.3999</option>
+                  <option value="4499">Rs.4499</option>
+                  <option value="4999">Rs.4999</option>
+                  <option value="5499">Rs.5499</option>
+                  <option value="5999">Rs.5999</option>
+                  <option value="6499">Rs.6499</option>
+                  <option value="6999">Rs.6999</option>
+                </select>
+              </span>
+              <span>
+                <label for="product-diacountPercentage"  class="form-label mt-3">Max</label>
+                <select class="form-select" id="maxPrice" name="maxPrice" aria-label="Default select example">
+                  <!-- <option selected>Select</option> -->
+                  <option value="999">Rs.999</option>
+                  <option value="1499">Rs.1499</option>
+                  <option value="1999">Rs.1999</option>
+                  <option value="2499">Rs.2499</option>
+                  <option value="2999">Rs.2999</option>
+                  <option value="3499">Rs.3499</option>
+                  <option value="3999">Rs.3999</option>
+                  <option value="4499">Rs.4499</option>
+                  <option value="4999">Rs.4999</option>
+                  <option value="5499">Rs.5499</option>
+                  <option value="5999">Rs.5999</option>
+                  <option value="6499">Rs.6499</option>
+                  <option value="6999">Rs.6999</option>
+                  <option selected value="10000">Rs.10000</option>
+
+                </select>
+              </span>
+
+            </div>
+
+
            </div>
+          
+           
            <hr>
            
            <!-- 3. Discount -->
            <div>
             <h6 class="fw-bold"> Discount Range</h6>
             <div class="form-check">
-              <input class="form-check-input me-2 " type="checkbox" value="" id="" >
-              <label class="form-check-label" for="">
+              <input class="form-check-input me-2 " type="checkbox" value="30-and-above" id="percentage1" name="discount" >
+              <label class="form-check-label" for="percentage1">
                 30% and above
               </label>
             </div>   
             <div class="form-check">
-              <input class="form-check-input me-2 " type="checkbox" value="" id="" >
-              <label class="form-check-label" for="">
+              <input class="form-check-input me-2 " type="checkbox" value="40-and-above" id="percentage2" name="discount">
+              <label class="form-check-label" for="percentage2">
                 40% and above
               </label>
             </div>   
             <div class="form-check">
-              <input class="form-check-input me-2 " type="checkbox" value="" id="" >
-              <label class="form-check-label" for="">
+              <input class="form-check-input me-2 " type="checkbox" value="50-and-above" id="percentage3" name="discount">
+              <label class="form-check-label" for="percentage3">
                 50% and above
               </label>
             </div>   
             <div class="form-check">
-              <input class="form-check-input me-2 " type="checkbox" value="" id="" >
-              <label class="form-check-label" for="">
+              <input class="form-check-input me-2 " type="checkbox" value="60-and-above" id="percentage4" name="discount">
+              <label class="form-check-label" for="percentage4">
                 60% and above
               </label>
             </div>   
             <div class="form-check">
-              <input class="form-check-input me-2 " type="checkbox" value="" id="" >
-              <label class="form-check-label" for="">
+              <input class="form-check-input me-2 " type="checkbox" value="70-and-above" id="percentage5" name="discount">
+              <label class="form-check-label" for="percentage5">
                 70% and above
               </label>
             </div>    
  
             
             
-           
+          
            </div>
 
-
+           </form>
 
         </div>
         <!-- filter END -->
 
         <!-- display block -->
+        
         <div class="col-lg-10 col-md-4 col-sm-2 mx-5 mx-sm-2">
+          
+         
             <div class=" text-center ">
-                <span class="d-flex  gap-4 ">
+                <span class="d-flex  gap-4 prdt-block ">
                   <% keyMatch.forEach((product, index) => { %>
                     <div class="product-card mx-3 my-5" style="width: 185px; height: 250px;">
                       <a href="/itemDisplay/<%= product._id %>">
@@ -154,6 +175,91 @@
     </div>
 
 </section>
+
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+  function updateMaxOptions() {
+    var minPrice = document.getElementById("minPrice");
+    var maxPrice = document.getElementById("maxPrice");
+  
+    // Clear existing options in maxPrice
+    maxPrice.innerHTML = '<option selected value="10000">Rs.10000</option>';
+  
+    // Get the selected index of the minPrice dropdown
+    var selectedIndex = minPrice.selectedIndex;
+  
+    // Add options greater than the selected min value to maxPrice
+    for (var i = selectedIndex + 1; i < minPrice.options.length; i++) {
+      var option = minPrice.options[i].cloneNode(true);
+      maxPrice.appendChild(option);
+    }
+  }
+  </script>
+
+<script>
+  $("#filterForm").submit((e) => {
+    e.preventDefault();
+    console.log("hai");
+    $.ajax({
+      url: "/filterItems",
+      method: 'post',
+      data: $('#filterForm').serializeArray(),
+      success: (response) => {
+        console.log("Response:", response); // Log the entire response object
+  
+        if (response.success) {
+          let products = response.filteredItems;
+          console.log("Filtered Items:", products); // Log the filtered items array
+  
+          const $productCardContainer = $('.prdt-block');
+  
+          // Clear existing content
+          $productCardContainer.empty();
+          console.log("Number of selected elements:", $productCardContainer.length);
+  
+          // Sort by price
+          const sortBy = $(".dropdown-item.active").data("sort");
+          if (sortBy === "asc") {
+            products = products.sort((a, b) => a.price - b.price);
+          } else if (sortBy === "desc") {
+            products = products.sort((a, b) => b.price - a.price);
+          }
+  
+          // Build the entire container from scratch
+          const prdtHTML = products.map(product => `
+            <div class="product-card mx-3 my-5" style="width: 185px; height: 250px;">
+              <a href="/itemDisplay/${product._id}">
+                <img src="/assests/productsUploads/${product.image}" class="card-img-top mx-3" alt="..." width="auto" height="250px" style="border-radius: 5px;">
+                <p class="ms-5 text-black">${product.name}</p> 
+                <h6>Price: <strong>₹ ${product.price} </strong></h6>
+              </a>
+            </div>
+          `);
+  
+          // Append the new HTML to the container
+          $productCardContainer.append(prdtHTML);
+          
+        }
+      }
+    });
+  });
+  
+  // Handle dropdown item clicks
+  $(".dropdown-item").on("click", function() {
+    // Remove active class from all items
+    $(".dropdown-item").removeClass("active");
+  
+    // Add active class to the clicked item
+    $(this).addClass("active");
+  
+    // Trigger form submission to apply filters and sorting
+    $("#filterForm").submit();
+  });
+  </script>
+  
+
+
 
 
 <%-include("../layout/userFooter.ejs")-%>

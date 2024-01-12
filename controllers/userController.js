@@ -557,46 +557,98 @@ const insertUser = async (req, res) => {
     }
 
 
-const getSearchItems = async(req, res) =>{
-  try {
-    const category = await Category.find()
-    const userAuthenticated = req.session.user;
-      const userId = req.session.user_id;
-    let searchKey = req.query.search
-    searchKey= searchKey.trim()
-    console.log(searchKey);
-
-    if(searchKey.length >0){
-      let keyMatch = await Product.find({
-        $or:[
-          {name : {$regex : searchKey,$options:'i'}},
-          {category : {$regex : searchKey, $options:'i'}}
-      ]})
-      console.log(keyMatch);
-      if(keyMatch.length>0){
-        
-        res.render("displayAllCategories" ,  
-        {title:`Luxicart-${searchKey}-All Category` , userAuthenticated, keyMatch, category })
-
-      }else{
-        res.redirect("/");
-
-
+    const getSearchItems = async (req, res) => {
+      try {
+        const category = await Category.find();
+        const prdt = await Product.find()
+        const userAuthenticated = req.session.user;
+        const userId = req.session.user_id;
+        let searchKey = req.query.search;
+       
+    
+        // Check if searchKey is defined before using it
+        if (searchKey !== undefined) {
+          searchKey = searchKey.trim();
+    
+          if (searchKey.length > 0) {
+            let keyMatch = await Product.find({
+              $or: [
+                { name: { $regex: searchKey, $options: 'i' } },
+                { category: { $regex: searchKey, $options: 'i' } },
+              ],
+            });
+    // console.log("********************" , searchKey);
+            if (keyMatch.length > 0) {
+              res.render("displayAllCategories", {
+                title: `Luxicart-${searchKey}-All Category`,
+                userAuthenticated,
+                keyMatch,prdt,
+                category,
+                searchKey
+              });
+            } else {
+              res.redirect("/");
+            }
+          } else {
+            res.redirect("/");
+          }
+        } else {
+          // Handle the case when req.query.search is undefined
+          res.redirect("/");
+        }
+      } catch (error) {
+        console.log(error);
       }
-    }else{
-      res.redirect("/");
+    };
+    
 
-    }
-   
+    const filterItems = async (req, res) => {
+      try {
+        let searchKey = req.body.query;
+        console.log("my word: ",searchKey);
+        let selectedCategories = req.body.category || [];
+        console.log("before:",selectedCategories);
+        // if(!Array.isArray(selectedCategories)){
+        //   selectedCategories = [selectedCategories]
+        // }else{
+        //   selectedCategories = [selectedCategories]
+        // }
+        console.log("after", selectedCategories);
+        const minimumCost = req.body.minPrice
+        const maxCost = req.body.maxPrice
+        const selectedDiscounts = req.body.discount || [];
+        
+        console.log(selectedCategories);
 
+       
+    
+        const filteredItems = await Product.find({
+          $or: [
+            { name: { $regex: searchKey, $options: 'i' } },
+            { description: { $regex: searchKey, $options: 'i' } },
+            { category: { $regex: searchKey, $options: 'i' } },
+          ],
+          category:  { $in: selectedCategories },
+          price: { $gte: minimumCost, $lte: maxCost },
+          // discount: { $in: selectedDiscounts },
+        });
+         console.log(filteredItems);
+         if (filteredItems.length > 0) {
+          res.json({ success: true, filteredItems });
+
+        }else{
+          res.json({ success: false, error: 'Internal Server Error' });
+
+        }
+        
+      } catch (error) {
+        console.error('Error:', error);
+        res.json({ success: false, error: 'Internal Server Error' });
+      }
+    };
     
     
-  } catch (error) {
-    console.log(error);
-  }
-  
 
-}
 
 
   
@@ -630,7 +682,8 @@ module.exports  = {
     getitemDisplay,
     adrsPage,
 
-    getSearchItems
+    getSearchItems,
+    filterItems
 
    
    

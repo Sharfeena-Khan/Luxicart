@@ -15,6 +15,9 @@ const isBlocked = require("../middleware/access")
 const dotenv = require("dotenv")
 dotenv.config()
 
+user_router.use(express.json())
+user_router.use(express.urlencoded({extended:true}))
+
 //use sessions for tracking logins
 user_router.use(session({
   secret: 'your-secret-key', // Replace with a secret key for session data
@@ -107,6 +110,7 @@ user_router.get("/itemDisplay/:id" , userController.getitemDisplay)
 // -------------------------------   SEARCH DISPLAY   -------------------------------------------------
 
 user_router.get('/searchResult', userController.getSearchItems)
+user_router.post('/filterItems' , userController.filterItems)
 
 // ***************************** ADDRESS *********************
 
