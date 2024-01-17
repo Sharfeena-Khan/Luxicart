@@ -162,8 +162,14 @@
 
 <script>
     function incrementQuantity(button) {
-        var input = button.parentNode.querySelector('input');
-        input.stepUp();
+      var input = button.parentNode.querySelector('input');
+        var maxQuantity = parseInt(input.getAttribute('max'));
+
+        if (parseInt(input.value) < maxQuantity) {
+            input.stepUp();
+        } else {
+            alert("Maximum quantity reached!");
+        }
     }
 
     function decrementQuantity(button) {

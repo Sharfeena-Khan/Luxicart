@@ -111,11 +111,16 @@ user_router.get("/itemDisplay/:id" , userController.getitemDisplay)
 
 user_router.get('/searchResult', userController.getSearchItems)
 user_router.post('/filterItems' , userController.filterItems)
+user_router.post('/sortItems' , userController.sortItems)
 
 // ***************************** ADDRESS *********************
 
 // user_router.post("/add-address" , userController.saveAddress)
 user_router.get("/adrsPage" , isLogin, userController.adrsPage)
+
+
+// ****************************WALLET   *********************
+user_router.get('/wallet' , isBlocked, isLogin, userController.walletPage)
 
 
 module.exports = user_router

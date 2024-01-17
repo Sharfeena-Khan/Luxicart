@@ -57,7 +57,7 @@
                   
                   <td>
                     <% 
-                      const orderDate = new Date(product.OrderDate); // Access item.OrderDate instead of orderData.OrderDate
+                      const orderDate = new Date(product.orderDate); // Access item.OrderDate instead of orderData.OrderDate
                       const formattedOrderDate = orderDate.toLocaleDateString();
                     %>
                     <%= formattedOrderDate %>

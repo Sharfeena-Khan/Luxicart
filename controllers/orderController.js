@@ -100,7 +100,8 @@ const Payment = async (req, res) => {
     if (cart && cart.products.length > 0) {
       console.log("Adding to order Db");
       let deliveryDate = new Date();
-      deliveryDate.setDate(deliveryDate.getDate()+2 ); // Set deliveryDate to tomorrow
+      let orderPlacedDate = new Date()
+      deliveryDate.setDate(deliveryDate.getDate()+1 ); // Set deliveryDate to tomorrow
 
       for (const cartProduct of cart.products) {
         const product = await Product.findOne({ _id: cartProduct.product_id });
@@ -109,7 +110,7 @@ const Payment = async (req, res) => {
 
         if (product.status !== "Canceled") {
           const currentDate = new Date();
-          productStatus = deliveryDate <= currentDate ? "Delivered" : "Out for Delivery";
+          productStatus = deliveryDate <= currentDate ? "Delivered" : "Order Placed";
         }
        
 
@@ -122,11 +123,14 @@ const Payment = async (req, res) => {
           size: cartProduct.size,
           quantity: cartProduct.quantity,
           orderStatus: productStatus,
-          paymentMode : radio
+          deliveryDate :deliveryDate,
+          paymentMode : radio,
+          orderPlaced : orderPlacedDate
         };
         
 
         orderData.items.push(newOrder);
+
       }
 
       await orderData.save();

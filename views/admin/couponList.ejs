@@ -1,0 +1,98 @@
+
+<%-include("../layout/adminHeader.ejs")-%>
+
+
+<section>
+    <div class="content ">
+      <div class="row">
+        <div class="container  mb-5">
+          <div >
+            <h5><strong> Coupons</strong> </h5>
+           <span class="opacity-50"> Dashboard > Coupons</span> 
+          </div>
+          
+        </div>
+        <div class="d-flex">
+            <div class="d-flex gap-4 fw-bold">
+                <div>Coupon Code
+                    <input type="text" placeholder="Enter the Code">
+                </div>
+                <div>Discount Description
+                    <input type="text" placeholder="Tell more about the offer">
+                </div>
+                <div>
+                    <label for="Expire">Expiration Date</label>
+                    <input type="date" id="Expire" name="Expire">
+                    
+                </div>
+
+            </div>
+            <div class="ms-auto me-5"> 
+                <a href="/admin/adminPanel/category/create-Coupon" class="btn text-white me-auto " style="background: #f35800;"><i class="fa-regular fa-plus" style="color: #ffffff;"></i> Create Coupon</a>
+               </div>
+        </div>
+
+      </div>
+        <table class="table" id="myTable">
+            <colgroup>
+                <col style="width: 10px;" /> <!-- Column for the checkbox icon -->
+                <col style="width: 158px;" /> <!-- Column for Category -->
+                <col style="width: 80px;" /> <!-- Column for sopld -->
+                <col style="width: 80px;" /> <!-- Column for stock -->
+                <col style="width: 100px;" />  <!-- Column for Added -->
+                <col style="width: 80px;" />  <!-- Column for Action -->
+                
+              </colgroup>
+            <thead>
+              <tr>
+                <th scope="col"><i class="fa-solid fa-square-check" style="color: #f35800;"></i></th>
+                <th scope="col">Category</th>
+                <th scope="col">Sold</th>
+                <th scope="col">Stock</th>
+                <th scope="col">Added</th>
+                <th scope="col">Action</th>
+               
+              </tr>
+            </thead>
+            <% if (couponData && couponData.length > 0) { %>
+            <tbody>
+
+              <% couponData.forEach(coupon => { %>
+                <tr>
+                  <th scope="row"><input type="checkbox"></th>
+                  <td colspan="1">
+                    
+                    name
+                  </td>
+                  
+                  <td class="pt-3">
+                    <%= category.sold %>
+                  </td>
+            
+                  <td class="pt-3">
+                   
+                  </td>
+                  <td class="pt-3"> </td>
+                  
+                  <td class="pt-3"> <i class="fa-solid fa-pen-to-square" style="color: #4a5153;"></i> </td>
+                </tr>
+                <% }); %>
+            
+            </tbody>
+            <% } else { %>
+              <p>No coupons available.</p>
+            <% } %>
+          </table>
+
+    </div>
+   
+           
+        
+   
+</section>
+
+<script>
+  $(document).ready( function () {
+    $('#myTable').DataTable();
+} );
+</script>

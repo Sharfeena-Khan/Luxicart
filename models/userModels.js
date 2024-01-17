@@ -181,14 +181,14 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0,
       },
-    pswd_token :{ 
-        token : {type : String},
-        createdAt: {
-            type: Date,
-            default: Date.now,
-            expires: 3600,
-        },
-    }
+    // pswd_token :{ 
+    //     token : {type : String},
+    //     createdAt: {
+    //         type: Date,
+    //         default: Date.now,
+    //         expires: 3600,
+    //     },
+    // }
    
 } ,
     {  timestamps: true}
@@ -200,14 +200,6 @@ const userSchema = new mongoose.Schema({
 const UserAddress = mongoose.model("Address" , adrsSchema)
 const User = mongoose.model("User", userSchema)
 
-// const validate = (User) => {
-//     const schema = Joi.object({
-//         name: Joi.string().required(),
-//         email: Joi.string().email().required(),
-//         password: Joi.string().required(),
-//     });
-//     return schema.validate(User);
-// };
 
 
 module.exports = {

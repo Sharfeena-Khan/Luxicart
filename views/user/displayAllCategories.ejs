@@ -4,16 +4,23 @@
 <section>
 
   <span class=" float-end ps-1 mt-3 me-4" style="border:1px solid #f359003f; border-radius: 4px;"> 
-    Sort by: <span class="dropdown">
-      <button class="btn dropdown-toggle fw-bold pt-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-      
-      </button>
-      <ul class="dropdown-menu">
-        <li><button class="dropdown-item" type="button">Price: Low to High</button></li>
-        <li><button class="dropdown-item" type="button">Price: High to Low</button></li>
-       
-      </ul>
-    </span>
+    <form action="" id="formSort">
+      Sort by: <span class="dropdown">
+        <button class="btn dropdown-toggle fw-bold pt-0" type="button" 
+        data-bs-toggle="dropdown" aria-expanded="false" id="sort">
+        Recommended
+        </button>
+        <ul class="dropdown-menu">
+          <li><button class="dropdown-item btn-light" type="button"
+             onclick="changeSort('Price: Low to High')">Price: Low to High</button></li>
+          <li><button class="dropdown-item" type="button" 
+            onclick="changeSort('Price: High to Low')">Price: High to Low</button></li>
+         
+        </ul>
+      </span>
+
+    </form>
+   
   </span>
     <div class="container-md  d-flex">
       <!-- filter box -->
@@ -178,6 +185,25 @@
 
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<!-- Add this script in your HTML file -->
+
+<script>
+  $('#formSort').submit((e)=>{
+    e.preventDefault()
+    console.log("sort");
+    $.ajax({
+      url : "/sortItems",
+      method : "post",
+      data : $('#formSort').serialize(),
+      success: (response)=>{
+        
+      }
+    })
+  })
+</script>
+
+
 <script>
   function updateMaxOptions() {
     var minPrice = document.getElementById("minPrice");
@@ -239,7 +265,6 @@
   
           // Append the new HTML to the container
           $productCardContainer.append(prdtHTML);
-          
         }
       }
     });

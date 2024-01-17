@@ -2,10 +2,12 @@ const Admin = require("../models/adminModel")
 const Product = require("../models/productModel")
 const {User} = require("../models/userModels")
 const { Payment, Order } = require("../models/orderModel")
+const Coupon = require("../models/coupon")
 
 
 
 const bcrypt = require('bcrypt');
+const { render } = require("ejs");
 const saltRounds = 10;
 
 
@@ -13,20 +15,116 @@ const saltRounds = 10;
 
 
 
-const getAdminPanel = async (req,res)=>{
+const getAdminPanel = async (req, res) => {
   try {
-    //req.session.user_id = adminData._id
-        if(req.session.admin ){
-          res.render("adminPanel")
-        }else{
-          res.redirect("/admin")
-        }
+    const selectedDays = req.query?.selectedDays ?? 0;
+
+    console.log("Selected Days: ", selectedDays);
+
+    let startDate;
+    let endDate;
+
+    if (selectedDays == 0) {
+      startDate = new Date();
+      startDate.setUTCHours(0, 0, 0, 0);
+      endDate = new Date();
+      endDate.setUTCHours(23, 59, 59, 999);
+    } else if (selectedDays == 7) {
+      startDate = new Date();
+      startDate.setDate(startDate.getDate() - 7);
+      endDate = new Date();
+    } else if (selectedDays == 30) {
+      startDate = new Date();
+      startDate.setDate(startDate.getDate() - 30);
+      endDate = new Date();
+    }
+
+    console.log('Start Date:', startDate);
+    console.log('End Date:', endDate);
+
+    const salesData = await Order.aggregate([
+      {
+        $unwind: '$items',
+      },
+      {
+        $match: {
+          'items.orderPlaced': {
+            $gte: startDate,
+            $lt: endDate,
+          },
+        },
+      },
+      { $group: { _id: null, totalSales:  {$sum: {$multiply : ["$items.price" , "$items.quantity"]}} } },
+    ]);
     
-  } catch (error) {
-    console.log(error);
+    // ------------   REVENUE DATA   ---------
+  const revenueData = await Order.aggregate([
+    {$unwind : '$items'} , 
+    {$match : {
+      'items.orderPlaced':{ $gte: startDate, $lt: endDate,},
+      'items.paymentMode': {$ne : "COD"}
+    }},
+    {$group :{
+      _id : null , 
+      TotalRevenue :  {$sum: {$multiply : ["$items.price" , "$items.quantity"]}}
+    }}
+     
+  ])
+
+  //    --------------------    MOST SOLD ITEMS     -----------------
+  const mostSoldData = await Order.aggregate([
+    {$unwind: '$items'},
+    {$match : {  'items.orderPlaced':{ $gte: startDate, $lt: endDate,} }},
+    {$group : {
+      _id : '$items.productName',
+      totalQty : { $sum : "$items.quantity"},
+    }},
+    {$sort : {totalQty : -1} },
+    {$limit : 5}
+  ])
+
+    console.log(`Days: ${selectedDays}`, salesData);
+    console.log("revenue : ", revenueData);
+    console.log("Most sold : " , mostSoldData);
+
+    const userCount = await User.countDocuments();
+
+    const responseData = { 
+      salesData: salesData[0]?.totalSales || 0, // Access the correct variable from salesData
+        userCount: userCount,
+        revenueData: revenueData[0]?.TotalRevenue || 0, // Access the correct variable from revenueData
+        mostSoldData: mostSoldData,
+
+    }
     
+  console.log("************************************************");
+  console.log(responseData);
+  
+   
+  if (req.session.admin) {
+    // If it's an AJAX request, respond with JSON
+    if (req.headers.accept.includes('application/json')) {
+      res.setHeader('Content-Type', 'application/json');
+      res.json(responseData);
+    } else {
+      // If it's a regular page load or a fetch request, render the HTML page
+      res.render('adminPanel', {
+        salesData: salesData[0]?.totalSales || 0,
+        userCount: userCount,
+        revenueData: revenueData[0]?.TotalRevenue || 0,
+        mostSoldData: mostSoldData,
+      });
+    }
+  } else {
+    res.redirect('/admin');
   }
-}
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
+
+
+
 
 
 const getAdmin = async (req, res)=>{
@@ -158,6 +256,18 @@ const orderMngmnt = async(req,res)=>{
   }
 }
 
+// ***********************    COUPON MANAGEMENT   ************************
+const couponPage = async(req, res)=>{
+  try {
+
+    const couponData = await Coupon.find()
+    res.render("couponList" , {title:`Luxicart-Coupons` ,couponData })
+    
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 
 
 
@@ -172,6 +282,8 @@ module.exports = {
   blockUser,
   unblockUser,
   orderMngmnt,
+
+  couponPage
 
   
 

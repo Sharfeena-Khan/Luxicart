@@ -1,5 +1,6 @@
 const express = require("express")
 const path = require("path")
+const morgan = require("morgan")
 
 const session = require('express-session');
 
@@ -35,6 +36,10 @@ app.use(session({
   saveUninitialized: true,
 }))
 
+
+// ************************ MORGAN  ******************************
+
+// app.use(morgan(':method :url :status :res[content-length] - :response-time ms '))
 
 
 //************************** VIEW ENGINE SETUP ********************/

@@ -21,7 +21,7 @@
           <a href="/adrsPage" class="list-group-item list-group-item-action py-2 ripple side"
             ><i class="fa-sharp fa-solid fa-map-location-dot me-2" ></i><span>Address</span></a
           >
-          <a href="#" class="list-group-item list-group-item-action py-2 ripple side">
+          <a href="/wallet" class="list-group-item list-group-item-action py-2 ripple side">
             <i class="fa-solid fa-wallet me-2" style="color: #f35800;"></i><span>Wallet</span>
           </a>
           <a href="/logout" class="list-group-item list-group-item-action py-2 ripple side">
@@ -67,27 +67,40 @@
           <h6 class="fw-bold  pt-2">Order Placed :</h6>
           <span class="ps-2">
             <% 
-              const orderDate = new Date(orderData.orderDate); 
+              const orderDate = new Date(product.orderPlaced); 
               const formattedOrderDate = orderDate.toLocaleDateString();
             %>
             <%= formattedOrderDate %>
           </span>
         </div>
-        <div class="mx-2 d-flex align-items-center">
-          <h6 class="fw-bold pt-2 pe-2"> Price :</h6>
-          ₹<%= product.price %>
+
+        <div class="mx-2 pt-1 d-flex align-items-center ">
+          <h6 class="fw-bold  pt-2">Delivery On :</h6>
+          <span class="ps-2">
+            <% 
+              const deliveryDate = new Date(product.deliveryDate); 
+              const formattedDeliveryDate = deliveryDate.toLocaleDateString();
+            %>
+            <%= formattedDeliveryDate %>
+          </span>
         </div>
+
+
         <div class="mx-2 d-flex align-items-center">
+          <h6 class="fw-bold pt-1 pe-2"> Price :</h6>
+          ₹<%= product.price * product.quantity %>
+        </div>
+        <!-- <div class="mx-2 d-flex align-items-center">
           <% if (orderData && orderData.deliveryDate) { %>
             <h6 class="fw-bold pt-2 pe-2">Delivery On :</h6>
             <%= orderData.deliveryDate.toLocaleDateString() %>
           <% } %>
           
         
-        </div>
+        </div> -->
         <div class="mx-2 d-flex align-items-center">
-          <h6 class="fw-bold pt-2 pe-2">Status :</h6>
-        <p class="fw-bold pt-3" style="color: #f35800;"> <%= product.orderStatus %></p> 
+          <h6 class="fw-bold  pe-2">Status :</h6>
+        <p class="fw-bold pt-2" style="color: #f35800;"> <%= product.orderStatus %></p> 
         
           
 

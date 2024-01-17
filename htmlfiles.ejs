@@ -1,5 +1,4 @@
 <%-include("../layout/adminHeader.ejs")-%>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfkit/0.11.0/pdfkit.js"></script>
 
 <section>
   <div class="content">
@@ -10,8 +9,7 @@
         </div>
         <div class="ms-auto me-5 mb-2 d-flex gap-4">
           <span>
-            <button id="exportButton" class="btn text-white" style="background: #f35800;">Export</button>
-
+            <button class="btn text-white" style="background: #f35800;">Export</button>
           </span>
           <span>
             <select class="form-select" aria-label="Default select example" id="selectionButton">
@@ -86,11 +84,6 @@
       await fetchAndUpdateCharts();
     });
   });
-
-  const exportButton = document.querySelector('#exportButton');
-    exportButton.addEventListener('click', () => {
-      generatePDF();
-    });
 
   async function fetchAndUpdateCharts() {
     try {
@@ -193,68 +186,8 @@
       });
     }
   }
-
-  // pdf
-
- 
-
-  async function generatePDF() {
-    const doc = new PDFDocument();
-    doc.pipe(blobStream());
-
-    // Add content to the PDF
-    doc.font('Helvetica-Bold').fontSize(18).text('Dashboard Export', { align: 'center' });
-    doc.moveDown();
-
-    // Add data from the dashboard
-    doc.font('Helvetica').fontSize(12).text(`Total Sales: ₹ ${salesData}`);
-    doc.font('Helvetica').fontSize(12).text(`Total Revenue: ₹ ${revenueData}`);
-    doc.font('Helvetica').fontSize(12).text(`User Count: ${userCount}`);
-    doc.moveDown();
-
-    // Add charts as images to the PDF
-    const totalSalesChartImage = await getChartImage('myTotalSalesChart');
-    const revenueChartImage = await getChartImage('myChart');
-    const userCountChartImage = await getChartImage('userCountChart');
-    const mostSoldChartImage = await getChartImage('mostSoldChart');
-
-    doc.image(totalSalesChartImage, { width: 400 });
-    doc.moveDown();
-
-    doc.image(revenueChartImage, { width: 400 });
-    doc.moveDown();
-
-    doc.image(userCountChartImage, { width: 400 });
-    doc.moveDown();
-
-    doc.image(mostSoldChartImage, { width: 400 });
-    doc.moveDown();
-
-    // Finalize the PDF
-    doc.end();
-
-    // Save the PDF or open in a new window
-    const blob = await blobStream.toBlob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'dashboard_export.pdf';
-    a.click();
-  }
-
-  async function getChartImage(canvasId) {
-    const canvas = document.getElementById(canvasId);
-    return new Promise(resolve => {
-      canvas.toBlob(blob => {
-        resolve(URL.createObjectURL(blob));
-      });
-    });
-  }
-</script>
-
-
 </script>
 
 
 
-<!-- const url = `http://localhost:8080/admin/adminPanel?selectedDays=${encodeURIComponent(selectedDays)}`; --> 
+<!-- const url = `http://localhost:8080/admin/adminPanel?selectedDays=${encodeURIComponent(selectedDays)}`; -->

@@ -646,8 +646,31 @@ const insertUser = async (req, res) => {
         res.json({ success: false, error: 'Internal Server Error' });
       }
     };
+
+const sortItems = async(req,res)=>{
+  try {
     
+  } catch (error) {
+    console.log(error);
+  }
+}
     
+    // ----------------------------   WALLET    ---------------------
+
+  const walletPage = async(req, res) => {
+    try {
+      const userAuthenticated = req.session.user;
+      const userId = req.session.user_id;
+      const userData = await User.findById(userId)
+      console.log("user :" ,userData);
+      res.render("wallet" ,{userAuthenticated , userData})
+    
+  } catch (error) {
+    console.log(error);
+  }
+
+    
+  }
 
 
 
@@ -683,7 +706,10 @@ module.exports  = {
     adrsPage,
 
     getSearchItems,
-    filterItems
+    filterItems,
+    sortItems,
+
+    walletPage
 
    
    

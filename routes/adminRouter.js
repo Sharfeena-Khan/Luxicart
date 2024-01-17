@@ -55,6 +55,12 @@ admin_router.get("/adminPanel/OrderList" , adminController.orderMngmnt)
 
 
 
+//  **************************--------------    COUPON MANAGEMENT   -----------------------**********************
+
+admin_router.get("/adminPanel/coupon" , adminController.couponPage)
+
+
+
 
 
 

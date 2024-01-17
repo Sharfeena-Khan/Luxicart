@@ -1,6 +1,7 @@
 const mongoose = require("mongoose")
 const { ObjectId } = require("mongodb")
 const Cart = require('./cartModel');
+const { date } = require("joi");
 const Schema = mongoose.Schema;
 
 
@@ -43,7 +44,7 @@ const OrdersSchema = new Schema({
   },
   address : {
 
-    _id: {type : ObjectId, },
+    _id: {type : ObjectId },
    
    
     name :{
@@ -88,20 +89,15 @@ const OrdersSchema = new Schema({
       size: { type: String },
       quantity: { type: Number },
       orderStatus: { type: String },
-       deliveryDate : {
-    type : Date,
-    default: () => new Date(Date.now() + 2 * 24 * 60 * 60 * 1000) // Two days in milliseconds
-
-  },
-  paymentMode: {
-    type: String,
-  },
+      deliveryDate : { type : Date },
+      paymentMode: { type: String,},
+      orderPlaced : {type : Date,  }
     },
   ],
   
   orderDate: {
     type: Date,
-    default: Date.now
+     default: Date.now
     
   },
  
