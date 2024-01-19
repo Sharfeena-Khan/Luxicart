@@ -17,23 +17,20 @@
       </div>
         <table class="table" id="myTable">
             <colgroup>
-                <col style="width: 10px;" /> <!-- Column for the checkbox icon -->
-                <col style="width: 158px;" /> <!-- Column for name -->
-                <col style="width: 180px;" /> <!-- Column for email -->
-                <col style="width: 100px;" /> <!-- Column for phn -->
-                <col style="width: 80px;" />  <!-- Column for dob -->
-               
+                <col style="width: 200px;" /> <!-- Column for name -->
+                <col style="width: 110px;" /> <!-- Column for email -->
+                <col style="width: 180px;" /> <!-- Column for phn -->
+                
                 <col style="width: 80px;" />  <!-- Column for Status -->
                
                 <col style="width: 130px;" /> <!-- Column for Action -->
               </colgroup>
             <thead>
               <tr>
-                <th scope="col"><i class="fa-solid fa-square-check" style="color: #f35800;"></i></th>
-                <th scope="col">Name</th>
+                 <th scope="col">Name</th>
                 <th scope="col">Email</th>
                 <th scope="col">Phone No</th>
-                <th scope="col">DOB</th>
+                
                 <th scope="col">Status</th>
                 <th scope="col">Action</th>
                 
@@ -44,14 +41,14 @@
             <tbody>
                 <% userList.forEach(function(data) { %>
                 <tr>
-                  <th scope="row"><input type="checkbox"></th>
-                  <td colspan="1">
+                  
+                  <td colspan="1" class="fw-semibold">
                     <img src="/assests/profile/<%= data.image %>" alt="" width="50" height="50" class="me-3">
-                    <%= data.name %>
+                    <%= data.FirstName %> <%= data.LastName %>
                   </td>
                   <td class="pt-3"><%= data.email %></td>
                   <td class="pt-3"><%= data.phone%></td>
-                  <td class="pt-3"><%= data.DOB%></td>
+                  
                   
                   <td class="pt-3"><%= data.status%></td> 
                   

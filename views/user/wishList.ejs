@@ -47,23 +47,37 @@
       <div class="row">
         <div class="container  mb-5"> 
           
-            <div class="mb-3 text-center">
+            <div class="mb-3 ">
 
               <% if(updatedWishlist && updatedWishlist.products.length > 0) { %>
                 <% updatedWishlist.products.forEach(product => { %> 
 
-                  <div class=" d-flex gap-3 my-3 py-2" style=" box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.242);">
+                  <div class=" d-flex gap-3 my-3 py-2 me-5" style=" box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.242);">
                     
-                    <div class="px-4 "> <img src="/assests/productsUploads/<%= product.image %>" alt="" width="100px"></div>
-                    <div class=" ">
-                        <div><%= product.category %></div>
-                        <div><%= product.name %></div>
+                    <div class="ps-4 "> 
+                      <a href="/itemDisplay/<%= product._id%>">
+                        <img src="/assests/productsUploads/<%= product.image %>" 
+                         alt="..."  width="100px" style="border-radius: 5px;">
+                        
+                       </a>
+                     </div>
+                    <div class="ps-4 pt-3  ">
+                        
+                        <div class="fw-bold fs-5"><%= product.name %></div>
+                        <div style="color: rgb(154, 151, 151);"><%= product.category %></div>
+                        <div class="fw-bold fs-6  ">₹<%= product.price %></div>
+                        
+                        
+                        
+                       
                     </div>
-                    <div>
-                        <div>Price</div>
-                        <div><%= product.price %></div>
+                   
+                    
+                    <div class="ms-auto me-5">
+                      <button class="btn mt-2 text-white removeButton" style="background: #f35800;" name="itemId" data-product-id="<%= product.product_id %>"> Remove </button> <br>
+                      
+
                     </div>
-                    <div>add</div>
                   </div>
              
                
@@ -80,5 +94,37 @@
 
 
   </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async()=>{
+      console.log("hai");
+      const removeButtons = document.querySelectorAll('.removeButton');
+      removeButtons.forEach(removeButton => {
+      removeButton.addEventListener('click', async () => {
+        const itemId = removeButton.getAttribute('data-product-id');
+        const url = `http://localhost:8080/cart/wishlist/removeItem/${itemId}`;
+        
+        try {
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+
+          if (response.ok) {
+            console.log('Item removed successfully');
+            location.href = '/cart/wishlist'
+            // Optionally, you can update the UI or perform other actions.
+          } else {
+            console.error('Failed to remove item from wishlist');
+          }
+        } catch (error) {
+          console.error('Error removing item from wishlist:', error);
+        }
+      });
+    });
+  });
+</script>
 
 <%-include("../layout/userFooter.ejs")-%>

@@ -53,6 +53,7 @@ cartRoute.use(session({
   // -----------------------------  WISHLIST --------------------------
   cartRoute.get("/wishlist" , isBlocked,isLogin , cartController.getWishlist)
   cartRoute.get("/Wishlist/:id" , isBlocked, isLogin, cartController.AddWish)
+  cartRoute.post("/wishlist/removeItem/:id", isBlocked, isLogin, cartController.removeWish)
 
   
 

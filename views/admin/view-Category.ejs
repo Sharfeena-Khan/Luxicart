@@ -18,20 +18,18 @@
       </div>
         <table class="table" id="myTable">
             <colgroup>
-                <col style="width: 10px;" /> <!-- Column for the checkbox icon -->
+               
                 <col style="width: 158px;" /> <!-- Column for Category -->
-                <col style="width: 80px;" /> <!-- Column for sopld -->
-                <col style="width: 80px;" /> <!-- Column for stock -->
-                <col style="width: 100px;" />  <!-- Column for Added -->
+               
+                <col style="width: 150px;" />  <!-- Column for Added -->
                 <col style="width: 80px;" />  <!-- Column for Action -->
                 
               </colgroup>
             <thead>
               <tr>
-                <th scope="col"><i class="fa-solid fa-square-check" style="color: #f35800;"></i></th>
+               
                 <th scope="col">Category</th>
-                <th scope="col">Sold</th>
-                <th scope="col">Stock</th>
+                
                 <th scope="col">Added</th>
                 <th scope="col">Action</th>
                
@@ -42,19 +40,13 @@
 
               <% categories.forEach(category => { %>
                 <tr>
-                  <th scope="row"><input type="checkbox"></th>
+                  
                   <td colspan="1">
                     <img src="/assests/categoryUploads/<%= category.image %>" alt="" width="50" height="50" class="me-3">
                     <%= category.name %>
                   </td>
                   
-                  <td class="pt-3">
-                    <%= category.sold %>
-                  </td>
-            
-                  <td class="pt-3">
-                    <%= category.stock %>
-                  </td>
+                 
                   <td class="pt-3"> <%= category.addedDate.toLocaleString() %></td>
                   
                   <td class="pt-3"> <i class="fa-solid fa-pen-to-square" style="color: #4a5153;"></i> </td>

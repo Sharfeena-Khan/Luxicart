@@ -18,7 +18,8 @@ const { body, validationResult, Result } = require('express-validator');
 
 
 const bcrypt = require('bcrypt');
-const { Long } = require("mongodb")
+const { Long } = require("mongodb");
+const session = require("express-session");
 const saltRounds = 10;
 
 
@@ -43,7 +44,9 @@ const generateRandomOTP = () => {
 //------------------------home Page-----------------
 
 const homePage = async (req, res) =>{
-  const userAuthenticated = req.session.user;
+  
+  
+  console.log("------------------------------  :  Home Page Session : --------------------");
   
   try {
     const pro = await Product.find()
@@ -54,9 +57,37 @@ const homePage = async (req, res) =>{
     const  WeddingWear = await Product.find({ category: "Wedding Wear" }).limit(8);
     const  westernWear = await Product.find({ category: "Western Collection" }).limit(8);
 
+    const userId = req.session.user_id
+    let userSession = req.session
+    let userData = await User.findById(userId)
+    // const userAuthenticated = req.session.user;
+    // console.log("Home Page **************************", userData);
 
+    if(userData){
+      console.log("check 1");
+      if( userData.isVerified ){
+        console.log("check 2 VErified");
+        if(userData.status === 'Active'){
+          console.log("check 3 Active");
+          res.render("homePage" , { title:"Luxicart-Home" , userAuthenticated:userData, EthnicWear, black, CasualWear, OfficeWear, WeddingWear, westernWear, error: req.flash('error') })
+         
+
+        }else{
+          console.log("check Blocked Else case");
+          res.render("homePage" , { title:"Luxicart-Home" , userAuthenticated :null, EthnicWear, black, CasualWear, OfficeWear, WeddingWear, westernWear, error: req.flash('error') })
+        }
+
+        }
+    else{
+      console.log("check 4 verified else case");
+      res.render("homePage" , { title:"Luxicart-Home" , userAuthenticated :null, EthnicWear, black, CasualWear, OfficeWear, WeddingWear, westernWear, error: req.flash('error') })
+    }
+  }else{
+    console.log("check 5 no user case");
+    // res.render("homePage" , { title:"Luxicart-Home" , userAuthenticated :null, EthnicWear, black, CasualWear, OfficeWear, WeddingWear, westernWear, error: req.flash('error') })
+    res.redirect('/login')
+  }
     // console.log("black products:", black);
-    res.render("homePage" , { title:"Luxicart-Home" , userAuthenticated, EthnicWear, black, CasualWear, OfficeWear, WeddingWear, westernWear, error: req.flash('error') })
     
   } catch (error) {
     console.log(error);    
@@ -69,13 +100,26 @@ const homePage = async (req, res) =>{
 
 const getLoginPage = async(req, res)=>{
   try {
+    console.log("Login Page");
     // console.log("Login Page Reached");
       if(req.session.user){
-        res.redirect("/")
+        let userSession = req.session
+        let userData = await User.findOne({email: userSession.email})
+        if(userData && userData.isVerified && userData.status =="Active"){
+
+          console.log(("======================  Login page Session    " , req.session));
+          res.redirect("/")
+
+        }else{
+          res.render("loginPage", { title:"Luxicart-Login" , userAuthenticated:null });
+    
+
+        }
+       
       }
       else{
-        const userAuthenticated = req.session.user;
-    res.render("loginPage", { title:"Luxicart-Login" , userAuthenticated });
+        
+    res.render("loginPage", { title:"Luxicart-Login" , userAuthenticated:null });
       
       }
   } catch (error) {
@@ -140,12 +184,10 @@ const postLogin = async (req, res) => {
 
 const getRegisterPage = async(req, res)=>{
     try {
-      if(req.session.user){
-        res.redirect("/")
-      }else{ 
+     
         res.render("register" , {title:"Luxicart-SignUp" , userAuthenticated: false })
       }
-    } catch (error) {
+    catch (error) {
         console.log(error);
     }
    
@@ -159,6 +201,8 @@ const getRegisterPage = async(req, res)=>{
 
 const insertUser = async (req, res) => {
     try {
+      console.log("-----------------------     test block     ---------------------");
+      console.log("Any session1 : " , req.session);
       const { email, password } = req.body;
   
       // Validate and sanitize email and password
@@ -180,6 +224,13 @@ const insertUser = async (req, res) => {
     if (/^\s*$/.test(password)) {
         return res.render('register', { title:"Luxicart-Signup" , message: 'Password cannot be only whitespace', userAuthenticated: req.session.user });
       }
+      if (password.length < 8) {
+        return res.render('register', { title: "Luxicart-Signup", message: 'Password must be at least 8 characters long', userAuthenticated: req.session.user });
+    }
+    if(!/[!@#$%^&*()|<>]/.test(password)){
+      return res.render('register', { title: "Luxicart-Signup", message: 'Password must have one special characters', userAuthenticated: req.session.user });
+  
+    }
 
       const otp = generateRandomOTP();
       //hash otp
@@ -191,7 +242,7 @@ const insertUser = async (req, res) => {
       const user = new User({
         email : email,
         password: hashedPassword,
-        isVerified:false,
+        // isVerified:false,
         otp: otp,
         otpExpiration: Date.now() + 30000,
       });
@@ -236,10 +287,10 @@ const insertUser = async (req, res) => {
   const otpPage = async(req, res)=>{
       try {
         const user = req.session.user;
-        console.log("huhfuy",user);
+        console.log("otp page User Details : ",user);
         console.log('Session:', req.session);
         console.log('User:', req.session.user);
-        res.render("otpVerification", {title:"Luxicart-Signup Verification"  ,User,  userAuthenticated: req.session.user})
+        res.render("otpVerification", {title:"Luxicart-Signup Verification"  ,User,  userAuthenticated: null})
       } catch (error) {
         
       }
@@ -248,34 +299,49 @@ const insertUser = async (req, res) => {
 
     const verify_OTP = async (req, res) => {
       try {
+        console.log("---------------------------           Verifying process -----------------------------");
         const enteredOTP = req.body.otp;
+        const sessionUser = req.session.user
+        console.log(sessionUser);
+        let user = await User.findOne({ email: sessionUser.email });
+         console.log("submitting OTP : " , user);
+        if(user){
+          console.log("ckeck 01");
+          if (user.otpExpiration > Date.now()){
+            console.log("ckeck 1");
+            if(user.otp== enteredOTP){
+              console.log("ckeck 2");
+             user = await User.updateOne(
+                {email:sessionUser.email},
+                {$set :
+                {
+                  isVerified:true, 
+                  status: "Active"
+                }}
+              )
+              res.render("loginPage", { title:"Luxicart-Login" , userAuthenticated:null });
+              // res.redirect("/login")
+              console.log('---------------------    User verified successfully    ----------------');
     
-        // Find the user with the entered OTP
-        const user = await User.findOne({ otp: enteredOTP });
-    
-        if (user) {
-          if (user.otpExpiration > Date.now()) {
-            user.isVerified = true;
-            if(user.isVerified){
-              user.status = "Active"
-            }else{
-              user.status = "Blocked"
+              console.log("=====================Updated User :  ", user);
             }
-            await user.save();
-            console.log('User verified successfully');
-            
-            //res.redirect('/login?message=Your%20Registration%20with%20Luxicat%20is%20completed.%20Now%20you%20can%20Login%20from%20here.');
+          }
+          // res.render("loginPage", { title:"Luxicart-Login" , userAuthenticated:null });
+          // res.redirect("/login")
+          // console.log('---------------------    User verified successfully    ----------------');
 
-            
-            res.redirect('/login' ); 
-          } else {
+        }
+      
+    
+        
+          else {
             console.log('Invalid OTP or OTP has expired');
             res.render('otpVerification', { title:"Luxicart-Signup Verification" , message: 'Invalid OTP or OTP has expired' , User :User ,  userAuthenticated: req.session.user});
           }
-        } else {
-          console.log('User not found or invalid OTP');
-          res.render('otpVerification', { title:"Luxicart-Signup Verification" , message: 'User not found or invalid OTP' ,User :User ,  userAuthenticated: req.session.user});
-        }
+        // else {
+        //   console.log('User not found or invalid OTP');
+        //   res.render('otpVerification', { title:"Luxicart-Signup Verification" , message: 'User not found or invalid OTP' ,User :User ,  userAuthenticated: req.session.user});
+        // }
       } catch (error) {
         console.error('Error in verify_OTP:', error);
         res.status(500).send('Internal Server Error');
@@ -456,12 +522,15 @@ const insertUser = async (req, res) => {
             
           } else {
             console.log('Invalid OTP or OTP has expired');
-            res.render('otpVerification', { title:"Luxicart-Signup Verification" , message: 'Invalid OTP or OTP has expired' , User :User ,  userAuthenticated: req.session.user});
+            res.render("pswOTP", {title:"Luxicart-Password Verification"  ,User,  userAuthenticated: req.session.user, message: 'User not found or invalid OTP'})
+
+            // res.render('otpVerification', { title:"Luxicart-Signup Verification" , message: 'Invalid OTP or OTP has expired' , User :User ,  userAuthenticated: req.session.user});
           }
-        } else {
+        } 
+        else {
           console.log('User not found or invalid OTP');
-          res.render('otpVerification', { title:"Luxicart-Signup Verification" , message: 'User not found or invalid OTP' ,User :User ,  userAuthenticated: req.session.user});
-        }
+          res.render("pswOTP", {title:"Luxicart-Password Verification"  ,User,  userAuthenticated: req.session.user, message: 'User not found or invalid OTP'})
+  }
       } catch (error) {
         console.error('Error in verify_OTP:', error);
         res.status(500).send('Internal Server Error');

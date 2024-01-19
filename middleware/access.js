@@ -13,10 +13,11 @@ const isBlocked = async (req, res, next) => {
             if (userData && userData.status === "Active") {
                 req.session.userData = userData;
                 next(); // Continue to the next middleware or route handler
-            } else {
-                req.flash('error', 'You Access to Luxicart is Blocked, please contact Admin!');
-                res.redirect("/"); // Render the blocked page
-            }
+            } 
+            // else {
+            //     req.flash('error', 'You Access to Luxicart is Blocked, please contact Admin!');
+            //     res.redirect("/"); // Render the blocked page
+            // }
         } else {
             res.redirect("/login"); // Redirect to the login page if not logged in
         }

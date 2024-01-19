@@ -5,6 +5,7 @@ const { User , UserAddress } = require("../models/userModels")
 
 const mongoose = require('mongoose');
 
+
 const { body, validationResult } = require('express-validator');
 
 
@@ -578,7 +579,33 @@ const AddWish = async (req, res) => {
     }
 };
 
+const removeWish =async(req,res)=>{
+    const { ObjectId } = require('mongoose').Types;
+    try {
+console.log("------------------Removing------------");
+        let itemId = req.params
+        console.log("---------*-*-*-*-*-*-*-*-*-*", itemId);
+        itemId = new ObjectId(itemId); 
+        const userId = req.session.user_id;
+        console.log(itemId);
 
+        const wishData = await WishList.findOne({user_id: userId})
+        console.log(wishData);
+        if(wishData){
+            await WishList.updateOne(
+            {user_id : userId},
+            {$pull : {products :{ product_id : itemId}}}
+
+            )
+           res.json(wishData)
+
+           }
+        
+        
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 
 
@@ -598,7 +625,8 @@ const AddWish = async (req, res) => {
     orderPlaced,
 
     getWishlist,
-    AddWish
+    AddWish,
+    removeWish
 
     
 

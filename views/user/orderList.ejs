@@ -50,6 +50,8 @@
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.242); margin-bottom: 20px;">
 
 <% if (orderData) { %>
+  <% orderData.items.sort((a, b) => new Date(b.orderPlaced) - new Date(a.orderPlaced)).forEach(product => { %>
+       
   
     <% orderData.items.forEach(product => { %>
       
@@ -119,6 +121,8 @@
    
 </div>
 <hr>
+
+<% }); %>
 
 <% }); %>
   

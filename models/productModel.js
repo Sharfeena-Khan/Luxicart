@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const { ObjectId } = require("mongodb")
 
 const productSchema = new mongoose.Schema({
     name:{
@@ -45,7 +46,8 @@ const productSchema = new mongoose.Schema({
         type:String
     },
     status : {
-        type: String
+        type: String,
+        required : true
     },
     sku : {
         type : Number

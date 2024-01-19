@@ -345,12 +345,15 @@ function incrementQuantity(button) {
     const currentQuantity = parseInt(input.value);
     console.log("hai");
 
-    // if (currentQuantity < stockLimit) {
+    if (currentQuantity < stockLimit) {
 
         input.stepUp();
-        const itemQty = input.value;
-        const productID = button.parentNode.querySelector('input[name="productID"]').value;
-        updateQuantity(itemQty, productID, 1);
+      } else {
+            alert("Maximum quantity reached!");
+        }
+        // const itemQty = input.value;
+        // const productID = button.parentNode.querySelector('input[name="productID"]').value;
+        // updateQuantity(itemQty, productID, 1);
     
 }
 

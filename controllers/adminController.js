@@ -218,7 +218,7 @@ const blockUser = async (req, res) => {
 
   try {
     const userId = req.body.userId;
-    console.log("Active:" +userId);
+    console.log("Blocked:" +userId);
     await User.findByIdAndUpdate(userId, {status: "Blocked"})
     res.redirect("/admin/adminPanel/customer");
 
@@ -231,7 +231,7 @@ const blockUser = async (req, res) => {
 const unblockUser = async (req, res) => {
   try {
     const userId = req.body.userId;
-    console.log("Blocked:" +userId);
+    console.log("Unblocked:" +userId);
     await User.findByIdAndUpdate(userId, {status: "Active"})
     res.redirect("/admin/adminPanel/customer");
 

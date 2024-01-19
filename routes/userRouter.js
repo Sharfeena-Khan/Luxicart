@@ -7,7 +7,7 @@ const path = require("path")
 const user_router = express()
 
 const userController = require("../controllers/userController")
-
+const userAccess = require('../middleware/access')
 
 const {isLogin , isLogout} = require("../middleware/auth")
 const isBlocked = require("../middleware/access")
@@ -60,8 +60,8 @@ user_router.use('/assets',express.static(path.join(__dirname,'public/assets')));
 user_router.get("/",  userController.homePage)
 // user_router.get("/homePage",  userController.gethomePage)
 
-user_router.get("/login", isLogout, userController.getLoginPage)
-user_router.get("/register",isLogout, userController.getRegisterPage)
+user_router.get("/login",  userController.getLoginPage)
+user_router.get("/register", userController.getRegisterPage)
 
 user_router.get("/verify-otp", userController.otpPage)
 user_router.post("/verify-otp", userController.insertUser)
@@ -91,7 +91,7 @@ user_router.post("/NewPswd" , userController.resetPaswrd)
 
   const profileController = require("../controllers/userProfileController")
 
-  user_router.get("/userProfile" , isLogin,isBlocked , profileController.profilePage)
+  user_router.get("/userProfile" , isLogin, profileController.profilePage)
   user_router.get("/editprofile/:id" , isLogin ,isBlocked, profileController.editprofile)
   user_router.get("/editdp/:id" , isLogin,isBlocked , profileController.editdp)
   user_router.post("/updateProfile" , isLogin, profileController.updateProfile)
