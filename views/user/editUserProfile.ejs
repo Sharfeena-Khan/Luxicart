@@ -48,6 +48,25 @@
     <div class="content ">
       <div class="row">
         <div class="container  mb-5">
+
+          <% if (error && error.length > 0) { %>
+
+            <div class="alert alert-danger">
+           
+               <ul>
+           
+                 <% error.forEach(function(errorMessage) { %>
+           
+                   <li><%= errorMessage %></li>
+           
+                 <% }); %>
+           
+               </ul>
+           
+            </div>
+           
+           <% } %>
+           
           <form action="/updateProfile" method="post" >
 
             <input type="hidden" name="ID" value="<%= userData._id %>">

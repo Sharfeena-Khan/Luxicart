@@ -44,18 +44,64 @@
     <div class="content ">
       <div class="row">
         <div class="container mb-5  " >
-            <h4 class="fw-bold pt-2 ps-4">Default Address</h4>
+            <h4 class="fw-bold pt-2 ps-4">Manage Addresses</h4>
+            <% adrsData.Addresses.forEach((adrs)=>{ %>
             <div class="pt-3 col-8" 
             style="border: 1px solid #f359006c; 
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.242); margin-bottom: 20px;">
 
-<% if (adrsData && Array.isArray(adrsData)) { %>
-  <% adrsData.forEach(function(item) { %>
-    <% item.Addresses.forEach(function(adrs) { %>
-      <h6 class="pt-2 ps-4"><%= adrs.name %></h6>
-    <% }) %>
-  <% }) %>
-<% } %>
+           
+              
+                
+                  <div class="d-flex gap-5">
+                    <div class="d-flex gap-5">
+                      <h5 class=" ps-4 fw-bold"><%= adrs.name %></h5>
+                      <span class="pt-2 px-3 text-center pb-1 rounded-pill fw-bold fa-sharp " style=" border:2px solid #f35900b5; color: #f35800; "><%= adrs.adrs_type %></span>
+                    </div>
+                    <div class="ms-auto me-5" >
+                     <div>
+                      <a href="/editAddress/<%= adrs._id %>" class="btn text-white fw-semibold  px-3 edit-btn" type="button"  
+                       data-address-id="<%= adrs._Id %>"><i class="fa fa-pencil" aria-hidden="true" style="color: #f35800;"></i></a>
+
+
+                       <button onclick="conformDelete('<%= adrs._id %>')" class="btn" style="">
+                        <i class="fa-regular fa-trash-can" style="color: #f35800; font-size: larger;"></i>
+                       </button>
+                       
+                     </div>
+
+                     <!-- EDIT MODAL -->
+
+                     
+
+
+                     <!-- END OF EDIT MODAL -->
+                      <div></div>
+                    </div>
+                  </div>
+                  
+                 
+                  <h6 class=" ps-4 fw-semibold  text-body-tertiary"><%= adrs.Adrs %>, </h6>
+             
+
+                  <h6 class=" ps-4 fw-semibold text-body-tertiary"><%= adrs.landmark %>, <%= adrs.locality %>, <%= adrs.city %>,</h6>
+                  <h6 class=" ps-4 fw-semibold text-body-tertiary"><%= adrs.state %>-<%= adrs.pincode %>. </h6>
+                  <h6 class="pt-2 ps-4 fw-semibold text-body-tertiary">Mobile: <%= adrs.phoneNum %> </h6>
+
+                
+
+
+
+
+              
+
+             
+
+           
+           
+
+
+
 
 
             <h6 class=" pt-2 ps-4"></h6>
@@ -63,12 +109,180 @@
 
 
             </div>
+            <% }) %>
+
+            <div class="col-8 p-3" style="background-color: rgba(235, 235, 235, 0.381);
+                            
+            border: 2px dotted #f161074b;
+            padding: 5px;
+            margin-bottom: 15px;
+            display: flex;
+           
+            font-weight: bold;
+            
+            ">
+                  <a style="color: #f35800;" type="button" class="" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <i class="fa-solid fa-plus" style="color: #f35800;"></i> <strong>Add New Address</strong>
+                  </a>
+            </div>
+
+            <% if (error && error.length > 0) { %>
+
+              <div class="alert alert-danger">
+             
+                 <ul>
+             
+                   <% error.forEach(function(errorMessage) { %>
+             
+                     <li><%= errorMessage %></li>
+             
+                   <% }); %>
+             
+                 </ul>
+             
+              </div>
+             
+             <% } %>
+    
+    
+                      <!-- Button trigger modal -->
+    
+      
+      <!-- Modal -->
+      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel"><strong>Add New Address</strong> </h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+    
+            <div>
+              <form action="/addNewAddress" method="post" id="addressForm">
+                
+                    <div class="modal-body">
+    
+               
+                        <div class="container mx-4">
+                          
+                        <div class="d-flex gap-3 pe-3">
+                            <input type="text" placeholder="Name" class="form-control" name="name">
+                            
+                        </div>
+                        <div class="d-flex gap-3 pt-4 pe-3">
+                            <input class="form-control" type="text" placeholder="PIN CODE" name="zip">
+                            <input class="form-control" type="text" placeholder="Locality" name="locality">
+                        </div>
+                        <div class="d-flex gap-3 pt-4 pe-3">
+                            <textarea class="form-control" name="Address" id="" placeholder="Address (Area and Street)" cols="47" rows="4"></textarea>
+                            
+                        </div>
+                        <div class="d-flex gap-3 pt-4 pe-3">
+                            <input class="form-control" type="text" placeholder="City / District / Town" name="place">
+                            <input class="form-control" type="text" placeholder="State" name="state">
+                        </div>
+                        <div class="d-flex gap-3 pt-4 pe-3">
+                            <input class="form-control" type="text" placeholder="Landmark" name="Lmark">
+                            <input class="form-control" type="text" placeholder="Alternate Phone" name="altNum">
+                        </div>
+                        <div class="d-flex gap-3 pt-4 pe-3">
+                            
+                        <h6>Address Type : </h6>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="Radios" id="exampleRadios1" value="Home" >
+                                <label class="form-check-label" for="exampleRadios1">
+                                   Home
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="Radios" id="exampleRadios2" value="Work" >
+                                <label class="form-check-label" for="exampleRadios2">
+                                    Work
+                                </label>
+                            </div>
+                        </div>
+            
+            
+                        </div>
+                    
+            
+            
+                     
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="submit" class="btn " style="background: #f35800; color: white; " id="AddButton">Save </button>
+                    
+                    </div>
+    
+                </form>
+            </div>
+           
+            
+          </div>
+        </div>
+      </div>
         </div>
 
       </div>
     </div>
 </main>
 
+
+<script>
+  function conformDelete(adrsId){
+    if(confirm("Are you sure want to delete this item?")){
+      window.location.href="/DeleteAddress/"+adrsId;
+    }
+  }
+</script>
+
+<script>
+ 
+
+
+
+$('#addressForm').submit((e)=>{
+  e.preventDefault()
+  $.ajax({
+  url : '/addNewAddress',
+  method  : 'POST' , 
+  data : $('#addressForm').serialize(),
+  success : (response)=>{
+    location.href = "/adrsPage"
+    console.log("HElloooo");
+  }
+
+})
+ 
+})
+  
+
+   
+
+//     try {
+//       const response = await fetch(url, {
+//         method: 'POST',
+//         body: JSON.stringify(formDataObject),
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//       });
+
+//       if (response.ok) {
+//         // Handle successful response, if needed
+//         console.log('Address added successfully');
+//       } else {
+//         // Handle error response, if needed
+//         console.error('Error adding address');
+//       }
+//     } catch (error) {
+//       console.error('Fetch error:', error);
+//     }
+//   });
+// });
+
+</script>
 
 
 <%-include("../layout/userFooter.ejs")-%>

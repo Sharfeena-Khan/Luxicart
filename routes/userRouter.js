@@ -117,7 +117,10 @@ user_router.post('/sortItems' , userController.sortItems)
 
 // user_router.post("/add-address" , userController.saveAddress)
 user_router.get("/adrsPage" , isLogin, userController.adrsPage)
-
+user_router.post('/addNewAddress', isLogin , userController.addingAdrs)
+user_router.get('/editAddress/:id', isLogin, userController.getAdrsEditPage)
+user_router.post('/update-address' , isLogin, userController.EditAddress)
+user_router.get('/DeleteAddress/:id', isLogin, userController.delAdrs)
 
 // ****************************WALLET   *********************
 user_router.get('/wallet' , isBlocked, isLogin, userController.walletPage)

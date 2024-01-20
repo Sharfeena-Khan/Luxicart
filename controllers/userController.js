@@ -616,7 +616,7 @@ const insertUser = async (req, res) => {
       
       try {
         console.log(adrsData);
-        res.render("adrsList" , {title: "Luxicart-Address", userAuthenticated , adrsData:adrsData})
+        res.render("adrsList" , {title: "Luxicart-Address", userAuthenticated ,adrsData ,  error: req.flash('error')})
 
         
       } catch (error) {
@@ -625,7 +625,225 @@ const insertUser = async (req, res) => {
       }
     }
 
+    const addingAdrs = async(req, res, next)=>{
+      const userAuthenticated = req.session.user
+      try {
+          const {name ,zip, locality, Address, place, state, Lmark, altNum ,Radios } = req.body
+          console.log("======================================");
+          console.log("======================================");
+         
+          console.log(name);
+          const trimmedName = name.trim();
+          const trimmedZip = zip.trim()
+          const trimmedLocality = locality.trim()
+          const trimmedAddress = Address.trim()
+          const trimmedPlace = place.trim()
+          const trimmedState = state.trim()
+          const trimmedLmark = Lmark.trim()
+          const trimmedAltNum = altNum.trim()
+  
+  
+          body('name', 'Name is required').notEmpty();
+  
+          body('zip', 'Zip code is required').notEmpty();
+  
+          body('zip', 'Invalid zip code').matches(/^\d{5}$/); // Check if zip is a 5-digit number
+  
+          body('locality', 'Locality is required').notEmpty();
+  
+          body('Address', 'Address is required').notEmpty();
+  
+          body('place', 'City is required').notEmpty();
+  
+          body('state', 'State is required').notEmpty();
+  
+          body('Lmark', 'Landmark is required').notEmpty();
+  
+          body('altNum', 'Alternate phone number is required').notEmpty().isNumeric();
+  
+          body('Radios', 'Address type is required').notEmpty();
+  
+  
+          if(!trimmedName.replace(/\s/g, '').length || !trimmedZip.replace(/\s/g,'').length ||
+           !trimmedLocality.replace(/\s/g, '').length || !trimmedAddress.replace(/\s/g, '').length 
+           || !trimmedPlace.replace(/\s/g, '').length || !trimmedState.replace(/\s/g,'').length
+          || !trimmedLmark.replace(/\s/g,'').length || !trimmedAltNum.replace(/\s/g,'').length)
+          {
+              req.flash('error', 'Please provide valid values for all required fields.');
+              return res.redirect('/adrsPage');
+          }
+  
+  
+  
+          // Check for validation errors
+  
+          const errors = validationResult(req);
+  
+          if (!errors.isEmpty()) {
+              // If there are validation errors, render the cart page with the errors
+              req.flash('error', errors.array().map(error => error.msg));
+              return res.redirect('/adrsPage');
+          }
+       
+          const userAuthenticated = req.session.user
+          const userId = req.session.user_id
+          let userAdrs = await UserAddress.findOne({user_id : userId})
+          if(!userAdrs){
+              userAdrs = new UserAddress({
+                  user_id : userId,
+                  Addresses : []
+              })
+          }
+          // const user = await User.findById(userId)
+          const newAdrs = {
+              name : name ,
+              pincode :zip,
+              locality: locality,
+              Adrs : Address , 
+              city : place,
+              state : state,
+              landmark : Lmark,
+              phoneNum : altNum,
+              adrs_type : Radios 
+  
+          }
+          if (!newAdrs.name || !newAdrs.pincode || !newAdrs.locality || !newAdrs.Adrs || !newAdrs.city || !newAdrs.state) {
+              req.flash('error', 'Please provide values for all required fields.');
+              return res.redirect('/adrsPage');
+          }
+           userAdrs.Addresses.push(newAdrs)
+          const userAddresses= await userAdrs.save()
+  
+          if(userAddresses){
+              let user = await User.findOne({ _id: userId })
+           let adrs = {
+              name : trimmedName,
+              adrsId : userAddresses.adrs_id,
+              adrs : trimmedAddress,
+              pincode :trimmedZip,
+              locality:trimmedLocality , 
+              city :trimmedPlace ,
+              state :trimmedState ,
+              landmark : trimmedLmark,
+              phoneNum : trimmedAltNum,
+              adrs_type :Radios ,
+              mainAdrs : userAddresses.mainAdrs 
+                  
+  
+           }
+           user.Addresses.push(adrs)
+           await user.save()
+           
+          }
+  
+        res.json({success : true})
+          // res.redirect("/adrsPage")
+          
+      } catch (error) {
+          console.log(error);
+      }
 
+    }
+
+    const getAdrsEditPage = async(req,res)=>{
+      console.log("----------------------------------Editing Address Page -----------------");
+      const userAuthenticated = req.session.user
+      try {
+      const id = req.params.id
+      const userId = req.session.user_id 
+      console.log(id);
+      let adrsData = await UserAddress.findOne({ "user_id": userId, })
+      // .findIndex((product) => product.product_id == pdt_Id
+      const index = adrsData.Addresses.findIndex((adrs) => adrs._id == id);
+
+
+      
+      
+      console.log("----------------------------------adrsData : ", adrsData.Addresses[index]);
+      res.render('editAddressDetailsPage',{adrsData :adrsData.Addresses[index] , error : req.flash('error') , userAuthenticated } )
+     } catch (error) {
+      
+     }
+
+
+    }
+
+    const EditAddress = async (req, res) => {
+      console.log("--------------------Editing Address------------------------");
+      const id = req.body.id;
+      const { name, house, Lmark, street, city, state, zip, phn, Radios } = req.body;
+      console.log(id);
+  
+      try {
+          // Find the user's address based on _id
+          let adrsData = await UserAddress.findOne({ "Addresses._id": id });
+  
+          // Check if the document was found
+          if (!adrsData) {
+              console.log("Address not found");
+              // You can customize this part based on your requirements, such as redirecting to an error page or rendering a specific message.
+              return res.render('errorPage', { errorMessage: 'Address not found' });
+          }
+  
+          // Find the index of the address within Addresses array based on _id
+          const index = adrsData.Addresses.findIndex((adrs) => adrs._id == id);
+  
+          // Check if the index was found
+          if (index === -1) {
+              console.log("Address index not found");
+              // You can customize this part based on your requirements, such as redirecting to an error page or rendering a specific message.
+              return res.render('errorPage', { errorMessage: 'Address index not found' });
+          }
+  
+          // Update the specific address data
+          adrsData.Addresses[index].name = name;
+          adrsData.Addresses[index].Adrs = house;
+          adrsData.Addresses[index].landmark = Lmark;
+          adrsData.Addresses[index].locality = street;
+          adrsData.Addresses[index].city = city;
+          adrsData.Addresses[index].state = state;
+          adrsData.Addresses[index].pincode = zip;
+          adrsData.Addresses[index].phoneNum = phn;
+          adrsData.Addresses[index].adrs_type = Radios;
+  
+          // Save the updated document
+          await adrsData.save();
+  
+          console.log("Address updated successfully");
+  
+          // Redirect or send a response as needed
+          res.redirect('/adrsPage'); // Change this to your desired redirect URL
+      } catch (error) {
+          // Handle any errors that might occur during the process
+          console.error(error);
+          // You can customize this part based on your requirements, such as redirecting to an error page or rendering a specific message.
+          res.render('errorPage', { errorMessage: 'An error occurred' });
+      }
+  };
+
+  const delAdrs = async(req,res)=>{
+    console.log("----------------------Deleating-----------------");
+    try {
+      const id = req.params.id
+      console.log(id);
+      const data = await UserAddress.updateOne(
+        { "Addresses._id" : id},
+        {$pull : { Addresses : {_id : id}}}
+      )
+      console.log(data);
+      if(data.modifiedCount >0){
+        res.redirect('/adrsPage')
+      }else {
+        console.log("Address not found");
+        res.status(404).json({ message: 'Address not found' });
+    }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  
+
+    // *******************************--------------  SEARCH  &   FILTER  -----------------****************************
     const getSearchItems = async (req, res) => {
       try {
         const category = await Category.find();
@@ -772,7 +990,12 @@ module.exports  = {
 
 
     getitemDisplay,
+
     adrsPage,
+    addingAdrs,
+    getAdrsEditPage,
+    EditAddress,
+    delAdrs,
 
     getSearchItems,
     filterItems,
