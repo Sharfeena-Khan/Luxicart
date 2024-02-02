@@ -92,17 +92,27 @@
          
          <div class="mt-5">
            <h6> <strong> Pricing</strong></h6>
-           <label for="product-rice"  class="form-label">Base Price</label>
+           <div class="container d-flex">
+            <div class="col-6 me-2">
+              <label for="product-rice"  class="form-label">Base Price</label>
            <input type="text" class="form-control" id="productPrice" name="price" placeholder="$ Type Base price name here">
            
+            </div>
+            <div class="col-6 me-2">
+              <label for="product-rice"  class="form-label">Sale Price</label>
+           <input type="text" class="form-control" id="productPrice" name="salePrice" placeholder="$ Type Base price name here">
+           
+            </div>
+           </div>
            <div class="container d-flex">
              <div class="col-6 me-2">
-               <label for="product-discountType"  class="form-label mt-3">Discount Type</label>
+               <label for="product-discountType"  class="form-label mt-3">Offer Type</label>
              <select class="form-select" name="discountType" aria-label="Default select example">
                <option selected>Select</option>
-               <option value="1">Clearence Sale</option>
-               <option value="2">Season</option>
-               <option value="3">Free Shipping</option>
+               <option value="Clearence Sale">Clearence Sale</option>
+               <option value="Season">Season</option>
+               <option value="Daily saver">Daily saver</option>
+               <option value="Nill">Nill</option>
               
              </select>
          
@@ -116,6 +126,7 @@
                <option value="50">50% or more</option>
                <option value="40">40% or more</option>
                <option value="30">30% or more</option>
+               <option value="0">nill</option>
              </select>
          
              </div>
@@ -163,9 +174,9 @@
              <label for="product-status"  class="form-label mt-3">Status</label>
              <select class="form-select" name="status" aria-label="Default select example">
                <option selected>Select</option>
-               <option >Draft</option>
-               <option >Out of stock</option>
-               <option >Published</option>
+               
+               <option value="Out of stock" >Out of stock</option>
+               <option value="Available">Available</option>
               
              </select>
              

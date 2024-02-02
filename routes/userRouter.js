@@ -96,6 +96,7 @@ user_router.post("/NewPswd" , userController.resetPaswrd)
   user_router.get("/editdp/:id" , isLogin,isBlocked , profileController.editdp)
   user_router.post("/updateProfile" , isLogin, profileController.updateProfile)
   user_router.post("/editpic" ,upload.single('image'), isLogin, profileController.updateDp)
+  user_router.post("/changePassword", isLogin, profileController.chngPassword)
 
 
 //----------------------------------------  End PROFILE   --------------------------------------------------

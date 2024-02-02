@@ -4,7 +4,9 @@ const session = require("express-session")
 const path = require('path');
 
 const multer = require('multer');
+const cropper = require('cropperjs')
 
+const { isLogin, isLogout} = require("../middleware/adminAuth")
 
 const product_router = express()
 
@@ -65,12 +67,12 @@ product_router.use(session({
   product_router.use('/assets',express.static(path.join(__dirname,'public/assets')));
 
 
- product_router.get("/" , productController.getProductPage)
- product_router.get("/add-product" , productController.getAddProduct)
+ product_router.get("/" ,isLogin, productController.getProductPage)
+ product_router.get("/add-product" ,isLogin, productController.getAddProduct)
  product_router.post("/", Upload.single("IMG"), productController.insertProduct); 
  product_router.post("/", Upload.fields([{ name: 'IMG', maxCount: 1 }]), productController.insertProduct); 
- product_router.get("/edit-products/:id" , productController.editProducts)
- product_router.get("/dltPdt/:id" , productController.dltPdt)
+ product_router.get("/edit-products/:id" , isLogin, productController.editProducts)
+ product_router.get("/dltPdt/:id" ,isLogin, productController.dltPdt)
  product_router.post("/updatPrdt", productController.updateProduct)
 
  product_router.post("/updatPrdtImage" , Upload.fields([

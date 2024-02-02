@@ -8,70 +8,104 @@
         <div class="container d-flex mb-5">
           <div >
             <h5><strong> Category</strong> </h5>
-           <span class="opacity-50"> Dashboard > Categorise</span> 
+           <span class="opacity-50"> Dashboard > Categorise  > Edit Categories</span> 
           </div>
-          <div class="ms-auto me-5"> 
-           <a href="/admin/adminPanel/category/create-Category" class="btn text-white me-auto " style="background: #f35800;"><i class="fa-regular fa-plus" style="color: #ffffff;"></i> Create Category</a>
-          </div>
+
+         
+        </div>
+        <div class="mb-3">
+          <%
+                         if(typeof message !== 'undefined'){
+                          %>
+                         <h5 class="text-danger fw-bold text-center mb-3 " id="invalidUser-msg"><%= message %></h5>
+                         <%
+                          }
+               %>
         </div>
 
-      </div>
-        <table class="table">
-            <colgroup>
-                <col style="width: 10px;" /> <!-- Column for the checkbox icon -->
-                <col style="width: 158px;" /> <!-- Column for Category -->
-                <col style="width: 80px;" /> <!-- Column for sopld -->
-                <col style="width: 100px;" /> <!-- Column for stock -->
-                <col style="width: 80px;" />  <!-- Column for Added -->
-                <col style="width: 80px;" />  <!-- Column for Action -->
-                
-              </colgroup>
-            <thead>
-              <tr>
-                <th scope="col"><i class="fa-solid fa-square-check" style="color: #f35800;"></i></th>
-                <th scope="col">Category</th>
-                <th scope="col">Sold</th>
-                <th scope="col">Stock</th>
-                <th scope="col">Added</th>
-                <th scope="col">Action</th>
-               
-              </tr>
-            </thead>
-            <% if (categories && categories.length > 0) { %>
-            <tbody>
+      <div class="col-7">
+        <div>
 
-              <% categories.forEach(category => { %>
-                <tr>
-                  <th scope="row"><input type="checkbox"></th>
-                  <td colspan="1">
-                    <img src="<%= category.image %>" alt="" width="50" height="50" class="me-3">
-                    <%= category.name %>
-                  </td>
-                  
-                  <td class="pt-3">
-                    <form action="/admin/adminPanel/update-sold/<%= category._id %>" method="POST">
-                      <input type="number" name="sold" value="<%= category.sold %>">
-                      <button type="submit">Update Sold</button>
-                    </form>
-                  </td>
+          <form  action="/admin/adminPanel/category/updateCategory" method="POST"  >
+            <input type="hidden" name="ID" value="<%= categories._id %>">
+      
+  
+              <div class=" " style="position:fixed; background: #ffffff; left: 1266px;"> 
+                  <button type="submit" class="btn text-white  " style="background: #f35800;"><i class="fa-regular fa-plus" style="color: #ffffff;"></i> Update</button>
+                 </div>
+        </div>
+  
+        <div class="mb-3">
+          <label for="product-name"  class="form-label">Product Name</label>
+          <input type="text" class="form-control" id="productName" name="name" value="<%= categories.name %>">
+          
+        </div>
+        <div class="mb-5">
+         <label for="description" class="form-label">Description</label>
+         <textarea class="form-control" rows="5" name="description" id="comment"><%= categories.discription %></textarea>
+        </div>
+        <div>
+          <img src="/assests/categoryUploads/cropped/<%= categories.image %>" alt=""  width="100" height="auto" class="me-3" name="IMG">
+          <a style="background: #f35800; color: #ffffff;" type="button" class="btn" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            <strong>Add New Images</strong>
+          </a>     
+        </div>
+      </form>
+      </div>
+      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel"><strong>Add/ Change Images</strong> </h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+    
+            <div>
+              <form action="/admin/adminPanel/category/updateCategoryImage" method="post" id="addressForm" enctype="multipart/form-data">
+                
+                    <div class="modal-body">
+                      <input type="hidden" name="IMG_ID" value="<%= categories._id %>">
+               
+                        <div class="container mx-4">
+                          
+                        <div class="d-flex gap-3 pe-3">
+
+                          <span id="imageContainer">
+                            <% if (categories.image) { %>
+                              <img src="/assests/categoryUploads/cropped/<%= categories.image %>" alt="" width="150px" height="auto" id="previewImage"   >
+                            <% } else { %>
+                              <img src="#" alt="" width="150px" height="auto"  style="display:none;">
+                            <% } %>
+                            <input type="file" class="form-control" name="main_IMG" id="imageInput" onchange="previewMainImage(this)">
+                          </span>
+                          
+                       
+                       
+                       
+                        </div>
             
-                  <td class="pt-3">
-                    <form action="/admin/adminPanel/update-stock/<%= category._id %>" method="POST">
-                      <input type="number" name="stock" value="<%= category.stock %>">
-                      <button type="submit">Update Stock</button>
-                    </form>
-                  </td>
-                  <td class="pt-3"> <%= category.addedDate.toLocaleString() %></td>
-                  
-                  <td class="pt-3"> <i class="fa-solid fa-pen-to-square" style="color: #4a5153;"></i> </td>
-                </tr>
-                <% }); %>
             
-            </tbody>
-            <% } else { %>
-              <p>No categories available.</p>
-            <% } %>
-          </table>
+                     
+                    
+            
+            
+                     
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="submit" class="btn " style="background: #f35800; color: white;">Save </button>
+                    
+                    </div>
+    
+                </form>
+            </div>
+          </div>
+            
+          </div>
+      </div>
+
+      </div>
+      
 
     </div>
    
@@ -79,3 +113,34 @@
         
    
 </section>
+
+
+<script>
+
+function userhidemsg(){
+const msg= document.getElementById("invalidUser-msg")
+if(msg){
+setTimeout(()=>{
+msg.style.display = "none"
+}, 3000)
+}
+}
+
+
+  function previewMainImage(input) {
+    const previewImage = document.getElementById('previewImage');
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        previewImage.src = e.target.result;
+        previewImage.style.display = 'block';
+      };
+      reader.readAsDataURL(input.files[0]);
+    } else {
+      previewImage.src = '#';
+      previewImage.style.display = 'none';
+    }
+  }
+
+  window.onload= userhidemsg;
+</script>

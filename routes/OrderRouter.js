@@ -36,6 +36,11 @@ orderRoute.get("/delOrder/:id" , isLogin ,isBlocked, orderController.cancelOrder
 orderRoute.get("/return/:id" ,isLogin,isBlocked, orderController.returnOrder )
 
 
+// ---------------      ORDER ITEM DETAILS      -------------------
+
+orderRoute.get("/itemDetails/:id" , isLogin, isBlocked, orderController.detailedPage)
+orderRoute.post('/itemDetails/invoice', isLogin, isBlocked , orderController.invoice)
+
 
 
 

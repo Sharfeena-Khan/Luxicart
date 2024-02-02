@@ -73,13 +73,10 @@ const adrsSchema = new mongoose.Schema({
 
 const userSchema = new mongoose.Schema({
 
-    FirstName:{
-        type:String,
-        default:""
-        
-    },
+    
+ 
 
-    LastName:{
+    Name:{
         type:String,
         default:""
         
@@ -128,6 +125,7 @@ const userSchema = new mongoose.Schema({
         type:Boolean,
         default:false
     },
+    // Addresses: [adrsSchema],
     Addresses : [{
         adrsId : {
             type : ObjectId,
@@ -181,15 +179,56 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0,
       },
-    // pswd_token :{ 
-    //     token : {type : String},
-    //     createdAt: {
-    //         type: Date,
-    //         default: Date.now,
-    //         expires: 3600,
-    //     },
-    // }
-   
+    wishList:[
+        {
+            product_id: {
+                type : ObjectId,
+                ref : "Product"
+                
+            },
+            category : {
+                type : String
+            },
+            name :{
+                type : String
+            },
+           price :{
+                type : Number
+            },image :{
+                type : String
+            },
+    }],
+    cart:[
+        {
+            product_id : {
+                type: ObjectId,
+                required: true
+            },
+            name:{
+                type : String,
+            },
+            price :{
+                type:Number
+            },
+            image: {
+                type : String
+            },
+            size:{
+                type : String
+            },
+            quantity : {
+                type : Number,
+                default : 1
+            },
+            stock : {
+                type : Number
+            }
+            
+    }],
+    
+    
+      
+    
 } ,
     {  timestamps: true}
 )

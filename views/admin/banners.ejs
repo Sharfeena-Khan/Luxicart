@@ -1,0 +1,99 @@
+<%-include("../layout/adminHeader.ejs")-%>
+
+
+
+<section>
+    <div class="content ">
+      <div class="row">
+        <div class="container mb-5  ">
+          <div class=""    >
+            <h5><strong> Banners</strong> </h5>
+           <span class="opacity-50 "> Dashboard >  <strong>Banner List </strong></span> 
+          </div>
+          <div class="container d-flex">
+            <div class="col-7">
+                <h6> <strong> Current Banners</strong></h6>
+                
+                    
+      <div class="mb-3">
+        <% if(bannerImg && bannerImg.length>0){ %>
+          <% bannerImg.forEach(banner => { %>
+
+            <img id="image" class="my-2" src="/assests/BannerUploads/<%= banner.image %>" alt="" width="800px">
+
+        <%  }) %>
+
+      <%  } %>
+        
+
+        
+      </div>
+      
+     
+    
+    <h6> <strong> Upload New One</strong></h6>
+                
+    
+    <div class="mb-3">
+
+       <form action="/admin/adminPanel/bannerImageUpload" method="post" id="ImgForm" enctype="multipart/form-data">
+        <div class="col-md-12">
+            <div class="col-md-12">
+                <div class="btn-container text-center mt-3">
+                    <span>
+                        <i class="fa-solid fa-image fa-4x" style="color: #f35800; " ></i>
+                    </span>
+                   
+                    <p> </p>
+                    <span class="upload-btn-wrapper">
+                     <label class="btn" for="fileup" style="background: #f35800; color: #ffffff; " >click to add an image</label>
+                     <!-- <input type="file" name= "IMG"  id="fileup"  accept=".jpg, .jpeg, .png, .gif"> -->
+                     <input type="file" name="IMG" id="fileup" accept="image/*">
+                 </span>
+                    
+                </div>
+                <div class=" text-center" >
+                  <button type="submit" class="btn   mt-3"  style="background: #f35800; color: #ffffff; ;">Submit</button>
+          
+                </div>
+                 </div>
+            
+        </div>
+       </form>
+    
+    <!--.............................................................................-->
+   
+    
+         
+   </div>
+         
+        </div>
+        
+        </div>
+      </div>
+      
+    </div>
+             
+        
+</section>
+
+
+<script>
+
+import Cropper from 'cropperjs';
+
+const image = document.getElementById('image');
+const cropper = new Cropper(image, {
+  aspectRatio: 16 / 9,
+  crop(event) {
+    console.log(event.detail.x);
+    console.log(event.detail.y);
+    console.log(event.detail.width);
+    console.log(event.detail.height);
+    console.log(event.detail.rotate);
+    console.log(event.detail.scaleX);
+    console.log(event.detail.scaleY);
+  },
+});
+
+</script>

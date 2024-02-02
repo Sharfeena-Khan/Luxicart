@@ -10,8 +10,20 @@
         </div>
         <div class="ms-auto me-5 mb-2 d-flex gap-4">
           <span>
-            <button id="exportButton" class="btn text-white" style="background: #f35800;">Export</button>
+            <!-- <button id="exportButton" class="btn text-white" style="background: #f35800;">Export</button> -->
+            <div class="dropdown">
+              <button id="exportButton" class="btn text-white dropdown-toggle" type="button" 
+              data-bs-toggle="dropdown" aria-expanded="false" style="background: #f35800;">
+              <i class="fa fa-download px-2" aria-hidden="true"></i>Export</button> 
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" id="pdfDownlod" href="#">PDF File</a></li>
+                <li><a class="dropdown-item" id="excelDownlod" href="#">Excel</a></li>
+              </ul>
+            </div>
 
+           
+            
+            
           </span>
           <span>
             <select class="form-select" aria-label="Default select example" id="selectionButton">
@@ -30,7 +42,7 @@
         <div class="d-flex gap-4">
           <div>
             Total Sales : <br>
-            <span class="fw-bold fs-3" id="salesDataDisplay">₹<%= salesData %> </span>
+            <span class="fw-bold fs-3" id="salesDataDisplay" >₹<%= salesData %> </span>
           </div>
           <div class="p-2" style="margin-top: -80px;">
             <canvas id="myTotalSalesChart" width="160px"></canvas>
@@ -85,12 +97,86 @@
     selectionButton.addEventListener('change', async () => {
       await fetchAndUpdateCharts();
     });
+
+    const exportPDFReport = document.getElementById('pdfDownlod')
+  exportPDFReport.addEventListener('click', async function() {
+   await generatePDF(); // Assuming generatePDF is a function without parameters
+});
   });
 
-  const exportButton = document.querySelector('#exportButton');
-    exportButton.addEventListener('click', () => {
-      generatePDF();
+ 
+
+  async function generatePDF() {
+  try {
+    // Get selected days
+    const selectedDays = Number(document.getElementById('selectionButton').value);
+
+    // Fetch data for the selected days
+    const url = `/admin/adminPanel?selectedDays=${encodeURIComponent(selectedDays)}`;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
     });
+
+    if (response.ok) {
+      const sales = await response.json();
+
+      // Prepare data for the PDF report
+      const reportDetails = {
+        totalSales: sales.salesData,
+        totalRevenue: sales.revenueData
+        // Add more data as needed
+      };
+
+      // Send data to the server to generate the PDF
+      const pdfUrl = 'http://localhost:8080/admin/adminPanel/pdfReport';
+      const pdfResponse = await fetch(pdfUrl, {
+        method: 'POST',
+        body: JSON.stringify({ reportDetails: reportDetails }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (pdfResponse.ok) {
+        // Download the generated PDF
+        const blob = await pdfResponse.blob();
+        const downloadLink = document.createElement('a');
+        downloadLink.href = window.URL.createObjectURL(blob);
+        downloadLink.download = `Luxicart-Sale-Report.pdf`;
+        downloadLink.click();
+      } else {
+        console.error('Error generating PDF:', pdfResponse.statusText);
+      }
+    } else {
+      console.error('Error fetching data:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+   
+
+      
+    
+
+    
+   
+  
+
+  
+
+
+
+   
+  
+
+
+
 
   async function fetchAndUpdateCharts() {
     try {
@@ -198,49 +284,8 @@
 
  
 
-  async function generatePDF() {
-    const doc = new PDFDocument();
-    doc.pipe(blobStream());
+ 
 
-    // Add content to the PDF
-    doc.font('Helvetica-Bold').fontSize(18).text('Dashboard Export', { align: 'center' });
-    doc.moveDown();
-
-    // Add data from the dashboard
-    doc.font('Helvetica').fontSize(12).text(`Total Sales: ₹ ${salesData}`);
-    doc.font('Helvetica').fontSize(12).text(`Total Revenue: ₹ ${revenueData}`);
-    doc.font('Helvetica').fontSize(12).text(`User Count: ${userCount}`);
-    doc.moveDown();
-
-    // Add charts as images to the PDF
-    const totalSalesChartImage = await getChartImage('myTotalSalesChart');
-    const revenueChartImage = await getChartImage('myChart');
-    const userCountChartImage = await getChartImage('userCountChart');
-    const mostSoldChartImage = await getChartImage('mostSoldChart');
-
-    doc.image(totalSalesChartImage, { width: 400 });
-    doc.moveDown();
-
-    doc.image(revenueChartImage, { width: 400 });
-    doc.moveDown();
-
-    doc.image(userCountChartImage, { width: 400 });
-    doc.moveDown();
-
-    doc.image(mostSoldChartImage, { width: 400 });
-    doc.moveDown();
-
-    // Finalize the PDF
-    doc.end();
-
-    // Save the PDF or open in a new window
-    const blob = await blobStream.toBlob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'dashboard_export.pdf';
-    a.click();
-  }
 
   async function getChartImage(canvasId) {
     const canvas = document.getElementById(canvasId);
@@ -253,6 +298,36 @@
 </script>
 
 
+<script>
+  // const exportPDFReport = document.getElementById('pdfDownlod')
+  // exportButton.addEventListener("click", function(){
+  //   const reportDetails = {
+  //     totalSales : '<%= salesData %>',
+  //     totalRevenue : '<%=  revenueData %>'
+
+  //   }
+  //   const url = 'http://localhost:8080/admin/adminPanel/pdfReport'
+  //   fetch(url, {
+  //     method : 'POST',
+  //     body : JSON.stringify({ reportDetails : reportDetails}),
+  //     headers: {
+  //                'Content-Type': 'application/json',
+  //                 },
+  //   })
+  //   .then(response=> response.blob())
+  //   .then(blob => {
+  //     const downloadLink = document.createElement('a');
+  //               downloadLink.href = window.URL.createObjectURL(blob);
+  //               downloadLink.download = `Luxicart-Sale Report.pdf`
+  //               downloadLink.click()
+
+  //   })
+  //   .catch(error => {
+  //               console.error('Error:', error);
+  //           });
+
+  // })
+  
 </script>
 
 

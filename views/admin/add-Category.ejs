@@ -40,22 +40,18 @@
               <label for="product-image" class="form-label">Photo</label>
   <!--.............................................................................-->
   <div class="col-md-12">
-      <div class="col-md-12">
-          <div class="btn-container text-center mt-3">
-              <span>
-                  <i class="fa-solid fa-image fa-4x" style="color: #f35800; " ></i>
-              </span>
-             
-              <p>Click to add an image</p>
-              <span class="upload-btn-wrapper">
-                  <label class="btn" for="fileup" style="background: #f35800; color: #ffffff; " >Add Image</label>
-                  <input type="file" name="image" id="fileup" accept="image/*">
-              </span>
-              
-          </div>
-          <!--<button type="submit">Add Product</button> -->
+    <div class="col-md-12">
+      <div class="btn-container text-center mt-3">
+        <span>
+          <i class="fa-solid fa-image fa-4x" style="color: #f35800; "></i>
+        </span>
+        <p>Click to add an image</p>
+        <span class="upload-btn-wrapper">
+          <label class="btn" for="fileup" style="background: #f35800; color: #ffffff; ">Add Image</label>
+          <input type="file" name="image" id="fileup" accept="image/*" onchange="displayImage()">
+        </span>
       </div>
-      
+    </div>
   </div>
           </div>
           <div class="col-7 mx-auto">
@@ -74,8 +70,15 @@
         </div>
           </div>
         </form>
+        
       
   
+      </div>
+
+      <div id="image-preview" class="mt-3">
+        <!-- Display uploaded and cropped image here -->
+        <img id="preview" src="#" alt="Uploaded Image">
+        <input type="hidden" name="croppedImage" id="croppedImage" value="">
       </div>
 
 
@@ -97,6 +100,23 @@ msg.style.display = "none"
 }, 3000)
 }
 }
+
+
+function displayImage() {
+  var input = document.getElementById('fileup');
+  var preview = document.getElementById('preview');
+
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+
+    reader.onload = function (e) {
+      preview.src = e.target.result;
+
+      // Initialize Cropper.js
+    } 
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
 window.onload= userhidemsg;
 </script>
-

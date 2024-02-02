@@ -95,36 +95,34 @@
 
   </main>
 
+  
   <script>
-    document.addEventListener('DOMContentLoaded', async()=>{
-      console.log("hai");
-      const removeButtons = document.querySelectorAll('.removeButton');
-      removeButtons.forEach(removeButton => {
-      removeButton.addEventListener('click', async () => {
-        const itemId = removeButton.getAttribute('data-product-id');
-        const url = `http://localhost:8080/cart/wishlist/removeItem/${itemId}`;
-        
-        try {
-          const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
+    document.addEventListener('DOMContentLoaded', async () => {
+  console.log("hai");
+  const removeButtons = document.querySelectorAll('.removeButton');
+  removeButtons.forEach(removeButton => {
+    removeButton.addEventListener('click', function  ()  {
+      const itemId = removeButton.getAttribute('data-product-id');
+      const url = `http://localhost:8080/cart/wishlist/removeItem/${itemId}`;
 
-          if (response.ok) {
-            console.log('Item removed successfully');
-            location.href = '/cart/wishlist'
-            // Optionally, you can update the UI or perform other actions.
-          } else {
-            console.error('Failed to remove item from wishlist');
-          }
-        } catch (error) {
-          console.error('Error removing item from wishlist:', error);
-        }
-      });
+      $.ajax({
+  url: url,
+  method: "post",
+  data: { itemId: itemId },
+  success: (response) => {
+      // Log the response to the console
+    if (response.success) {
+      location.href = '/cart/wishlist';
+    }
+  }
+});
+
+
+
     });
   });
+});
+
 </script>
 
 <%-include("../layout/userFooter.ejs")-%>

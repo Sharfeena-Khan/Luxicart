@@ -7,7 +7,7 @@
             <img class="ms-0 ps-0" src="/assests/registerPage-image.png" alt="" width="1050px">
         </div>
         
-        <div class="col-8  ms-5 mt-5 pt-2  "  >
+        <div class="col-8  ms-5    "  >
           <div class="ms-5">
             <%
                                     if(typeof message !== 'undefined'){
@@ -18,10 +18,21 @@
                                     %>
           </div>
             <form action="/verify-otp" method="post" >
-                <div class="form-group col-6 mb-3 ms-5  " style="padding-top:80px; ">
-                  <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" required>
+
+              <div class="form-group col-6  ms-5  " style="padding-top:150px; ">
+                <input type="text" name="name" class="form-control" id="exampleInputName"  placeholder="Enter your name" required>
+              </div>
+
+              <div class="d-flex col-6 gap-3 mt-1">
+                <div class="form-group  mb-3 ms-5  mt-3 " >
+                  <input type="email" name="email" class="form-control " id="exampleInputEmail1" aria-describedby="emailHelp"  style="width: 226px;" placeholder="Enter your email" required>
                 </div>
-                <div class="form-group col-6 ms-5">
+                <div class="form-group  mb-3  mt-3" >
+                  <input type="tel" name="mobile" class="form-control " style="width: 226px;" id="exampleInputName" placeholder="Your Mobile number" required>
+                </div>
+              </div>
+                
+                <div class="form-group col-6 ms-5 mt-2">
                   <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="Password" required>
                 </div>
                 <div class="ms-5 ps-3" style="padding-top:50px;">

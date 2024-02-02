@@ -77,6 +77,12 @@ app.use("/admin/adminPanel/category", CategoryRouter)
 
 
 
+//-------------------------- COUPON-ROUTERS  -----------------
+
+const CouponRouter = require("./routes/couponRouter")
+app.use("/admin/adminPanel/coupon" , CouponRouter)
+
+
 //-------------------------- PRODUCT-ROUTERS  -----------------
 
 const ProductRouter = require("./routes/productRouter")

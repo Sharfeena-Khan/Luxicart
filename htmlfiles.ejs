@@ -191,3 +191,23 @@
 
 
 <!-- const url = `http://localhost:8080/admin/adminPanel?selectedDays=${encodeURIComponent(selectedDays)}`; -->
+
+
+
+
+function conformUnlist(Id) {
+  $.ajax({
+    type: 'DELETE',
+      url: '/admin/adminPanel/category/softDel-category', 
+      data: { Id: Id },
+      success : (response)=>{
+        location.href = '/admin/adminPanel/category'
+
+      }
+  })
+}
+
+
+
+<button id="delButton"  onclick="softDeleteCategory('<%= category._id %>')" class=" btn softDel"><i class="fa fa-trash ms-4" style="color: #4a5153;" aria-hidden="true"></i></a> </td>
+                    

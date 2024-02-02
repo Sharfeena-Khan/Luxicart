@@ -3,6 +3,11 @@ const { Cart } = require("../models/cartModel")
 const Product = require("../models/productModel")
 const { User, UserAddress} = require("../models/userModels")
 
+const pdfkit = require('pdfkit');
+const fs = require('fs');
+
+const mongoose = require('mongoose');
+
 
 const Razorpay = require('razorpay');
 
@@ -20,10 +25,62 @@ const RazorpayInstance = new Razorpay({
 
 
 const userOrderList = async(req,res)=>{
-    const userAuthenticated = req.session.user
-    const userId = req.session.user_id;
-    const orderData = await Order.findOne({ user_id: userId })
-   // console.log(orderData);
+  console.log("********************************  Order List Page    ----------------------------------");
+    
+  const userId = req.session.user_id;
+  const userAuthenticated = await User.findById(userId)
+    
+    
+    let orderData = await Order.findOne({ user_id: userId });
+
+    if(orderData){
+      for (const orderItem of orderData.items) {
+        const orderPlacedDate = new Date(orderItem.orderPlaced); // convert orderPlaced to a Date object
+        const currentDate = new Date();
+        console.log("------------------------------    order  ---------", orderPlacedDate);
+        
+        let productStatus = orderItem.orderStatus;
+        let deliveryDdate = orderItem.deliveryDate
+        
+        deliveryDdate.setDate(orderPlacedDate.getDate() + 3);
+        console.log("************   Delivey   *******************", deliveryDdate);
+      if(productStatus !== "Canceled"){
+        if(productStatus !== "Returned" ){
+          if (currentDate.getDate() >= orderPlacedDate.getDate() + 3  ) {
+            productStatus = 'Delivered';
+          console.log("1");
+        } else if (currentDate.getDate() >= orderPlacedDate.getDate() +2) {
+           productStatus = 'On the Way';
+           console.log("2");
+        } else if (currentDate.getDate() >= orderPlacedDate.getDate() +1) {
+           productStatus = 'Shipped';
+           
+        } else if (currentDate.getDate() === orderPlacedDate.getDate()) {
+          productStatus = "Order Confirmed";
+          
+        }
+        console.log("===================================",productStatus);
+        // Update the productStatus in the database if needed
+        orderItem.orderStatus = productStatus;
+        orderItem.deliveryDate = deliveryDdate
+      }
+      }
+
+      }
+     
+      
+      // Save the changes to the database
+      await orderData.save();
+      
+
+    }
+
+   
+    
+                   
+
+
+  //  console.log(orderData);
     res.render("orderList" ,  {title : "Luxicart- Order List" , userAuthenticated, orderData})
 }
 
@@ -33,8 +90,9 @@ const userOrderList = async(req,res)=>{
 const getConformed =async (req,res) =>{
     try {
       console.log("getting page conformed");
-        const userAuthenticated = req.session.user;
+        
         const userId = req.session.user_id;
+        const userAuthenticated = await User.findById(userId)
         const addressId = req.body.addressRadio;
         const userAddresses = await UserAddress.findOne({ user_id: userId });
         
@@ -99,19 +157,19 @@ const Payment = async (req, res) => {
 
     if (cart && cart.products.length > 0) {
       console.log("Adding to order Db");
-      let deliveryDate = new Date();
+      // let deliveryDate = new Date();
       let orderPlacedDate = new Date()
-      deliveryDate.setDate(deliveryDate.getDate()+1 ); // Set deliveryDate to tomorrow
+      // deliveryDate.setDate(orderPlacedDate.getDate()+3 ); // Set deliveryDate to tomorrow
 
       for (const cartProduct of cart.products) {
         const product = await Product.findOne({ _id: cartProduct.product_id });
+        let productStatus ="Order Confirmed"
 
-        let productStatus = "Order Confirmed";
+        
+        console.log("-------------------  1   -----------------",productStatus);
+        const currentDate = new Date()
+        
 
-        if (product.status !== "Canceled") {
-          const currentDate = new Date();
-          productStatus = deliveryDate <= currentDate ? "Delivered" : "Order Placed";
-        }
        
 
         let newOrder = {
@@ -123,14 +181,14 @@ const Payment = async (req, res) => {
           size: cartProduct.size,
           quantity: cartProduct.quantity,
           orderStatus: productStatus,
-          deliveryDate :deliveryDate,
+          // deliveryDate :deliveryDate,
           paymentMode : radio,
           orderPlaced : orderPlacedDate
         };
         
-
+       
         orderData.items.push(newOrder);
-
+        console.log("------------------  3  ------------------",orderData.items.productStatus);
       }
 
       await orderData.save();
@@ -140,6 +198,12 @@ const Payment = async (req, res) => {
       
    if(radio=== 'COD'){
     await Cart.findOneAndDelete({ _id: cart._id });
+    await User.findOneAndUpdate(
+      {_id : userId},
+      {$set :{ cart: []}},
+      {new: true}
+    )
+
       // console.log("cart is deleted");
 
     console.log("cod action");
@@ -162,6 +226,11 @@ const Payment = async (req, res) => {
     await Cart.findOneAndDelete({ _id: cart._id });
       // console.log("cart is deleted");
     //  console.log("razorpay Order Details : ", razorpayOrder);
+    await User.findOneAndUpdate(
+      {_id : userId},
+      {$set :{ cart: []}},
+      {new: true}
+    )
     res.json({razorpayOrder})
 
    } else if(radio==="wallet"){
@@ -353,6 +422,7 @@ const cancelOrder = async (req, res) => {
     const userId = req.session.user_id;
     const orderData = await Order.findOne({ user_id: userId });
     const productId = req.params.id;
+    console.log("-----------------cancel    ----------", productId);
     
     // Check if orderData exists and has orders
     if (orderData  && orderData.items && orderData.items.length > 0 ) {
@@ -365,6 +435,7 @@ const cancelOrder = async (req, res) => {
         // Update the status of the specific product
         orderData.items[productIndex].orderStatus = "Canceled";
         let itemPrice  = orderData.items[productIndex].price
+        let qty = orderData.items[productIndex].quantity
     console.log("Amount ",itemPrice);
 
        
@@ -373,20 +444,26 @@ const cancelOrder = async (req, res) => {
         await orderData.save();
 
         if(orderData.items[productIndex].orderStatus==="Canceled"){
-          
-          let userData = await User.findById(  userId  )
-          console.log("Before:", userData);
-          let walletAmount = userData.wallet + itemPrice
-          
-          userData = await User.findByIdAndUpdate(
-             userId,
-            {$set : {wallet : walletAmount }},
-            {new : true}
-          )
-          console.log("order Cancelled");
-           console.log(userData);
-           await userData.save()
+          if(orderData.items[productIndex].paymentMode!=='COD' ){
+            let userData = await User.findById(  userId  )
+            console.log("Before:", userData);
+            const totalPrice = itemPrice*qty
+            console.log("total Price---------------------------------->", totalPrice);
+            let walletAmount = userData.wallet + totalPrice 
+            
+            userData = await User.findByIdAndUpdate(
+               userId,
+              {$set : {wallet : walletAmount }},
+              {new : true}
+            )
+            console.log("order Cancelled");
+             console.log(userData);
+             await userData.save()
+  
 
+          }
+          
+         
           
           
           
@@ -410,6 +487,7 @@ const cancelOrder = async (req, res) => {
 
 const returnOrder = async (req, res)=>{
   try {
+    console.log("*********************         RETUrN BLOCK   ****************");
     const productId = req.params.id;
     console.log("productId" , productId);
     const userId = req.session.user_id;
@@ -417,10 +495,10 @@ const returnOrder = async (req, res)=>{
     // console.log(orderData);
     if (orderData  && orderData.items && orderData.items.length > 0 ) {
       // Find the index of the product in the items array
-      console.log(orderData);
+      // console.log(orderData);
       
       const productIndex = orderData.items.findIndex(item => item._id.toString() === productId);
- console.log(productIndex);
+ console.log("index : ",productIndex);
       if (productIndex !== -1) {
         // Update the status of the specific product
         orderData.items[productIndex].orderStatus = "Returned";
@@ -446,8 +524,90 @@ const returnOrder = async (req, res)=>{
 
 
 
+  // -----------------------------    COMPLETE ORDER DETAILS    ---------------------
   
+  const detailedPage = async(req,res)=>{
+    try {
+      console.log("------------------      ITEM ORDERED DETAILED VIEW    ------------------");
+      
+      const userId = req.session.user_id
+      const userAuthenticated = await User.findById(userId)
 
+      const itemId = req.params.id
+      console.log(itemId);
+      const orderData = await Order.findOne({user_id : userId})
+      
+       if(orderData && orderData.items && orderData.items.length >0){
+        // console.log(orderData);
+        const itemIndex = orderData.items.findIndex(item => item._id.toString() === itemId)
+        console.log(itemIndex+ " id : ", itemId);
+        if(itemIndex!== -1){
+          const itemData = orderData.items[itemIndex]
+          console.log("*******************       ITEM DATA      ******************" , itemData);
+          res.render("orderItemDetails" ,{ title:`Luxicart-Order Detail`, userAuthenticated, itemData, orderData })
+
+
+        }
+       }
+
+
+     
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+
+  const invoice = async (req, res) => {
+    try {
+        const { itemId, itemData } = req.body;
+        const total = (itemData.itemPrice*itemData.itemQuantity)+40
+      console.log("------------------------------------              INVOICE      -----------");
+        console.log(itemData);
+
+        // Generate PDF with PDFKit
+        const pdfDoc = new pdfkit();
+        pdfDoc.pipe(fs.createWriteStream(`invoice_${itemId}.pdf`));
+
+
+        // Add details to the PDF
+        pdfDoc.font('Helvetica-Bold'); // Set font to bold
+        pdfDoc.text(`Invoice for Item ID: ${itemId}`);
+        pdfDoc.font('Helvetica'); // Reset font to the default
+        if (itemData) {
+            pdfDoc.text(`Item Name: ${itemData.itemName}`);
+            pdfDoc.text(`Size: ${itemData.itemSize}`);
+            pdfDoc.text(`Quantity: ${itemData.itemQuantity}`);
+            pdfDoc.text(`Price: Rs.${itemData.itemPrice}`);
+            pdfDoc.text(`Payment Method: Rs.${itemData.paymentMode}`);
+            pdfDoc.text(`Total Amount: Rs.${total}`);
+            
+            // Add more details as needed
+            // ...
+
+            // Add address details
+            if (Array.isArray(itemData.address)) {
+                itemData.address.forEach(adrs => {
+                    pdfDoc.text(`Address: ${adrs.name}, ${adrs.adrs}, ${adrs.landmark}, ${adrs.locality}, ${adrs.city}, ${adrs.state} - ${adrs.pincode}`);
+                });
+            } else if (itemData.address) {
+                pdfDoc.text(`Address: ${itemData.address.name}, ${itemData.address.adrs}, ${itemData.address.landmark}, ${itemData.address.locality}, ${itemData.address.city}, ${itemData.address.state} - ${itemData.address.pincode}`);
+            }
+        }
+
+        pdfDoc.end();
+
+        // Send the generated PDF as a response
+        // res.setHeader('Content-Type', 'application/pdf');
+        // res.setHeader('Content-Disposition', `attachment; filename=invoice_${itemId}.pdf`);
+
+        const pdfStream = fs.createReadStream(`invoice_${itemId}.pdf`);
+        pdfStream.pipe(res);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
   
 
 
@@ -462,5 +622,9 @@ module.exports = {
     returnOrder,
 
     // RazorOrder,
-    razorpayPaymentConfrm
+    razorpayPaymentConfrm,
+  
+    // item details
+    detailedPage,
+    invoice,
 }

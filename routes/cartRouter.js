@@ -55,6 +55,9 @@ cartRoute.use(session({
   cartRoute.get("/Wishlist/:id" , isBlocked, isLogin, cartController.AddWish)
   cartRoute.post("/wishlist/removeItem/:id", isBlocked, isLogin, cartController.removeWish)
 
+  // --------------------------------   COUPON    ----------------------
+  cartRoute.post("/applyCoupon", isBlocked, isLogin, cartController.applyCoupon)
+
   
 
  

@@ -4,10 +4,11 @@ const path = require('path');
 const multer = require('multer');
 const categoryRouter = express()
 
+const { isLogin, isLogout} = require("../middleware/adminAuth")
 
 
-categoryRouter.use(express.json())
-categoryRouter.use(express.urlencoded({extended:true}))
+categoryRouter.use(express.json({ limit: '50mb'}))
+categoryRouter.use(express.urlencoded({ limit: '50mb', extended: true }))
 
 
 
@@ -28,7 +29,8 @@ categoryRouter.use(session({
       cb(null, Date.now() + '-' + file.originalname); // Define the filename for the uploaded file
     },
   });
-  const upload = multer({ storage: storage })
+  // const storage = multer.memoryStorage()
+  const upload = multer({ storage: storage, limits: { fileSize: 50 * 1024 * 1024 } })
   
 
 
@@ -43,16 +45,20 @@ categoryRouter.use(session({
  
    categoryRouter.set('views',"./views/admin");
 
-   categoryRouter.use('/assets',express.static(path.join(__dirname,'public/assets')));
+   categoryRouter.use('/assets',express.static(path.join(__dirname,'public/assets/categoryUploads/cropped')));
 
 
    const categoryController = require("../controllers/categoryController")
 
 
-   categoryRouter.get("/" , categoryController.getCategory)
-   categoryRouter.get("/create-Category" , categoryController.getCreateCategory)
+   categoryRouter.get("/" ,isLogin, categoryController.getCategory)
+   categoryRouter.get("/create-Category" ,isLogin, categoryController.getCreateCategory)
    categoryRouter.post("/",upload.single('image'), categoryController.addCategory)
-
+   categoryRouter.get("/edit-category/:id" , isLogin, categoryController.editCategory)
+   categoryRouter.post('/updateCategory', isLogin, categoryController.updateCategory)
+   categoryRouter.post('/updateCategoryImage', isLogin , upload.single('main_IMG'), categoryController.updateImage)
+   categoryRouter.post('/unlist-category', isLogin, categoryController.unlistCategory)
+   categoryRouter.delete('/softDel-category', isLogin, categoryController.softDelete)
 
 
 

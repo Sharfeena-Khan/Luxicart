@@ -17,6 +17,12 @@ const productSchema = new mongoose.Schema({
         default: 0
 
     },
+    salePrice :{
+        type: Number,
+        required:true,
+        default: 0
+
+    },
      
     image: {
         type:String,
@@ -51,6 +57,16 @@ const productSchema = new mongoose.Schema({
     },
     sku : {
         type : Number
+    },
+    active :{
+        type : Boolean , 
+        required : true,
+        default :true
+    },
+    isDelete :{
+        type : Boolean , 
+        required : true,
+        default :false
     }
         
 

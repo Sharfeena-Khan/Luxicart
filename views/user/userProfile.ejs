@@ -48,6 +48,7 @@
     <div class="content ">
       <div class="row">
         <div class="container  mb-5"> 
+          
 
           <div class="mb-3  text-center d-flex">
             <div>
@@ -81,8 +82,8 @@
           </div>
          <div class="mb-3 col-6 gap-4 d-flex">
             
-            <input type="text" class="form-control" id="productName" name="Fname" placeholder="<%= userData.FirstName %>" disabled>
-            <input type="text" class="form-control" id="productName" name="Lname" placeholder="<%= userData.LastName %>" disabled>
+            <input type="text" class="form-control" id="productName" name="Fname" placeholder="<%= userData.Name %>" disabled>
+            <!-- <input type="text" class="form-control" id="productName" name="Lname" placeholder="<%= userData.LastName %>" disabled> -->
             
           </div>
           <h6 class="pt-3">  Your Gender</h6>
@@ -126,7 +127,39 @@
 
           </div>
 
+          <div class="mb-3 col-6 gap-4 mt-5">
+            <form action="/changePassword" id="pswChngForm">
+            <div class="d-flex gap-3">
+              <div><h4 ><strong> Change Password</strong> </h4></div>
+              <div class="ms-auto"><button class="btn text-white" style="background: #f35800;"  id="saveButton">Save New Password</button></div>
+            </div>
+            <div class=" text-center fw-semibold fs-5 mb-3" style="color: #f35800;" id="errorContainer"></div>
+         
+           
+           
+            <div class="form-group col-6 ">
+              <input type="password" name="Curt" class="form-control" id="exampleInputPassword1" placeholder="Current Password" hidden required>
+            </div>
+              <div class="d-flex gap-3 mt-4">
+                
+                <div class="form-group col-6 ">
+                  <input type="password" name="Current" class="form-control" id="exampleInputPassword1" placeholder="Current Password"  required>
+                </div>
+                <div class="form-group col-6 ">
+                  <input type="password" name="newPsw" class="form-control" id="exampleInputPassword1" placeholder="New Password"  required>
+                </div>
+                <!-- <div class="form-group col-6 ">
+                  <input type="password" name="conformpassword" class="form-control" id="exampleInputPassword1" placeholder="Conform Password" required>
+                </div> -->
+    
+               </div>
 
+            </form>
+          
+           
+            
+             
+          </div>
 
         </div>
 
@@ -144,7 +177,35 @@
 
 
 
+<script>
+  document.addEventListener('DOMContentLoaded' , ()=>{
+    $('#pswChngForm').submit((e)=>{
+      e.preventDefault()
+      const newPswd = document.getElementById('Password2')
+      const saveButton = document.getElementById('saveButton')
+      
+      $.ajax({
+        url :'/changePassword',
+        method : 'post',
+        data : $('#pswChngForm').serialize(),
+        success : (response)=>{
+          if(response.success){
+            alert("Password updated successfully")
+            window.location.href = "/userProfile";
+          }
+          else{
+            const errorContainer = document.getElementById('errorContainer');
+            errorContainer.innerHTML = response.errors.join('<br>');
+            setTimeout(() => {
+            errorContainer.innerHTML = '';
+          }, 3000);
 
+          }
+        }
+      })
+    })
+  })
+</script>
 
 
 

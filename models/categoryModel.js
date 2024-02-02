@@ -11,23 +11,22 @@ const categorySchema = new mongoose.Schema({
       required:true
      },
      
-     color:{
-        type : String,
-     },
+    
      image:{
         type : String,
         required:true
      },
-     
-     stock:{
-        type : Number,
-        default:0
+     active: {     // List & Unlist
+      type: Boolean,
+      default: true
      },
-     sold:{
-      type : Number,
-      default:0
-
-     } ,
+     isDelete :{   // soft Delete
+      type : Boolean , 
+      required : true,
+      default :false
+  }
+    ,
+    
      addedDate: {
        type: Date, 
        default: Date.now

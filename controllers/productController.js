@@ -1,5 +1,7 @@
 const Category = require("../models/categoryModel");
 const Product = require("../models/productModel");
+const path = require("path")
+const Sharp = require("sharp")
 
 const { body, validationResult } = require("express-validator");
 const flash = require("express-flash");
@@ -23,7 +25,7 @@ const getAddProduct = async (req, res) => {
   try {
     console.log("Adding page");
     const error = validationResult(req);
-    const categories = await Category.find();
+    const categories = await Category.find({active : true});
     res.render("add-Product", {
       title: `Luxicart-Add Products`,
       categories,
@@ -42,6 +44,7 @@ const insertProduct = async (req, res) => {
     name,
     discription,
     price,
+    salePrice,
     discountType,
     percentage,
     SKU,
@@ -50,6 +53,8 @@ const insertProduct = async (req, res) => {
     status,
   } = req.body;
 
+  const { path: originalImagePath } = req.file;
+
   console.log(req.file);
   console.log(req.body);
 
@@ -57,6 +62,7 @@ const insertProduct = async (req, res) => {
   const trimName = name.trim();
   const trimDescription = discription.trim();
   const trimPrice = price.trim();
+  const trimsalePrice = salePrice.trim();
   const trimSKU = SKU.trim();
   const trimQty = qty.trim();
 
@@ -64,6 +70,7 @@ const insertProduct = async (req, res) => {
     !trimName.replace(/\s/g, "").length ||
     !trimDescription.replace(/\s/g, "").length ||
     !trimPrice.replace(/\s/g, "").length ||
+    !trimsalePrice.replace(/\s/g, "").length ||
     !trimQty.replace(/\s/g, "").length ||
     !trimSKU.replace(/\s/g, "").length
   ) {
@@ -76,6 +83,10 @@ const insertProduct = async (req, res) => {
     body("name", "Name is required").notEmpty(),
     body("discription", "Description is required").notEmpty(),
     body("price")
+      .isNumeric()
+      .withMessage("Price must be a number")
+      .matches(/^\d*\.?\d+$/),
+    body("salePrice")
       .isNumeric()
       .withMessage("Price must be a number")
       .matches(/^\d*\.?\d+$/),
@@ -116,10 +127,16 @@ const insertProduct = async (req, res) => {
       res.render("add-Product", { title: `Luxicart-Products` });
     }
 
+    const croppedImagePath = path.join('./public/assests/productsUploads', Date.now() + '-cropped-' + req.file.originalname);
+    await Sharp(originalImagePath)
+     .resize({ width: 1000, height: 1500 })
+     .toFile(croppedImagePath);
+
     const product = new Product({
       name: name,
       description: discription,
       price: price,
+      salePrice : salePrice,
 
       image: req.file.filename,
 
@@ -179,6 +196,7 @@ const updateProduct = async (req, res) => {
       image,
       description,
       price,
+      salePrice,
       discountType,
       percentage,
       SKU,
@@ -195,6 +213,7 @@ const updateProduct = async (req, res) => {
     const trimName = name.trim();
     const trimDescription = description.trim();
     const trimPrice = price.trim();
+    const trimsalePrice = salePrice.trim();
     const trimSKU = SKU.trim();
     const trimQty = Qty.trim();
 
@@ -205,6 +224,10 @@ const updateProduct = async (req, res) => {
         .isNumeric()
         .withMessage("Price must be a number")
         .matches(/^\d*\.?\d+$/),
+      body("salePrice")
+      .isNumeric()
+      .withMessage("Price must be a number")
+      .matches(/^\d*\.?\d+$/),
       body("discountType").notEmpty().withMessage("Discount Type is required"),
       body("percentage").isNumeric().withMessage("Percentage must be a number"),
       body("SKU").notEmpty().withMessage("SKU is required"),
@@ -239,6 +262,7 @@ const updateProduct = async (req, res) => {
       products.name = name;
       products.description = description;
       products.price = price;
+      products.salePrice = salePrice
 
       products.stock = Qty;
       products.category = category;

@@ -63,19 +63,74 @@
         <!--  -->
         <div class="mt-5">
           <h6> <strong> Pricing</strong></h6>
-          <label for="product-rice"  class="form-label">Base Price</label>
-          <input type="text" class="form-control" id="productPrice" name="price" value="<%= products.price %>">
+          <div class="container d-flex">
+           <div class="col-6 me-2">
+             <label for="product-rice"  class="form-label">Base Price</label>
+          <input type="text" class="form-control" id="productPrice" name="price"  value="<%= products.price %>">
           
+           </div>
+           <div class="col-6 me-2">
+             <label for="product-rice"  class="form-label">Sale Price</label>
+          <input type="text" class="form-control" id="productPrice" name="salePrice"  value="<%= products.salePrice %>">
+          
+           </div>
+          </div>
           <div class="container d-flex">
             <div class="col-6 me-2">
-             <label for="product-discountType" class="form-label mt-3">Discount Type</label>
+             <label for="product-discountType" class="form-label mt-3">Offer Type</label>
 <select class="form-select" name="discountType" aria-label="Default select example">
    <option value="" <% if (products.discountType === '') { %>selected<% } %>>Select</option>
-   <option value="1" <% if (products.discountType === '1') { %>selected<% } %>>Clearance Sale</option>
-   <option value="2" <% if (products.discountType === '2') { %>selected<% } %>>Season</option>
-   <option value="3" <% if (products.discountType === '3') { %>selected<% } %>>Free Shipping</option>
+   <option value="Clearence Sale" <% if (products.discountType === 'Clearence Sale') { %>selected<% } %>>Clearance Sale</option>
+   <option value="Season" <% if (products.discountType === 'Season') { %>selected<% } %>>Season</option>
+   <option value="Daily saver" <% if (products.discountType === 'Daily saver') { %>selected<% } %>>Free Shipping</option>
+   <option value="Nill" <% if (products.discountType === 'Nill') { %>selected<% } %>>Nill</option>
 </select>
 
+        
+            </div>
+            <div class="col-6 ms-2">
+              <label for="product-diacountPercentage"  class="form-label mt-3">Discount Percentage</label>
+              <select class="form-select" name="percentage" aria-label="Default select example">
+               <option value="" <% if (products.discountPercentage === '') { %>selected<% } %>>Select</option>
+               <option value="70" <% if (products.discountPercentage === '70') { %>selected<% } %>>70% or more</option>
+               <option value="60" <% if (products.discountPercentage === '60') { %>selected<% } %>>60% or more</option>
+               <option value="50" <% if (products.discountPercentage === '50') { %>selected<% } %>>50% or more</option>
+               <option value="40" <% if (products.discountPercentage === '40') { %>selected<% } %>>40% or more</option>
+               <option value="30" <% if (products.discountPercentage === '30') { %>selected<% } %>>30% or more</option>
+               <option value="0" <% if (products.discountPercentage === '0') { %>selected<% } %>>nill</option>
+           </select>
+           
+            </div>
+            
+          </div>
+        </div>
+        <!--  -->
+
+        <!-- <div class="mt-5">
+          <h6> <strong> Pricing</strong></h6>
+          <div class="container d-flex">
+           <div class="col-6 me-2">
+             <label for="product-rice"  class="form-label">Base Price</label>
+          <input type="text" class="form-control" id="productPrice" name="price"  value="<%= products.price %>">
+          
+           </div>
+           <div class="col-6 me-2">
+             <label for="product-rice"  class="form-label">Sale Price</label>
+          <input type="text" class="form-control" id="productPrice" name="salePrice"  value="<%= products.salePrice %>">
+          
+           </div>
+          </div>
+          <div class="container d-flex">
+            <div class="col-6 me-2">
+              <label for="product-discountType"  class="form-label mt-3">Offer Type</label>
+            <select class="form-select" name="discountType" aria-label="Default select example">
+              <option selected>Select</option>
+              <option value="Clearence Sale">Clearence Sale</option>
+              <option value="Season">Season</option>
+              <option value="Daily saver">Daily saver</option>
+              <option value="Nill">Nill</option>
+             
+            </select>
         
             </div>
             <div class="col-6 ms-2">
@@ -87,12 +142,16 @@
                <option value="3" <% if (products.discountPercentage === '3') { %>selected<% } %>>50% or more</option>
                <option value="4" <% if (products.discountPercentage === '4') { %>selected<% } %>>40% or more</option>
                <option value="5" <% if (products.discountPercentage === '5') { %>selected<% } %>>30% or more</option>
+               <option value="5" <% if (products.discountPercentage === '5') { %>selected<% } %>>30% or more</option>
            </select>
-           
+        
             </div>
             
           </div>
-        </div>
+        </div> -->
+
+
+        <!--  -->
         <div class="mt-5 mb-5 pb-5">
           <h6> <strong> Inventory</strong></h6>
           <div class="container d-flex">
@@ -134,9 +193,8 @@
             <label for="product-status"  class="form-label mt-3">Status</label>
             <select class="form-select" name="status" aria-label="Default select example">
              <option value="" <% if (!products.status) { %>selected<% } %>>Select</option>
-             <option value="Draft" <% if (products.status === 'Draft') { %>selected<% } %>>Draft</option>
-             <option value="Out of stock" <% if (products.status === 'Out of stock') { %>selected<% } %>>Out of stock</option>
-             <option value="Published" <% if (products.status === 'Published') { %>selected<% } %>>Published</option>
+               <option value="Out of stock" <% if (products.status === 'Out of stock') { %>selected<% } %>>Out of stock</option>
+             <option value="Available" <% if (products.status === 'Available') { %>selected<% } %>>Available</option>
          </select>
          
             

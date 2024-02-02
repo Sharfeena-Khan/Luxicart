@@ -16,15 +16,15 @@ const isLogin = async (req, res, next) => {
                     }
                 } else {
                     console.log("User is not Verified -------------------------------------");
-                    res.redirect('/login');
+                    res.redirect('/');
                 }
             } else {
                 console.log("No User Data -------------------------------------");
-                res.redirect('/login');
+                res.redirect('/');
             }
         } else {
             console.log("No User Session -------------------------------------");
-            res.redirect('/login');
+            res.redirect('/');
         }
     } catch (error) {
         console.log(error.message);

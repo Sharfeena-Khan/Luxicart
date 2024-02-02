@@ -3,12 +3,16 @@ const Product = require("../models/productModel")
 const {User} = require("../models/userModels")
 const { Payment, Order } = require("../models/orderModel")
 const Coupon = require("../models/coupon")
+const Banner = require("../models/bannerModel")
 
 
 
 const bcrypt = require('bcrypt');
 const { render } = require("ejs");
 const saltRounds = 10;
+
+const pdfkit = require('pdfkit');
+const fs = require('fs');
 
 
 
@@ -52,6 +56,7 @@ const getAdminPanel = async (req, res) => {
             $gte: startDate,
             $lt: endDate,
           },
+          'items.orderStatus': {$ne : "Canceled"}
         },
       },
       { $group: { _id: null, totalSales:  {$sum: {$multiply : ["$items.price" , "$items.quantity"]}} } },
@@ -62,7 +67,7 @@ const getAdminPanel = async (req, res) => {
     {$unwind : '$items'} , 
     {$match : {
       'items.orderPlaced':{ $gte: startDate, $lt: endDate,},
-      'items.paymentMode': {$ne : "COD"}
+      'items.orderStatus': {$eq : "Delivered"}
     }},
     {$group :{
       _id : null , 
@@ -125,12 +130,51 @@ const getAdminPanel = async (req, res) => {
 
 
 
+const salesPdfReport = async(req, res) =>{
+  console.log("*****************************    SALES REPORT    ********************");
+  try {
+    
+    const {reportDetails} = req.body;
+    console.log(reportDetails);
+
+     const pdfDoc = new pdfkit();
+        pdfDoc.pipe(fs.createWriteStream(`Sales Report.pdf`));
+
+
+        // Add details to the PDF
+        // pdfDoc.font('Helvetica-Bold'); // Set font to bold
+        // pdfDoc.text(`Invoice for Item ID: ${itemId}`);
+        // pdfDoc.font('Helvetica'); // Reset font to the default
+        if (reportDetails) {
+            pdfDoc.text(`Total Sales: ${reportDetails.totalSales}`);
+            pdfDoc.text(`Total Revenue: ${reportDetails.totalRevenue}`);
+            
+            // Add more details as needed
+            // ...
+
+            // Add address details
+           }
+        
+
+        pdfDoc.end();
+
+        // Send the generated PDF as a response
+        // res.setHeader('Content-Type', 'application/pdf');
+        // res.setHeader('Content-Disposition', `attachment; filename=invoice_${itemId}.pdf`);
+
+        const pdfStream = fs.createReadStream(`Sales Report.pdf`);
+        pdfStream.pipe(res);
+
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 
 const getAdmin = async (req, res)=>{
   //console.log("Admin");
   try {
-    if(req.session.user){
+    if(req.session.admin){
       res.redirect("/adminPanel")
     }else{
       res.render("adminLogin" ,{title:`Luxicart-Admin Login`, })
@@ -256,18 +300,36 @@ const orderMngmnt = async(req,res)=>{
   }
 }
 
-// ***********************    COUPON MANAGEMENT   ************************
-const couponPage = async(req, res)=>{
-  try {
-
-    const couponData = await Coupon.find()
-    res.render("couponList" , {title:`Luxicart-Coupons` ,couponData })
-    
-  } catch (error) {
-    console.log(error);
-  }
+// ***********************   BANNER MANAGEMENT   ************************
+const getBanner = async(req, res)=>{
+  console.log("------------------------------------------  BANNER LIST  ------------------");
+  const bannerImg = await Banner.find()
+  console.log(bannerImg);
+  res.render("banners" ,  {title:`Luxicart-Banner List` , bannerImg})
 }
 
+const uploadBannerImg = async(req,res)=>{
+  console.log("--------------------------   Uploading ----------");
+  try {
+    const { IMG } = req.file
+    console.log("IMG" , req.file);
+    let bannerData = await Banner.find();
+    console.log(bannerData);
+     bannerData = new Banner({
+      image : req.file.filename
+     })
+     const newBaner = await bannerData.save()
+     if(newBaner){
+      res.redirect("/admin/adminPanel/banner")
+     }
+
+   
+    
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+};
 
 
 
@@ -283,7 +345,11 @@ module.exports = {
   unblockUser,
   orderMngmnt,
 
-  couponPage
+  salesPdfReport,
+
+  getBanner,
+  uploadBannerImg
+
 
   
 

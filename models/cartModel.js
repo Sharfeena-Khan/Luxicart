@@ -25,11 +25,16 @@ const wishListSchema = new mongoose.Schema({
             },
            }]
 })
+
 const cartSchema = new mongoose.Schema({
    
     user_id :{
         type: ObjectId,
         
+    },
+    total: {
+        type: Number,
+         // Set a default value if needed
     },
     products : [
         {
@@ -54,8 +59,9 @@ const cartSchema = new mongoose.Schema({
                 default : 1
             },
             stock : {
-                type: Number
+                type : Number
             }
+            
         }
     ],
     

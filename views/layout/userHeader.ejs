@@ -88,16 +88,26 @@
                     <a class="nav-link mx-2 text-uppercase" href="/cart/wishlist">
                       <i class="fa-sharp fa-regular fa-heart me-1" 
                       style="color: #7a7a7a;">
-                      <!-- <span class="position-absolute  translate-middle badge rounded-pill  "
-                       style="background: #F35800; margin-top: -5px; width: 18px; height: 16px; font-size: 10px;">
-                        if()
                       
-                      </span>   -->
+                      <span class="position-absolute translate-middle badge rounded-pill"
+                      style="background: #F35800; margin-top: -5px; width: 18px; height: 16px; font-size: 10px;">
+                    <% if (userAuthenticated.wishList) { %>
+                        <%= userAuthenticated.wishList.length %>
+                    <% } %>
+                </span>
+                
                     </i>Wishlist  </a>
                   </li>
 
                   <li class="nav-item">
-                    <a class="nav-link mx-2 text-uppercase" href="/cart"><i class="fa-solid fa-cart-shopping me-1"></i> Cart</a>
+                    <a class="nav-link mx-2 text-uppercase" href="/cart"><i class="fa-solid fa-cart-shopping me-1">
+                      <span class="position-absolute translate-middle badge rounded-pill"
+                      style="background: #F35800; margin-top: -5px; width: 18px; height: 16px; font-size: 10px;">
+                    <% if (userAuthenticated.cart) { %>
+                        <%= userAuthenticated.cart.length %>
+                    <% } %>
+                </span>
+                    </i> Cart</a>
                   </li>
                   <!-- Display the "Account" button when the user is authenticated -->
                   <li class="nav-item">

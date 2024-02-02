@@ -88,10 +88,19 @@ const OrdersSchema = new Schema({
       img1: { type: String },
       size: { type: String },
       quantity: { type: Number },
+      orderPlaced : {type : Date,  },
       orderStatus: { type: String },
-      deliveryDate : { type : Date },
+      deliveryDate : { type : Date,
+        default: function () {
+          // Calculate default delivery date as 3 days after orderPlaced
+          const defaultDeliveryDate = new Date()
+          defaultDeliveryDate.setDate(defaultDeliveryDate.getDate() + 3);
+          return defaultDeliveryDate;
+        },required : true
+      },
+   
       paymentMode: { type: String,},
-      orderPlaced : {type : Date,  }
+     
     },
   ],
   

@@ -61,7 +61,7 @@ const homePage = async (req, res) =>{
     let userSession = req.session
     let userData = await User.findById(userId)
     // const userAuthenticated = req.session.user;
-    // console.log("Home Page **************************", userData);
+    console.log("Home Page **************************", userData);
 
     if(userData){
       console.log("check 1");
@@ -69,6 +69,7 @@ const homePage = async (req, res) =>{
         console.log("check 2 VErified");
         if(userData.status === 'Active'){
           console.log("check 3 Active");
+          console.log("*-*-*-*-*-*-*/-*************/////////////////////--------------------       ", userData);
           res.render("homePage" , { title:"Luxicart-Home" , userAuthenticated:userData, EthnicWear, black, CasualWear, OfficeWear, WeddingWear, westernWear, error: req.flash('error') })
          
 
@@ -84,8 +85,8 @@ const homePage = async (req, res) =>{
     }
   }else{
     console.log("check 5 no user case");
-    // res.render("homePage" , { title:"Luxicart-Home" , userAuthenticated :null, EthnicWear, black, CasualWear, OfficeWear, WeddingWear, westernWear, error: req.flash('error') })
-    res.redirect('/login')
+    res.render("homePage" , { title:"Luxicart-Home" , userAuthenticated :null, EthnicWear, black, CasualWear, OfficeWear, WeddingWear, westernWear, error: req.flash('error') })
+    // res.render('homePage')
   }
     // console.log("black products:", black);
     
@@ -140,7 +141,7 @@ const postLogin = async (req, res) => {
 
     if (userData) {
       const passwordMatch = await bcrypt.compare(password, userData.password);
-
+      // const passwordMatch = await User.findOne({password: password })
       if (passwordMatch) {
         if (userData.isVerified  ) {
           if (userData.status === "Active"){
@@ -163,10 +164,12 @@ const postLogin = async (req, res) => {
          else {
           res.render("loginPage", { title:"Luxicart-Login" , message: "OTP is not verified" , userAuthenticated: req.session.user});
         }
-      } else {
+      } 
+      else {
         res.render('loginPage', { title:"Luxicart-Login" , message: "Invalid User details" , userAuthenticated: req.session.user });
       }
-    } else {
+    } 
+    else {
       res.render('loginPage', { title:"Luxicart-Login" , message: "Invalid User details" , userAuthenticated: req.session.user});
     }
   } catch (error) {
@@ -203,7 +206,7 @@ const insertUser = async (req, res) => {
     try {
       console.log("-----------------------     test block     ---------------------");
       console.log("Any session1 : " , req.session);
-      const { email, password } = req.body;
+      const { email, password,mobile, name } = req.body;
   
       // Validate and sanitize email and password
       const errors = validationResult(req);
@@ -233,15 +236,16 @@ const insertUser = async (req, res) => {
     }
 
       const otp = generateRandomOTP();
-      //hash otp
-      // const hashedOTP = await bcrypt.hash(otp,saltRounds)
-  
+      
       // Hash the password
       const hashedPassword = await bcrypt.hash(password, saltRounds);
       console.log('Password:', password);
       const user = new User({
+        Name : name,
+        phone : mobile,
         email : email,
         password: hashedPassword,
+
         // isVerified:false,
         otp: otp,
         otpExpiration: Date.now() + 30000,
@@ -592,13 +596,15 @@ const insertUser = async (req, res) => {
       const userId = req.session.user_id
       const wishListData = await WishList.findOne({user_id : userId}).populate("products");
       const pdt_Id = req.params.id
-       const userAuthenticated = req.session.user
+      let userData = await User.findById(userId)
+      //  console.log("*-*-*-*-*-*-*/-*************/////////////////////--------------------       ",userAuthenticated);
 
       try {
         const product = await Product.findById(pdt_Id)
+        console.log("*-*-*-*-*-*-*/-*************/////////////////////--------------------       ",userData);
        
 
-        res.render("itemDisplay" , {title:`Luxicart-${product.name}` ,userAuthenticated , product,wishListData })
+        res.render("itemDisplay" , {title:`Luxicart-${product.name}` ,userAuthenticated : userData , product,wishListData })
        
         
       } catch (error) {

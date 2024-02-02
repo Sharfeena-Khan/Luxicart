@@ -1,7 +1,7 @@
 const {  Cart, WishList } = require("../models/cartModel")
 const Product = require("../models/productModel")
 const { User , UserAddress } = require("../models/userModels")
-
+const Coupon = require("../models/coupon")
 
 const mongoose = require('mongoose');
 
@@ -19,6 +19,7 @@ const dotenv = require("dotenv")
 dotenv.config()
 
 const Razorpay = require('razorpay');
+// const { default: products } = require("razorpay/dist/types/products");
 
 
 const RazorpayInstance = new Razorpay({
@@ -27,26 +28,58 @@ const RazorpayInstance = new Razorpay({
   });
 
 
-const getCart = async (req, res) => {
+  const getCart = async (req, res) => {
     try {
+        console.log("===========================    CART PAGE   ========================");
         const userAuthenticated = req.session.user;
-        const userId = req.session.user_id;
-
-       
-
+        
+        const userId = req.session.user_id; 
+        const userData = await User.findById(userId)      
         const userAddresses = await UserAddress.findOne({ user_id: userId });
-        // console.log("address : ", userAddresses);
-        // Use findOne instead of findById to handle null case
         const cartData = await Cart.findOne({ user_id: userId });
-        const totalPrice = cartData ? calculateTotalWithDelivery(cartData.products, 40) : 40;
 
-        res.render("cart", { title:`Luxicart-Cart`,  userAuthenticated, cartData, totalPrice,calculateTotalPrice, calculateTotalItemsCount , userAddresses, error: req.flash('error') });
+        const productIds = cartData.products.map(product => product.product_id);
+        const productsInCart = await Product.find({ _id: { $in: productIds } }, 'stock');
+        const productStockMap = new Map(productsInCart.map(product => [product._id.toString(), product.stock]));
+
+
+
+        const totalPrice = cartData ? calculateTotalWithDelivery(cartData.products, 40) : 0;
+        const currentDate = new Date();
+        const couponData = await Coupon.find();
+        // console.log("=============================   coupons ============" , couponData);
+        let availableCoupon = [];
+
+        if (couponData) {
+            availableCoupon = await Coupon.find({ minAmount : {$lte : totalPrice}, expireDate : {$gte : currentDate } });
+        }
+        // console.log("---------------------------------------------------------------------------", availableCoupon);
+      const newOne =  await Cart.findOneAndUpdate(
+        {user_id : userId },
+        {$set :{total : totalPrice}},
+        {upsert : true, new : true}
+       )
+       console.log("*-*-*-*-*-*-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*",  newOne);
+
+        res.render("cart", { 
+            title: `Luxicart-Cart`,  
+            userAuthenticated: userData, 
+            cartData, 
+            totalPrice, 
+            calculateTotalPrice, 
+            calculateTotalItemsCount, 
+            userAddresses, 
+            error: req.flash('error'), 
+            couponData, 
+            availableCoupon,
+            productStockMap
+        });
     } catch (error) {
         console.log(error);
-        // Flash an error message or handle the error appropriately
-        res.redirect("/error"); // Redirect to an error page or handle as needed
+        res.redirect("/error");
     }
 };
+
 
 const calculateTotalItemsCount = (products) => {
    
@@ -71,16 +104,42 @@ const calculateTotalWithDelivery = (products, deliveryCharge) => {
 
   
 
-  const addtoCart = async (req, res) => {
-    const total = req.body.total
-   
+const addtoCart = async (req, res) => {
+    const total = req.body.total;
     const pdt_Id = req.params.id;
     const userAuthenticated = req.session.user;
     console.log("add to cart", pdt_Id);
 
     try {
         // Check if a cart already exists for the user
+        let userData = await User.findById(req.session.user_id );
+
+        if (!userData) {
+            // Handle case where user is not found
+            return res.status(404).send('User not found');
+        }
+
         let cart = await Cart.findOne({ user_id: req.session.user_id });
+
+        let product = await Product.findById(pdt_Id);
+        const prdtInCart = userData.cart.some(item => item.product_id.toString() == pdt_Id);
+        let currentStock = product.stock
+        console.log("current Stock before adding to cart " , currentStock);
+            currentStock = currentStock - req.body.qty
+            console.log("current Stock after adding to cart " , currentStock);
+
+        if (!prdtInCart) {
+            userData.cart.push({
+                product_id: pdt_Id,
+                name: product.name,
+                price: product.price,
+                image: product.image,
+                size: req.body.size,
+                quantity: req.body.qty,
+                stock :  currentStock
+            });
+            await userData.save();
+        }
 
         if (!cart) {
             // If no cart exists, create a new one
@@ -90,48 +149,46 @@ const calculateTotalWithDelivery = (products, deliveryCharge) => {
             });
         }
 
-        const existingProductIndex = cart.products.findIndex((product) => product.product_id == pdt_Id && product.size == req.body.size);
+        const existingProductIndex = cart.products.findIndex(
+            (product) => product.product_id == pdt_Id && product.size == req.body.size
+        );
 
-// console.log('existingProductIndex:', existingProductIndex);
+        if (existingProductIndex !== -1) {
+            // If the product is already in the cart, update the quantity
+            console.log('Updating existing product quantity');
+            cart.products[existingProductIndex].quantity += 1;
+        } else {
+            // If the product is not in the cart, add it
+            console.log('Adding new product to the cart:');
+            cart.products.push({
+                product_id: pdt_Id,
+                name: product.name,
+                price: product.price,
+                image: product.image,
+                size: req.body.size,
+                quantity: req.body.qty,
+                stock :  currentStock
+               
+            });
+        }
 
-if (existingProductIndex !== -1) {
-    // If the product is already in the cart, update the quantity
-    console.log('Updating existing product quantity');
-    cart.products[existingProductIndex].quantity += 1;
-} else {
-    // If the product is not in the cart, add it
-    const product = await Product.findById(pdt_Id);
-    console.log('Adding new product to the cart:');
-    // cart.Total_Amount = req.body.total
-    cart.products.push({
-        product_id: pdt_Id,
-        name: product.name, 
-        price: product.price,
-        image: product.image,
-        size: req.body.size,
-        quantity: req.body.qty,
-        stock: product.stock
-    });
-}
-
-// Save the updated cart
-const updatedCart = await cart.save();
-// console.log('Updated Cart:', updatedCart);
-
-        // -------------------------------------------------------
+        // Save the updated cart
+        const updatedCart = await cart.save();
 
         if (updatedCart) {
-            const id = updatedCart.products.product_id
-            const pdt =await Product.findOne(id)
-            // console.log("product  :" ,pdt);
-           
-                res.redirect("/cart");
-          
-        }
-        
-        
+            
+            console.log("************************************************", product);
+           let stock = product.stock
+                stock = stock - req.body.qty,
+                product = await Product.findByIdAndUpdate(pdt_Id,
+                {$set : {stock : stock}},
+                {new : true})
+                
+            console.log("---------------*-**********---------------    product  :" ,product);
+            // res.json({success: true})
 
-      
+            res.redirect("/cart");
+        }
     } catch (error) {
         console.log(error);
     }
@@ -142,19 +199,58 @@ const updatedCart = await cart.save();
 const delItem = async (req, res) => {
     console.log("delete");
     try {
-        const id = req.params.id;
+        console.log("------------------     Cart  Removing  ------------");
+        const { ObjectId } = require('mongoose').Types;
+        let id = req.params.id;
+        console.log("id from client side:  ",id);
+        id = new ObjectId(id)
         console.log(id);
+
+        let userData = await User.findOne({'cart.product_id': id})
+        console.log("------------------user befor ------------", userData);
+        if(userData){
+            userData = await User.findOneAndUpdate(
+                { 'cart.product_id': id},
+                { $pull : {cart:{  product_id: id}}},
+                {new :true}
+            )
+        }
+        console.log("------------------user after      ********************************************* ------------", userData);
+
+       
+        let updatedProduct = await Product.findOne({_id : id})
+        let prdctStock = updatedProduct.stock
+        console.log("product updated stock*******************" , prdctStock);
+   
         const data = await Cart.findOne(
-            { 'products._id': id },
+            { 'products.product_id': id },
             { 'products.$': 1 } // Projection to include only the matching product
           );
-         
-        console.log("item:", data);
+          
+        // const data = await Cart.findOne({user_id : req.session.user_id})
+         let cartQty = data.products[0].quantity
+        
+
+         prdctStock = prdctStock+cartQty
+        console.log("====================    item:   ",prdctStock);
         const result = await Cart.updateOne(
-  { 'products._id': id },
-  { $pull: { products: { _id: id } } }
-);
+                        { 'products.product_id': id },
+                         { $pull: { products: { product_id: id } } }
+                            );
+
+
 if(result){
+    
+    console.log("====================    After Cart delet:   ", prdctStock);
+      
+        updatedProduct = await Product.findOneAndUpdate(
+        {_id : id},
+        {$set : {stock : prdctStock}},
+        {new : true}
+    )
+    if(updatedProduct){
+        console.log("-----------------------------------------========================    ", updatedProduct);
+    }
     res.redirect("/cart")
 }
    
@@ -346,43 +442,204 @@ const saveAdrs = async(req, res,next)=>{
 
 // ----------------------------------       CHANGE QUANTITY     -----------------
 
-const changeQty = async (req, res) => {
-    const itemQty = req.body.quantity;
-    const id = req.body.productID;
-    const count = req.body.count;
-   // const stock = req.body.stock
-//    const objectId =  mongoose.Types.ObjectId.createFromHexString(id);
 
-    console.log(itemQty, "id : ", id, "stock:" );
+// const changeQty = async (req, res) => {
+//     // const newQuantity = parseInt(req.body.quantity, 10);
+//     // const productId = req.body.productID;
 
-    try {
-        const cart = await Cart.findOne({ 'products._id': id  });
-        // const stock = await cart.products({ 'products._id': id  },{stock:1})
-        let itemStock = await Product.findById(id)
-        console.log(itemStock);
-        if (cart) {
-            // console.log("hai" , stock);
-            console.log("Cart found:", cart);
+//     try {
 
-            const productIndex = cart.products.findIndex(product => product._id.toString() === id);
+//        const { productID, quantity, buttonValue} = req.body
+//        let newQty 
 
-            if (productIndex !== -1) {
+        
+//         console.log("---------------------------------  chng qty  -----------------------");
+//         // console.log("qty  :  ", newQuantity);
+//         // console.log(" prd id", productId);
+//         console.log("data: " ,req.body);
+//         let cart = await Cart.findOne({ 'products.product_id': productID });
+//         console.log("-----------------  cart  -----------------", cart);
+
+//         if (cart) {
+//             const productIndex = cart.products.findIndex(product => product.product_id.toString() === productID);
+//             console.log("hell0ooooooooooooooooooo" , productIndex);
+//             if (productIndex !== -1) {
+//                 // Update the quantity of the specific product
+//                 console.log("qnty on click" , quantity);
+//                 cart.products[productIndex].quantity = quantity;
+                
+//                 cart =await cart.save();
+//                 console.log("------------------new cart----------------" , cart);
 
                 
-              
-                // Update the quantity of the specific product
-                cart.products[productIndex].quantity = req.body.quantity;
-                await cart.save();
+//                 const productStock = await Product.findOne({_id : productID});
+//                 console.log("***************   product DB   ***************** /n" , productStock);
+//                 let currentStock = productStock.stock
+
+//                 console.log("***************   new  Quantity   *****************" , quantity);
+//                 if ( productStock.stock <=0 ) {
+//                     // Handle exceeding stock limit
+//                     console.log("iudhfdiuidjfif");
+//                     req.flash('warning', 'Quantity exceeds available stock');
+//                     return res.redirect("/cart");
+//                 } else{
+//                     console.log("*---------------------------  stock updating   -------------------  ");
+//                     let updatedProductDb
+//                     if(buttonValue ==-1){
+//                         // newQty = quantity + buttonValue
+//                         currentStock = currentStock+1
+//                          updatedProductDb= await Product.findOneAndUpdate(
+//                             {_id : productID},
+//                             {$set : {stock: currentStock} },
+//                             {new :true}
+//                         )
+
+//                     }else{
+//                         console.log("------------------",quantity);
+//                         currentStock = currentStock-1
+//                         // newQty = quantity + buttonValue
+//                         console.log(newQty);
+//                          updatedProductDb= await Product.findOneAndUpdate(
+//                             {_id : productID},
+//                             {$set : {stock: currentStock} },
+//                             {new :true}
+//                         )
+
+
+//                     }
+                   
+//                     console.log(updatedProductDb);
+//                     res.json({success:true})
+//                 }
+
+//                 // await cart.save();
+//                 // res.redirect("/cart");
+//             } else {
+//                 req.flash('error', 'Product not found in cart');
+//                 res.redirect("/cart");
+//             }
+//         } else {
+//             req.flash('error', 'Cart not found');
+//             res.redirect("/cart");
+//         }
+//     } catch (error) {
+//         console.error(error);
+//         req.flash('error', 'Internal Server Error');
+//         res.redirect("/cart");
+//     }
+// };
+
+const changeQty = async(req,res)=>{
+    try {
+
+        const { productID, quantity, buttonValue} = req.body
+        console.log("---------------------------------  chng qty  -----------------------");
+        console.log("data: " ,req.body);
+        let cart = await Cart.findOne({ 'products.product_id': productID });
+        console.log("----------------- Before cart  -----------------", cart);
+
+        if(cart){
+            const productIndex = cart.products.findIndex(product => product.product_id.toString() === productID);
+            console.log("Product Index------------------->  " , productIndex);
+            let productDetails = await Product.findOne({_id : productID});
+            console.log("***************  Before product DB   ***************** /n" , productDetails);
+            let currentStock = productDetails.stock
+            if (productIndex !== -1){
+                 
+                    console.log("*---------------------------  stock updating   -------------------  ");
+                    let updatedProductDb
+                    let updatedCart
+                  
+                    if(buttonValue==-1){ // cart qty decreasing
+
+                        if(quantity <1){
+                            res.json({success : false, error: 'Quantity should be atlest 1'})
+
+                        }else{
+                            console.log("-----------------  cart qty decresing   ----------- ");
+                        currentStock = currentStock+1
+                        updatedProductDb= await Product.findOneAndUpdate(
+                            {_id : productID},
+                            {$set : {stock: currentStock} },
+                            {new :true}
+                        )
+                         updatedCart = await Cart.updateOne(
+                            { 'products.product_id': productID },
+                            { $set: { 'products.$.quantity': parseInt(quantity),
+                            'products.$.stock': currentStock
+                         }}
+                        );
+                    
+                        if (updatedCart.nModified === 0) {
+                            // Handle the case where the cart was not found or the quantity wasn't updated
+                            return res.status(404).json({ success: false, error: 'Cart not found or quantity not updated' });
+                        }
+
+                        }
+
+                        
+
+
+                       
+
+
+                    } else { //cart qty Incresing
+                        if(productDetails.stock <=0){
+                            console.log("--------------------   out of stock   ------------");
+                            req.flash('warning', 'Quantity exceeds available stock');
+                            // return res.redirect("/cart");
+                            res.json({success : false, error: 'Quantity exceeds available stock'})
+                        }else{
+                            console.log("-----------------  cart qty Incresing   ----------- ");
+                        currentStock = currentStock-1
+                        updatedProductDb= await Product.findOneAndUpdate(
+                            {_id : productID},
+                            {$set : {stock: currentStock} },
+                            {new :true}
+                        )
+                        
+                        updatedCart = await Cart.updateOne(
+                            { 'products.product_id': productID },
+                            { $set: { 
+                                'products.$.quantity': parseInt(quantity),
+                                'products.$.stock': currentStock
+                             }}
+                        );
+                    
+                        if (updatedCart.nModified === 0) {
+                            // Handle the case where the cart was not found or the quantity wasn't updated
+                            return res.status(404).json({ success: false, error: 'Cart not found or quantity not updated' });
+                        }
+
+                        }
+
+                        
+                        
+                        
+
+                        
+
+                    }
+                    console.log("prdt DB after", updatedProductDb);
+                    console.log(("cart after update" , updatedCart));
+                    res.json({success:true, cart})
+                } else {
+                req.flash('error', 'Product not found in cart');
                 res.redirect("/cart");
             }
+         
+
         } else {
-            res.status(404).send("Product not found in cart");
+            req.flash('error', 'Cart not found');
+            res.redirect("/cart");
         }
+
+
+        
     } catch (error) {
-        console.error(error);
-        res.status(500).send("Internal Server Error");
+        console.log(error);
     }
-};
+}
 
 
 
@@ -392,8 +649,9 @@ const getAddressPage = async(req , res)=>{
     try {
 
         console.log("Reached Address Page");
-        const userAuthenticated = req.session.user;
+       
         const userId = req.session.user_id;
+        const userAuthenticated = await User.findById(userId)
 
         const userAddresses = await UserAddress.findOne({ user_id: userId });
         const cartData = await Cart.findOne({ user_id: userId });
@@ -462,8 +720,9 @@ const getAddressPage = async(req , res)=>{
 
 const getPaymentPage = async (req, res) => {
     try {
-        const userAuthenticated = req.session.user;
+        
         const userId = req.session.user_id;
+        const userAuthenticated = await User.findById(userId)
         const addressId = req.body.addressRadio;
         const user = await User.findById(userId)
         const userAddresses = await UserAddress.findOne({ user_id: userId });
@@ -519,10 +778,13 @@ const orderPlaced = async(req,res)=>{
 
 const getWishlist = async(req,res)=>{
     try {
-        const userAuthenticated = req.session.user;
         const userId = req.session.user_id;
+        
+        const user = await User.findById(userId)
+
+        
         const updatedWishlist = await WishList.findOne({user_id : userId})
-        res.render("wishList", { title: `Luxicart-Wishlist`, userAuthenticated, updatedWishlist });
+        res.render("wishList", { title: `Luxicart-Wishlist`, userAuthenticated : user, updatedWishlist });
         
     } catch (error) {
         console.log(error);
@@ -535,7 +797,35 @@ const AddWish = async (req, res) => {
         const pdt_Id = req.params.id;
         const userAuthenticated = req.session.user;
         const userId = req.session.user_id;
+        const user = await User.findById(userId);
+        if (!user) {
+            // Handle case where user is not found
+            return res.status(404).send('User not found');
+        }
         const product = await Product.findById(pdt_Id);
+        if (!product) {
+            // Handle case where product is not found
+            return res.status(404).send('Product not found');
+        }
+
+        const isProductInWishlist = user.wishList.some(item => item.product_id.toString() === pdt_Id);
+
+        if (isProductInWishlist) {
+            return res.render("itemDisplay", { title: `Luxicart-${product.name}`, userAuthenticated: user, product, message: "Already Added" });
+        } else {
+            // Add the product to the user's wishlist
+            user.wishList.push({
+                product_id: pdt_Id,
+                name: product.name,
+                category: product.category,
+                price: product.price,
+                image: product.image,
+            });
+
+            // Save the user document with the updated wishlist
+            await user.save();
+        }
+
 
         let wishListData = await WishList.findOne({ user_id: userId }).populate("products");
 
@@ -568,7 +858,7 @@ const AddWish = async (req, res) => {
         const updatedWishlist = await wishListData.save();
 
         if (updatedWishlist) {
-            return res.json({success : true})
+            return res.json({success : true, updatedWishlist})
             // return res.redirect(`/itemDisplay/${product._id}`);
         }
 
@@ -579,34 +869,123 @@ const AddWish = async (req, res) => {
     }
 };
 
-const removeWish =async(req,res)=>{
+
+
+const removeWish = async(req, res)=>{
+   try {
+    console.log("------------------Removing------------");
     const { ObjectId } = require('mongoose').Types;
-    try {
-console.log("------------------Removing------------");
-        let itemId = req.params
-        console.log("---------*-*-*-*-*-*-*-*-*-*", itemId);
-        itemId = new ObjectId(itemId); 
-        const userId = req.session.user_id;
-        console.log(itemId);
-
-        const wishData = await WishList.findOne({user_id: userId})
-        console.log(wishData);
-        if(wishData){
-            await WishList.updateOne(
-            {user_id : userId},
-            {$pull : {products :{ product_id : itemId}}}
-
+    let itemId = req.params
+    itemId = new ObjectId(itemId); 
+    const userId = req.session.user_id;
+    let userData = await User.findOne({ "wishList.product_id": itemId })
+    console.log("************* user Data ***********  ", userData);
+    let wishDB =await WishList.findOne({user_id : userId})
+    console.log("************* Wishlist Data ***********  ", wishDB);
+    if(userData){
+        userData = await User.findOneAndUpdate(
+            { "wishList.product_id": itemId },
+            {$pull : {wishList: {product_id: itemId}}},
+            {new : true}
             )
-           res.json(wishData)
-
-           }
-        
-        
-    } catch (error) {
-        console.log(error);
     }
+    console.log("*-*-*-*-*-*-*/-*************/////////////////////--------------------       ", userData);
+    if(wishDB){
+      wishDB =  await WishList.findOneAndUpdate(
+            {user_id : userId},
+            {$pull : {products : {
+                product_id : itemId
+            }}},
+            {new : true}
+
+        )
+    }
+   
+    
+            console.log("llllllllllllllllllllllllllllrrrrrrrrrrrrrrrrr");
+            res.json({success:true, wishDB})
+
+        
+    
+   } catch (error) {
+    console.log(error);
+    
+   } 
+
 }
 
+
+// ------------------------------------------- =========  Coupon Apply ======= --------------
+
+
+const applyCoupon = async (req, res) => {
+    try {
+        console.log("-------------------------------------------- =========  Coupon Apply ======= -----------------------------");
+        const selectedCoupons = req.body.coupons;
+        // console.log("Received request with body:", req.body);
+        // console.log("Selected Coupons:", selectedCoupons);
+        let discountPercentage
+        let allDiscountPercentages = [];
+        const couponData = await Coupon.find({ code: { $in: selectedCoupons } });
+
+        // Check if any coupons were found
+        if (couponData.length > 0) {
+            allDiscountPercentages = [];
+          // Iterate through each coupon in the array
+          couponData.forEach((coupon) => {
+             discountPercentage = coupon.Discount;
+             allDiscountPercentages.push(discountPercentage);
+            // Now you can use the discountPercentage variable for each coupon
+            console.log("------------------------             percentage : ", allDiscountPercentages);
+          });
+        
+
+        
+            const cartData = await Cart.findOne({ user_id: req.session.user_id });
+            // const totalPrice = cartData ? calculateTotalPrice(cartData.products) : 0;
+            const totalPrice = cartData.total
+            console.log(totalPrice,"******************************************************************");
+
+            // Apply the coupon discount to the total price
+            const discountedPrice = applyCouponDiscount(totalPrice, allDiscountPercentages);
+            if(discountedPrice){
+               const cartNew= await Cart.findOneAndUpdate(
+                    {user_id : req.session.user_id},
+                    {$set : {total : discountedPrice}},
+                    {upsert : true, new : true}
+                )
+                console.log(".....................................",cartNew);
+            }
+
+            console.log("Discounted Price:", discountedPrice);
+
+            res.json({ success: true, message: "Coupon applied successfully!" });
+        } else {
+            res.json({ success: false, message: "Invalid or expired coupon code!" });
+        }
+
+    
+
+       
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "Internal server error." });
+    }
+};
+
+// Function to apply the coupon discount
+function applyCouponDiscount(totalPrice, discountPercentages) {
+    let discountedPrice = totalPrice;
+  
+    // Apply each discount percentage to the total price
+    discountPercentages.forEach((discountPercentage) => {
+      const discountAmount = (discountPercentage / 100) * discountedPrice;
+      discountedPrice -= discountAmount;
+    });
+  
+    return discountedPrice;
+  }
+  
 
 
 
@@ -626,8 +1005,9 @@ console.log("------------------Removing------------");
 
     getWishlist,
     AddWish,
-    removeWish
+    removeWish,
 
+    applyCoupon
     
 
    

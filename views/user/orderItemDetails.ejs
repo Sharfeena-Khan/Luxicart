@@ -1,0 +1,159 @@
+<%-include("../layout/userHeader.ejs")-%>
+
+<header>
+    <!-- Sidebar -->
+    <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse " >
+      <div class="position-sticky"  style="margin-top: 100px; ">
+        <div class="list-group list-group-flush ms-5 mt-5" >
+          <a
+            href="/orderList"
+            class="list-group-item list-group-item-action py-2 ripple side" aria-current="true" style="color: #f35800; background: white;"
+            
+          >
+          <i class="fa-solid fa-box me-2" ></i><span>Order</span>
+          </a>
+          <a href="#" class="list-group-item list-group-item-action py-2 ripple side">
+            <i class="fa-regular fa-heart me-2" style="color: #f35800;"></i><span>Wishlist</span>
+          </a>
+          <a href="/userProfile" class="list-group-item list-group-item-action py-2 ripple side" 
+            ><i class="fa-solid fa-user me-2" style="color: #f35800;" ></i><span>Profile</span></a
+          >
+          <a href="/adrsPage" class="list-group-item list-group-item-action py-2 ripple side"
+            ><i class="fa-sharp fa-solid fa-map-location-dot me-2" ></i><span>Address</span></a
+          >
+          <a href="/wallet" class="list-group-item list-group-item-action py-2 ripple side">
+            <i class="fa-solid fa-wallet me-2" style="color: #f35800;"></i><span>Wallet</span>
+          </a>
+          <a href="/logout" class="list-group-item list-group-item-action py-2 ripple side">
+            <i class="fa-solid fa-arrow-right-from-bracket me-2" style="color: #f35800;"></i><span>Logout</span>
+          </a>
+          
+        </div>
+      </div>
+    </nav>
+    <!-- Sidebar -->
+  
+    <!-- Navbar -->
+  
+    <!-- Navbar -->
+</header>
+
+<main style="margin-top: 58px;">
+
+  <div class="content">
+      <div class="row">
+          <div class="container mb-5">
+              <h4 class="fw-bold pt-2 ps-4">Order Item Details</h4>
+              <div class="pt-3 col-9 pb-4" style="border: 1px solid #f359006c; 
+              box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.242); margin-bottom: 20px;">
+              <% if(itemData){ %>
+              <div class="d-flex gap-5 mx-3">
+                <div class=" ms-3">
+                    <h5 style="color: rgb(101, 101, 101);">Order ID : <span class="fw-bold" style="color: #f35800;">#<%= String(itemData._id).slice(0,8) %> </span></h5>
+                    <h5 style="color: rgb(101, 101, 101);">Place On     : <span class="fw-bold " style="color: #f35800;">
+                        <% 
+                        const orderDate = new Date(itemData.orderPlaced); 
+                        const formattedOrderDate = orderDate.toLocaleDateString();
+                    %>
+                    <%= formattedOrderDate %></h5>
+                </div>
+                
+                    <% if(itemData.orderStatus !== 'Canceled') { %>
+                        <div class="ms-auto me-5">
+                            <button id="invoice" data-item-id="<%= itemData._id %>" 
+                                class="btn text-white" style="background: #f35800;"><i class="fa fa-download px-2 fs-5" aria-hidden="true"></i>Invoice</button>
+                
+
+                        </div>
+
+                  <%  } %>
+                    
+              </div>
+              <hr class="col-11 mx-auto">
+              <div class="d-flex gap-5 mx-3 mt-4">
+                <div class="ms-3">
+                    <h3 class="fw-bold" style="color: #f35800;"><%= itemData.productName %></h3>
+                    <h6>Size : <%= itemData.size %></h6> 
+                    <h6>Qt : <%= itemData.quantity %> item</h6> 
+                    <h5 class="fw-bold fs-3" > ₹ <%= itemData.price %><span class="fs-6 fw-normal"> via (<%= itemData.paymentMode %>)</span></h5>
+                    <h6>Current Status : <span class="fs-4 fw-bold" style="color: #f35800;"><%= itemData.orderStatus %></span></h6>
+                    <h6 class="mt-4">Address :
+                        <% if (Array.isArray(orderData.address)) { %>
+                          <% orderData.address.forEach(adrs => { %>
+                            <div>
+                              <h5 class="ps-4 fw-bold"><%= adrs.name %></h5>
+                            </div>
+                          <% }); %>
+                        <% } else if (orderData.address) { %>
+                          <div class="ps-5" style="margin-top: -17px;">
+                            <h6 class="ps-4 fw-bold"><%= orderData.address.name %></h6>
+                            <h6 class=" ps-4 fw-semibold  text-body-tertiary"><%= orderData.address.adrs %>, </h6>
+                            <h6 class=" ps-4 fw-semibold text-body-tertiary"><%= orderData.address.landmark %>, <%= orderData.address.locality %>, <%= orderData.address.city %>,</h6>
+                            <h6 class=" ps-4 fw-semibold text-body-tertiary"><%= orderData.address.state %>-<%= orderData.address.pincode %>. </h6>
+                            <h6 class="pt-2 ps-4 fw-semibold text-body-tertiary">Mobile: <%= orderData.address.phoneNum %> </h6>
+
+                          </div>
+                        <% } %>
+                      </h6>
+                      
+
+                </div>
+                <div class="ms-auto me-5">
+                    <img src="/assests/productsUploads/<%= itemData.img1 %>" class="rounded-2 p-4" width="230px" height="auto" alt="Product Image">
+                          
+                </div>
+              </div>
+              
+
+              <% } %>
+              </div>
+          </div>
+      </div>
+  </div>
+</main>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", ()=>{
+        const invoiceButton =document.getElementById('invoice')
+        invoiceButton.addEventListener('click', function() {
+            
+            const itemId = this.getAttribute("data-item-id");
+
+            const itemDetails = {
+            itemName: '<%= itemData.productName %>',
+            itemSize: '<%= itemData.size %>',
+            itemQuantity: '<%= itemData.quantity %>',
+            itemPrice: '<%= itemData.price %>',
+            paymentMode: '<%= itemData.paymentMode %>'
+        };
+
+            const url = 'http://localhost:8080/orderList/itemDetails/invoice'
+            fetch(url, {
+                method :'POST',
+                body: JSON.stringify({ itemId: itemId, itemData: itemDetails }),
+                headers: {
+                 'Content-Type': 'application/json',
+                  },
+            })
+            .then(response => response.blob())  // Convert response to Blob
+            .then(blob => {
+                // Create a download link and trigger a download
+                const downloadLink = document.createElement('a');
+                downloadLink.href = window.URL.createObjectURL(blob);
+                downloadLink.download = `Luxicart-invoice_${itemId}.pdf`;
+                downloadLink.click();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+});
+</script>
+
+
+
+
+
+
+<%-include("../layout/userFooter.ejs")-%>

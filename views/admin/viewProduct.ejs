@@ -18,24 +18,26 @@
       </div>
         <table class="table" id="myTable">
             <colgroup>
-                <col style="width: 10px;" /> <!-- Column for the checkbox icon -->
-                <col style="width: 200px;" /> <!-- Column for Product -->
-                <col style="width: 50px;" /> <!-- Column for SKU -->
+                
+                <col style="width: 220px;" /> <!-- Column for Product -->
+                <col style="width: 40px;" /> <!-- Column for SKU -->
                 <col style="width: 90px;" /> <!-- Column for Category -->
-                <col style="width: 70px;" />  <!-- Column for Stock -->
+                <col style="width: 20px;" />  <!-- Column for Stock -->
+                <col style="width: 70px;" />  <!-- Column for Price -->
                 <col style="width: 70px;" />  <!-- Column for Price -->
                 <col style="width: 70px;" />  <!-- Column for Status -->
                
-                <col style="width: 30px;" /> <!-- Column for Action -->
+                <col style="width: 50px;" /> <!-- Column for Action -->
               </colgroup>
             <thead>
               <tr>
-                <th scope="col"><i class="fa-solid fa-square-check" style="color: #f35800;"></i></th>
+                
                 <th scope="col">Product</th>
                 <th scope="col">SKU</th>
                 <th scope="col">Category</th>
                 <th scope="col">Stock</th>
                 <th scope="col">Price</th>
+                <th scope="col">MRP</th>
                 <th scope="col">Status</th>
                 
                 <th scope="col">Action</th>
@@ -44,7 +46,7 @@
             <tbody>
               <% products.forEach(function(products) { %>
                 <tr>
-                  <th scope="row"><input type="checkbox"></th>
+                  
                   <td colspan="1">
                     <img src="/assests/productsUploads/<%= products.image %>" alt="" width="50" height="50" class="me-3">
                     <%= products.name %>
@@ -53,6 +55,7 @@
                   <td class="pt-3"><%= products.category%></td>
                   <td class="pt-3"><%= products.stock%></td>
                   <td class="pt-3">₹ <%= products.price%></td>
+                  <td class="pt-3">₹ <%= products.salePrice %></td>
                   <td class="pt-3"><%= products.status%></td>
                   
                   <td class="pt-3">

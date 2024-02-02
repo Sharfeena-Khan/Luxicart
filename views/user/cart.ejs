@@ -1,5 +1,7 @@
 <%-include("../layout/userHeader.ejs")-%>
 
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
 
 <section >
 
@@ -180,7 +182,7 @@
             <h5 class=""><strong><%= product.name %></strong></h5>
         
            
-            <button onclick="conformDelete('<%= product._id %>')" class="btn" style="margin-left: 20px;">
+            <button onclick="conformDelete('<%= product.product_id %>')" class="btn" style="margin-left: 20px;">
                 <i class="fa-regular fa-trash-can" style="color: #f35800; font-size: larger;"></i>
             </button>
         </div>
@@ -190,7 +192,29 @@
         
         <div class="quantity-input d-flex">
           <h6 class="pt-2">Qty:</h6>
-          <form action="/cart/update-quantity" id="myForm" method="post">
+
+
+          <!--  -->
+          
+          <div>
+            <a type="submit" class="quantity-button btn" value="-1" id="minusButton" data-productID="<%= product.product_id %>" >
+                <i class="fa-solid fa-square-minus h4" style="color: #f35800;"></i>
+            </a>
+        
+            <input type="number" style="border: 1px solid #f359007d; padding: 2px; width: 50px;" 
+                name="quantity" value="<%= product.quantity %>" min="1" max="<%= product.stock %>" id="currentQty">
+            <input type="hidden" value="<%= product.stock %>" name="stock"> 
+            <input type="hidden" value="<%= product.product_id %>" name="productID">
+        
+            <a type="submit" class="quantity-button btn" id="plusButton" value="1" data-productID="<%= product.product_id %>" >
+                <i class="fa-solid fa-square-plus h4" style="color: #f35800;"></i>
+            </a>
+        </div>
+
+
+          <!--  -->
+
+          <!-- <form action="/cart/update-quantity" id="myForm" method="post">
            
             <div>
               <button type="submit" class="quantity-button btn" onclick="decrementQuantity(this)">
@@ -200,13 +224,13 @@
             <input type="number" style="border: 1px solid #f359007d; padding: 2px; width: 50px;" 
                name="quantity" value="<%= product.quantity %>" min="1" max="<%= product.stock %>">
            <input type="hidden" value="<%= product.stock %>" name="stock"> 
-            <input type="hidden" value="<%= product._id %>" name="productID">
+            <input type="hidden" value="<%= product.product_id %>" name="productID">
             
             <button type="submit" class="quantity-button btn" onclick="incrementQuantity(this)">
                 <i class="fa-solid fa-square-plus h4" style="color: #f35800;"></i>
             </button>
             </div>
-          </form>
+          </form> -->
       </div>
     </div>
 </div>
@@ -225,6 +249,7 @@
 
     </div>
     <% if (cartData && cartData.products) { %>
+      <% cartData.products.forEach(item=> { %>
     <div class="col-5 "> 
       <div class="px-5  mx-5" style=" border: 1px solid #f359004d; box-shadow: 0px 4px 8px rgba(82, 82, 82, 0.1);">
 
@@ -233,17 +258,107 @@
        <span style="font-weight:600; color: rgb(176, 176, 176);">COUPONS</span> 
         <div class="d-flex ">
            <h6 class=""><strong>Apply Cuopons</strong></h6>
-           <button> APPLY</button>
+           <a style="color: #f35800; outline: 1px solid  #f35800; border-radius: 5px;"
+           type="button" class="ms-auto btn-outline-danger  px-3 py-1" 
+           data-bs-toggle="modal" data-bs-target="#couponModal">
+         APPLY
+         </a>  
         </div> 
-      </div> 
+      </div>  <!-- coupon modal --> 
+      <div class="modal fade" id="couponModal" tabindex="-1" aria-labelledby="couponModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="couponModalLabel"><strong>Apply Coupon</strong> </h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div>
+          <form action="/cart/applyCoupon" method="post" id="couponForm">
+            
+                <div class="modal-body">
+
+           
+                    <div class="container mx-4">
+                      
+                    <!-- <div class="d-flex gap-3 pe-3" >
+                      <input type="text" class="form-control" style="color:#7a7a7a">
+                      <button class="btn  " style="color: #f35800;">Check</button>
+                    </div> -->
+                    <div class=" pt-4 pe-3">
+                      Available Coupon
+                      <div>
+                          <% if(availableCoupon && availableCoupon.length > 0) { %>
+                              <ul class="list-group">
+                                  <% availableCoupon.forEach(coupon => { %>
+                                      <li class="list-group-item">
+                                          <input class="form-check-input me-1" type="checkbox" value="" id="selectedCoupon">
+                                          <label class="form-check-label" for="<%= coupon.code %>Checkbox"><%= coupon.code %></label>
+                                      </li>
+                                  <% }) %>
+                              </ul>
+                          <% } else { %>
+                              No Coupons are Available right now
+                          <% } %>
+                      </div>
+                      <hr class="" style="color:  #f35900d8 ;">
+                      <div class="text-secondary">
+                        <div class="col-12">More Coupons </div>
+                        <div>
+                          <% if(couponData && couponData.length > 0){ %>
+                            <ul>
+                              <% couponData.forEach(coupon=> { %>
+                                <li class="list-group-item">
+                                  <h6><%= coupon.code %></h6>
+                              </li>
+
+                              <% }) %>
+
+                            </ul>
+                            <% } else { %>
+                              No Coupons are Available right now
+                          <% } %>
+                        </div>
+                      </div>
+                  </div>
+                  
+                  
+        
+        
+                    </div>
+                
+        
+        
+                 
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                  <button id="couponApply" class="btn " style="background: #f35800; color: white;"
+                   data-couponID="some_coupon_id">Apply</button>
+                
+                
+                </div>
+
+            
+        </div>
+       
+        
+      </div>
+    </div>
+  </div>
+      <!-- coupon modal ends  -->
+
      
       <div class="mt-5 ">
         <span style="font-weight:600; color: rgb(155, 153, 153);"> PRICE DETAILS</span>
        
-        <div class="d-flex gap-5">
-          <span id="itemsCount" style="font-weight: bold;"> 
-            Items Price (<%= calculateTotalItemsCount(cartData.products) %> items):</span>
-          <span id="totalPrice" class="ms-4" style="padding-left: 100px; font-weight: bold;">
+        <div class="d-flex ">
+          <span class="d-flex" id="itemsCount" style="font-weight: bold;"> 
+            Items Price(<p class="fw-semibold" id="count"><%=item.quantity%></p>):</span>
+
+          
+          <span id="totalPrice" class="ms-4" style="padding-left: 200px; font-weight: bold;">
             ₹ <%= calculateTotalPrice(cartData.products) %>
           </span>
         </div>
@@ -279,6 +394,7 @@
    
     
     </div>
+  <% }) %>
     <% } else { %>
       <div>
         <a href="/" class="btn text-white btn-b ms-2 me-2" style="background: #f35800;font-weight: 600;">COUNTINUE SHOPPING</a>
@@ -320,54 +436,59 @@ myModal.addEventListener('shown.bs.modal', () => {
 <!-- **************************** AJAX  ******************* -->
 
 
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
-
-
- 
 
 
 <script>
+  $(document).ready(function() {
+      $(".quantity-button").on("click", function() {
+          var buttonValue = $(this).attr("value");
+          
+          var productID = $("input[name='productID']").val();
+          let quantity = $("input[name='quantity']").val();
+           quantity = +quantity + parseInt(buttonValue);
+          // var stock = $("input[name='stock']").val();
+          console.log("---------------------productID" , quantity);
 
-function updateQuantity(quantity, productID, count) {
-    console.log("Updating quantity for product ID:", productID, "with count:", count);
-
-    // Convert quantity to a number
-    const updatedQuantity = parseInt(quantity);
-
-
- }
-
-
-function incrementQuantity(button) {
-    const input = button.parentNode.querySelector('input');
-    const stockLimit = parseInt(input.getAttribute('max'));
-    const currentQuantity = parseInt(input.value);
-    console.log("hai");
-
-    if (currentQuantity < stockLimit) {
-
-        input.stepUp();
-      } else {
-            alert("Maximum quantity reached!");
-        }
-        // const itemQty = input.value;
-        // const productID = button.parentNode.querySelector('input[name="productID"]').value;
-        // updateQuantity(itemQty, productID, 1);
-    
-}
+          // AJAX request
+          $.ajax({
+              type: "POST",
+              url: "/cart/update-quantity", // Replace with your server endpoint
+              data: {
+                  buttonValue: buttonValue,
+                  productID: productID,
+                  quantity: quantity,
+                  
+              },
+              success: function(response) {
+                  // Handle the response from the server
+                  if(response.success){
+                    
+                    location.href = '/cart'
+                    // $("#currentQty").val(quantity);
+                   
+                    // $('#count').text(quantity);
 
 
-  function decrementQuantity(button) {
-    const input = button.parentNode.querySelector('input');
-    input.stepDown();
-    const itemQty = input.value;
-    const productID = button.parentNode.querySelector('input[name="productID"]').value;
-    updateQuantity(itemQty, productID, -1);
-  }
+                  }
+                  if(response.success==false){
+                    alert(response.error);
+                    
 
+                  }
+                 
+                  console.log(response);
+              },
+              error: function(error) {
+                  // Handle errors
+                  console.log(error);
+              }
+          });
+      });
+  });
 </script>
 
+ 
 
 
 

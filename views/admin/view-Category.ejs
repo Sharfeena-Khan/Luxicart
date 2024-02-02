@@ -10,6 +10,15 @@
             <h5><strong> Category</strong> </h5>
            <span class="opacity-50"> Dashboard > Categorise</span> 
           </div>
+          <div class="mb-3">
+            <%
+                           if(typeof message !== 'undefined'){
+                            %>
+                           <h5 class="text-danger fw-bold text-center mb-3 " id="invalidUser-msg"><%= message %></h5>
+                           <%
+                            }
+                 %>
+          </div>
           <div class="ms-auto me-5"> 
            <a href="/admin/adminPanel/category/create-Category" class="btn text-white me-auto " style="background: #f35800;"><i class="fa-regular fa-plus" style="color: #ffffff;"></i> Create Category</a>
           </div>
@@ -22,7 +31,8 @@
                 <col style="width: 158px;" /> <!-- Column for Category -->
                
                 <col style="width: 150px;" />  <!-- Column for Added -->
-                <col style="width: 80px;" />  <!-- Column for Action -->
+                <col style="width: 100px;" />  <!-- Column for Action -->
+                <col style="width: 100px;" />  <!-- Column for Action -->
                 
               </colgroup>
             <thead>
@@ -31,6 +41,7 @@
                 <th scope="col">Category</th>
                 
                 <th scope="col">Added</th>
+                <th scope="col">Active</th>
                 <th scope="col">Action</th>
                
               </tr>
@@ -39,18 +50,32 @@
             <tbody>
 
               <% categories.forEach(category => { %>
-                <tr>
+                <% if(category.active && category.isDelete==false){ %>
+
+                  <tr>
                   
-                  <td colspan="1">
-                    <img src="/assests/categoryUploads/<%= category.image %>" alt="" width="50" height="50" class="me-3">
-                    <%= category.name %>
-                  </td>
-                  
-                 
-                  <td class="pt-3"> <%= category.addedDate.toLocaleString() %></td>
-                  
-                  <td class="pt-3"> <i class="fa-solid fa-pen-to-square" style="color: #4a5153;"></i> </td>
-                </tr>
+                    <td colspan="1">
+                      <img src="/assests/categoryUploads/cropped/<%= category.image %>" alt="" width="50" height="50" class="me-3">
+                      <%= category.name %>
+                    </td>
+                    
+                   
+                    <td class="pt-3"> <%= category.addedDate.toLocaleString() %></td>
+                    <td class="pt-3"> <%= category.active %></td>
+                    
+                    <td class="pt-3"> 
+                      <input type="hidden" name="Id" id="" value="<%= category._id %>">
+                      <button id="activeButton" onclick="conformUnlist('<%= category._id %>')" class="unlistButton btn" ><i class="fa-regular fa-circle-xmark" style="color: #4a5153;"></i></button>
+                      <a href="/admin/adminPanel/category/edit-category/<%= category._id %>"  ><i class="fa-solid fa-pen-to-square" style="color: #4a5153;"></i></a> 
+                     
+                      <button id="delButton"  onclick="softDeleteCategory('<%= category._id %>')" class=" btn softDel"><i class="fa fa-trash ms-4" style="color: #4a5153;" aria-hidden="true"></i></a> </td>
+
+                    </td>
+                     
+                  </tr>
+
+               <% }  %>
+                
                 <% }); %>
             
             </tbody>
@@ -58,6 +83,59 @@
               <p>No categories available.</p>
             <% } %>
           </table>
+
+<!-- **************************************************************************** -->
+<button class="btn text-white mt-4 mb-5" id="displayButton" style="background: #f35800;">Show Unlisted Categories</button>
+
+<div class="mt-3 unlisted-table" id="unlistedTableContainer" style="display: none;">
+  <% if (unlisted && unlisted.length > 0) { %>
+    <table class="table" id="myTable">
+      <colgroup>
+        <col style="width: 158px;" /> <!-- Column for Category -->
+        <col style="width: 150px;" /> <!-- Column for Added -->
+        <col style="width: 100px;" /> <!-- Column for Action -->
+        <col style="width: 80px;" /> <!-- Column for Action -->
+      </colgroup>
+      <thead>
+        <tr>
+          <th scope="col">Category</th>
+          <th scope="col">Added</th>
+          <th scope="col">Active</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% unlisted.forEach(category => { %>
+          <% if (!category.active & !category.isDelete) { %>
+            <tr>
+              <td colspan="1">
+                <img src="/assests/categoryUploads/cropped/<%= category.image %>" alt="" width="50" height="50" class="me-3">
+                <%= category.name %>
+              </td>
+              <td class="pt-3"><%= category.addedDate.toLocaleString() %></td>
+              <td class="pt-3"><%= category.active %></td>
+              <td class="pt-3">
+                <input type="hidden" name="Id" id="" value="<%= category._id %>">
+                
+                <button id="activeButton" onclick="conformUnlist('<%= category._id %>')" class="unlistButton btn"><i class="fa-solid fa-check"></i></button>
+                <button id="delButton"  onclick="softDeleteCategory('<%= category._id %>')" class=" btn softDel"><i class="fa fa-trash ms-4" style="color: #4a5153;" aria-hidden="true"></i></a> </td>
+
+              </td>
+            </tr>
+          <% } %>
+        <% }); %>
+      </tbody>
+    </table>
+  <% } else { %>
+    <p>No categories available.</p>
+  <% } %>
+</div>
+
+
+
+         
+
+
 
     </div>
    
@@ -69,5 +147,54 @@
 <script>
   $(document).ready( function () {
     $('#myTable').DataTable();
+   
 } );
+
+
+
+  function userhidemsg(){
+const msg= document.getElementById("invalidUser-msg")
+if(msg){
+setTimeout(()=>{
+msg.style.display = "none"
+}, 3000)
+}
+}
+
 </script>
+
+
+<script>
+  function conformUnlist(Id) {
+    $.ajax({
+      type: 'POST',
+        url: '/admin/adminPanel/category/unlist-category', 
+        data: { Id: Id },
+        success : (response)=>{
+          location.href = '/admin/adminPanel/category'
+
+        }
+    })
+  }
+
+
+  function softDeleteCategory(Id) {
+  $.ajax({
+    type: 'DELETE',
+      url: '/admin/adminPanel/category/softDel-category', 
+      data: { Id: Id },
+      success : (response)=>{
+        location.href = '/admin/adminPanel/category'
+
+      }
+  })
+}
+
+
+  document.getElementById('displayButton').addEventListener('click', function() {
+    var unlistedTableContainer = document.getElementById('unlistedTableContainer');
+    unlistedTableContainer.style.display = (unlistedTableContainer.style.display === 'none') ? 'block' : 'none';
+  });
+
+</script>
+

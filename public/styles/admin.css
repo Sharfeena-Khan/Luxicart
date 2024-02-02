@@ -181,3 +181,9 @@
     }
 
 */
+
+#sidebarMenu a.active {
+  background: white ; /* Set the background color to orange */
+  color: #f35800; /* Set the text color to white for better visibility */
+  border: none;
+}

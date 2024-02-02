@@ -49,25 +49,10 @@
       <div class="row">
         <div class="container  mb-5">
 
-          <% if (error && error.length > 0) { %>
+        
+           <div class=" text-center fw-semibold fs-5 mb-3" style="color: #f35800;" id="errorContainer"></div>
 
-            <div class="alert alert-danger">
-           
-               <ul>
-           
-                 <% error.forEach(function(errorMessage) { %>
-           
-                   <li><%= errorMessage %></li>
-           
-                 <% }); %>
-           
-               </ul>
-           
-            </div>
-           
-           <% } %>
-           
-          <form action="/updateProfile" method="post" >
+          <form action="/updateProfile" method="post" id="editForm" >
 
             <input type="hidden" name="ID" value="<%= userData._id %>">
           <div class="mb-3 col-6  d-flex">
@@ -75,8 +60,8 @@
           </div>
          <div class="mb-3 col-6 gap-4 d-flex">
             
-            <input type="text" class="form-control" id="productName" name="Fname"   placeholder="First Name" value="<%= userData.FirstName %>" >
-            <input type="text" class="form-control" id="productName" name="Lname" value="<%= userData.LastName %>"  >
+            <input type="text" class="form-control" id="productName" name="Fname"   placeholder="First Name" value="<%= userData.Name %>" >
+            <!-- <input type="text" class="form-control" id="productName" name="Lname" value="<%= userData.LastName %>"  > -->
             
           </div>
           <h6 class="pt-3">  Your Gender</h6>
@@ -102,11 +87,11 @@
           </div>
           
           </div>
-          <h5 class="pt-3"> <strong>Email</strong> </h5>
+          <h5 class="pt-3 opacity-50 " > <strong>Email</strong> </h5>
 
-          <div class="mb-3 col-6 ">
+          <div class="mb-3 col-6 opacity-50 ">
 
-            <input type="email" class="form-control" id="productName" name="email" value="<%= userData.email %>">
+            <input type="email" class="form-control" id="productName" name="email" value="<%= userData.email %>" disabled>
 
           </div>
 
@@ -115,16 +100,18 @@
           <h5 class="pt-3"> <strong>Mobile Number</strong> </h5>
           <div class="mb-3 col-6 ">
 
-            <input type="tel" class="form-control" id="productName" name="phn" value="<%= userData.phone%>">
+            <input type="tel" class="form-control" id="mobile" name="phn" value="<%= userData.phone%>">
 
           </div>
 
           <div class="d-grid  col-4 mt-5 " style="margin-left: 100px;">
-            <button type="submit" class="btn text-white btn-b  ms-0" style="background: #f35800;"><strong>Update</strong></button>
+            <button type="submit" class="btn text-white btn-b  ms-0" style="background: #f35800;" id="updateButton">Update</button>
        
         </div>
         </form>
 
+
+        
         </div>
 
 
@@ -137,7 +124,33 @@
 
 
 
+<script>
+  document.addEventListener('DOMContentLoaded',()=>{
+    const update = document.getElementById('updateButton')
+    $("#editForm").submit((e)=>{
+      e.preventDefault()
+      $.ajax({
+        url : "/updateProfile" ,
+        method: 'post',
+        data : $('#editForm').serialize(),
+        success : (response)=>{
+          if(response.success){
+            window.location.href = "/userProfile";
+          }else{
+            // alert(response.errors.join('\n'));
+            const errorContainer = document.getElementById('errorContainer');
+            errorContainer.innerHTML = response.errors.join('<br>');
+            setTimeout(() => {
+            errorContainer.innerHTML = '';
+          }, 3000);
 
+          }
+        }
+      })
+    })
+
+  })
+</script>
 
 
 
