@@ -29,16 +29,19 @@
                 <!-- price  block -->
              <div class="">
 
-              <div class="mt-5 ">
+              <div class="mt-5 " style="padding-left: 189px;">
                 <div class="d-flex gap-5 mb-2">
                   <span style="font-weight:bold; color:#777676; font-style: oblique;"> PRICE DETAILS</span>
                
                 </div>
                
-                <div class="d-flex gap-5">
-                  <span style="font-weight: bold;"> Items Price (<%= calculateTotalItemsCount(cartData.products) %> items):</span>
-                  <span class="ms-4" style="padding-left: 100px; font-weight: bold;"">
-                    ₹ <%= calculateTotalPrice(cartData.products) %>
+                <div class="d-flex ">
+                  <span class="d-flex" id="itemsCount" style="font-weight: bold;"> 
+                    Items Price(<p class="fw-semibold" id="count"><%=cartData.totalCount%></p>):</span>
+        
+                  
+                  <span id="totalPrice" class="ms-4" style="padding-left: 200px; font-weight: bold;">
+                    ₹ <%= cartData.total %>
                   </span>
                 </div>
                 <div class="d-flex ">
@@ -54,7 +57,7 @@
                   <h5 style="font-weight: bold;">Total Price:
                   <span class="mx-4" style="padding-left: 190px; font-weight: bold;">
                     <input type="hidden" value="<%= totalPrice %>" name="total">
-                    ₹ <%= cartData.total %>
+                    ₹ <%= totalPrice %>
                   </span></h5>
                 </div>
               </div>

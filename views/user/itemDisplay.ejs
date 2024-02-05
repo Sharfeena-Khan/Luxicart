@@ -39,7 +39,7 @@
 
                   <% if(product.stock <= 0){ %>
                     <span class="mx-5">
-                      <button type="submit" id="addtocart" name="addToCart" onclick="addToCart('<%= product._id %>')"
+                      <button type="submit" id="addtocartDis" name="addToCartDis"
                          class="btn  text-white  px-5" style="background: #f35800;" disabled>
                         <i class="fa-solid fa-cart-shopping me-1  "></i> ADD TO CART
                     </button>
@@ -53,27 +53,13 @@
                   
              <% } %>
 
-                  <!-- <span class="mx-5">
-                    <button type="submit" id="addtocart" name="addToCart" onclick="addToCart('<%= product._id %>')" class="btn  text-white  px-5" style="background: #f35800;">
-                      <i class="fa-solid fa-cart-shopping me-1  "></i> ADD TO CART
-                  </button>
-                  </span> -->
-
+                 
                  
                 </div>
               
             
             <div class=" mt-3">
-                    <!-- <div>
-      <button type="submit" id="addtocart" name="addToCart"  class="btn  text-white px-5 " style="background: #f35800;">
-        <i class="fa-solid fa-cart-shopping me-1  "></i> ADD TO CART
-    </button>
-    </div>
-    <div>
-      <button type="submit" id="addtocart" name="addToCart" class="btn  text-white px-5 " style="background: #f35800;">
-        <i class="fa-solid fa-cart-shopping me-1  "></i> Buy Now
-    </button>
-   </div> -->
+                    
     
       
     
@@ -116,29 +102,36 @@
                 
                
                  
-                    <!-- <a href="" class="btn text-white btn-b ms-0 px-3" style="background:#b6b5b500;" id="red">
-                      <i class="fa-sharp fa-solid fa-heart me-1 fs-4" style="color:#d20000; display: none;"></i>
-                    </a>
-                 -->
+                   
               </span>
               
               
             </div>
 
-            <h6>Base Price</h6>
-            <p><strong> ₹ <%= product.price %> </strong> </p>
-            <!-- <div class="d-flex">
-                <span>
-                    <h6>Color</h6>
-                </span>
-                <div class=" d-flex gap-3 ps-5 opacity-50">
-                    <img src="/assests/productsUploads/<%= product.image %>" alt=""  width="50px" height="50px" ><img src="/assests/productsUploads/<%= product.image %>" alt=""  width="50px" height="50px" ><img src="/assests/productsUploads/<%= product.image %>" alt=""  width="50px" height="50px" ><img src="/assests/productsUploads/<%= product.image %>" alt=""  width="50px" height="50px" ><img src="/assests/productsUploads/<%= product.image %>" alt=""  width="50px" height="50px" ><img src="/assests/productsUploads/<%= product.image %>" alt=""  width="50px" height="50px" >
-                
-                </div>
+           
 
-               
-        </div> -->
-        <!-- <div class="d-flex pt-5"> -->
+            <% if(product.discountType == "Nill"){ %>
+              <h6>Base Price</h6>
+              <p><strong> ₹ <%= product.price %> </strong> </p>
+              <!-- <p class="fw-bold opacity-50">Sorry! No offers Available for now. </p> -->
+              
+          <%  } else{ %>
+            <h6>Base Price</h6>
+            <p class="fw-bold fs-5"> ₹ <%= product.price - (product.price * product.discountPercentage / 100) %> <span class="opacity-50 fs-6 fw-semibold ps-2"> <del>₹ <%= product.price %> </del> </span>   </p>
+            <div class="pt-4">
+              <h6 style="font-weight: 600;">Available Offer</h6>
+             
+             <div class="d-flex gap-3">
+              <i class="fa-sharp fa-solid fa-tag" style="color: #f35800; width: 5px; height: auto;"></i> <p style="font-size: x-small;"><span style="color: #f35800; font-weight: bold;"><%= product.discountType %> offer :</span> With this offer you can save <%= product.discountPercentage %>% of your money</p>
+             </div>
+
+             
+          </div> 
+          <% }%>
+
+
+           
+           
           <div class="d-flex pt-5">
             <span>
               <h6 class="pe-5 pt-2">Size:</h6>
@@ -171,7 +164,7 @@
              <% } else { %>
               
                 <span>
-                  <h6 class="ms-5 pt-2 pe-2">Quantity:</h6>
+                  <h6 class=" pt-2 pe-2">Quantity:</h6>
               </span>
              
                 <div class="quantity-input">
@@ -184,18 +177,7 @@
             
           <% } %>
 
-              <!-- <div class="d-flex">
-                <span>
-                  <h6 class="ms-5 pt-2 pe-2">Quantity:</h6>
-              </span>
-             
-                <div class="quantity-input">
-                    <button type="button" class="quantity-button btn" onclick="decrementQuantity(this)" ><i class="fa-solid fa-square-minus h4" style="color: #f35800;"></i></button>
-                    <input type="number" style="border: 1px solid #f359007d; padding: 2px; width: 50px;" id="quantity" name="qty" value="1"  min="1" max="<%= product.stock %>">
-                    <button type="button" class="quantity-button btn" onclick="incrementQuantity(this)" ><i class="fa-solid fa-square-plus h4" style="color: #f35800;"></i></button>
-                </div>
-
-              </div> -->
+            
             
           </div>
            
@@ -209,29 +191,7 @@
             </form>
         
     <!-- </div>  -->
-    <!-- <div class="pt-4">
-        <h6 style="font-weight: 600;">Available Offers</h6>
-       <div class="d-flex gap-3">
-        <i class="fa-sharp fa-solid fa-tag" style="color: #f35800; width: 5px; height: auto;"></i>
-         <p style="font-size: x-small;">
-        </p>
-       </div>
-       <div class="d-flex gap-3">
-        <i class="fa-sharp fa-solid fa-tag" style="color: #f35800; width: 5px; height: auto;"></i> <p style="font-size: x-small;">Bank Offer10% Instant Discount on ICICI Bank Credit Card, up to ₹1250 on orders of ₹5,000 and above T&C</p>
-       </div>
-       <div class="d-flex gap-3">
-        <i class="fa-sharp fa-solid fa-tag" style="color: #f35800; width: 5px; height: auto;"></i> <p style="font-size: x-small;">Bank Offer10% Instant Discount on ICICI Bank Credit Card, up to ₹1250 on orders of ₹5,000 and above T&C</p>
-       </div>
-       <div class="d-flex gap-3">
-        <i class="fa-sharp fa-solid fa-tag" style="color: #f35800; width: 5px; height: auto;"></i> <p style="font-size: x-small;">Bank Offer10% Instant Discount on ICICI Bank Credit Card, up to ₹1250 on orders of ₹5,000 and above T&C</p>
-       </div>
-       
-    </div> -->
-    <!-- <div class="pt-2">
-        <h6><strong>Delivery Available?</strong></h6><i class="fa-solid fa-truck fa-bounce" style="color: #000000;"></i>
-        <input type="text" name="pincode" style="border: 1px solid #f359008f;"> 
-        <p class="pt-2" style="font-size: x-small;">Please enter PIN code to check delivery time & Pay on Delivery Availability</p>
-    </div> -->
+   
         </div>
     </div>
 

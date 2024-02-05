@@ -61,7 +61,7 @@ const homePage = async (req, res) =>{
     let userSession = req.session
     let userData = await User.findById(userId)
     // const userAuthenticated = req.session.user;
-    console.log("Home Page **************************", userData);
+    // console.log("Home Page **************************", userData);
 
     if(userData){
       console.log("check 1");
@@ -601,7 +601,7 @@ const insertUser = async (req, res) => {
 
       try {
         const product = await Product.findById(pdt_Id)
-        console.log("*-*-*-*-*-*-*/-*************/////////////////////--------------------       ",userData);
+        // console.log("*-*-*-*-*-*-*/-*************/////////////////////--------------------       ",userData);
        
 
         res.render("itemDisplay" , {title:`Luxicart-${product.name}` ,userAuthenticated : userData , product,wishListData })
@@ -616,13 +616,13 @@ const insertUser = async (req, res) => {
     // ***************************--------- ADDRESS LIST  ------------------*******************
 
     const adrsPage = async(req, res)=>{
-      const userAuthenticated = req.session.user;
       const userId = req.session.user_id;
+      const userData = await User.findById(userId)
       const adrsData = await UserAddress.findOne({user_id : userId})
       
       try {
         console.log(adrsData);
-        res.render("adrsList" , {title: "Luxicart-Address", userAuthenticated ,adrsData ,  error: req.flash('error')})
+        res.render("adrsList" , {title: "Luxicart-Address", userAuthenticated:userData ,adrsData ,  error: req.flash('error')})
 
         
       } catch (error) {
@@ -952,11 +952,11 @@ const sortItems = async(req,res)=>{
 
   const walletPage = async(req, res) => {
     try {
-      const userAuthenticated = req.session.user;
+      // const userAuthenticated = await User;
       const userId = req.session.user_id;
       const userData = await User.findById(userId)
       console.log("user :" ,userData);
-      res.render("wallet" ,{userAuthenticated , userData})
+      res.render("wallet" ,{userAuthenticated: userData , userData})
     
   } catch (error) {
     console.log(error);

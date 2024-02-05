@@ -37,21 +37,21 @@ const userOrderList = async(req,res)=>{
       for (const orderItem of orderData.items) {
         const orderPlacedDate = new Date(orderItem.orderPlaced); // convert orderPlaced to a Date object
         const currentDate = new Date();
-        console.log("------------------------------    order  ---------", orderPlacedDate);
+        // console.log("------------------------------    order  ---------", orderPlacedDate);
         
         let productStatus = orderItem.orderStatus;
         let deliveryDdate = orderItem.deliveryDate
         
         deliveryDdate.setDate(orderPlacedDate.getDate() + 3);
-        console.log("************   Delivey   *******************", deliveryDdate);
+        // console.log("************   Delivey   *******************", deliveryDdate);
       if(productStatus !== "Canceled"){
         if(productStatus !== "Returned" ){
           if (currentDate.getDate() >= orderPlacedDate.getDate() + 3  ) {
             productStatus = 'Delivered';
-          console.log("1");
+          // console.log("1");
         } else if (currentDate.getDate() >= orderPlacedDate.getDate() +2) {
            productStatus = 'On the Way';
-           console.log("2");
+          //  console.log("2");
         } else if (currentDate.getDate() >= orderPlacedDate.getDate() +1) {
            productStatus = 'Shipped';
            
@@ -59,7 +59,7 @@ const userOrderList = async(req,res)=>{
           productStatus = "Order Confirmed";
           
         }
-        console.log("===================================",productStatus);
+        // console.log("===================================",productStatus);
         // Update the productStatus in the database if needed
         orderItem.orderStatus = productStatus;
         orderItem.deliveryDate = deliveryDdate
@@ -80,7 +80,7 @@ const userOrderList = async(req,res)=>{
                    
 
 
-  //  console.log(orderData);
+   console.log(orderData);
     res.render("orderList" ,  {title : "Luxicart- Order List" , userAuthenticated, orderData})
 }
 
@@ -242,7 +242,10 @@ const Payment = async (req, res) => {
         walletAmount = walletAmount-total
        userData= await User.findByIdAndUpdate(
           userId,
-          {$set: {wallet :walletAmount}},
+          {$set: {
+            wallet :walletAmount,
+            cart: []
+          }},
           {new : true}
         )
         await userData.save()
@@ -421,15 +424,20 @@ const cancelOrder = async (req, res) => {
   try {
     const userId = req.session.user_id;
     const orderData = await Order.findOne({ user_id: userId });
+    
     const productId = req.params.id;
-    console.log("-----------------cancel    ----------", productId);
+    let productData = await Product.findOne({_id : productId})
+    console.log("Producty Details -------------------------------------->   ", productId);
+    let currentStock = productData.stock
+
+    console.log("-----------------cancel    ----------", orderData);
     
     // Check if orderData exists and has orders
     if (orderData  && orderData.items && orderData.items.length > 0 ) {
       // Find the index of the product in the items array
       // console.log(orderData);
       
-      const productIndex = orderData.items.findIndex(item => item._id.toString() === productId);
+      const productIndex = orderData.items.findIndex(item => item.productId.toString() === productId);
  console.log("index: ",productIndex);
       if (productIndex !== -1) {
         // Update the status of the specific product
@@ -444,6 +452,16 @@ const cancelOrder = async (req, res) => {
         await orderData.save();
 
         if(orderData.items[productIndex].orderStatus==="Canceled"){
+
+          currentStock = currentStock+qty
+          productData = await Product.findByIdAndUpdate(
+            productId,
+            { $set : {
+              stock : currentStock
+            }},
+            {new: true}
+          )
+
           if(orderData.items[productIndex].paymentMode!=='COD' ){
             let userData = await User.findById(  userId  )
             console.log("Before:", userData);

@@ -36,6 +36,10 @@ const cartSchema = new mongoose.Schema({
         type: Number,
          // Set a default value if needed
     },
+    totalCount : {
+        type : Number,
+        default : 0
+    },
     products : [
         {
             product_id : {
@@ -56,7 +60,7 @@ const cartSchema = new mongoose.Schema({
             },
             quantity : {
                 type : Number,
-                default : 1
+                default : 0
             },
             stock : {
                 type : Number

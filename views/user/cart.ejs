@@ -90,7 +90,7 @@
                   <!-- Button trigger modal -->
 
   
-  <!-- Modal -->
+  <!-- Modal Address-->
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -214,24 +214,7 @@
 
           <!--  -->
 
-          <!-- <form action="/cart/update-quantity" id="myForm" method="post">
-           
-            <div>
-              <button type="submit" class="quantity-button btn" onclick="decrementQuantity(this)">
-                <i class="fa-solid fa-square-minus h4" style="color: #f35800;"></i>
-            </button>
-            
-            <input type="number" style="border: 1px solid #f359007d; padding: 2px; width: 50px;" 
-               name="quantity" value="<%= product.quantity %>" min="1" max="<%= product.stock %>">
-           <input type="hidden" value="<%= product.stock %>" name="stock"> 
-            <input type="hidden" value="<%= product.product_id %>" name="productID">
-            
-            <button type="submit" class="quantity-button btn" onclick="incrementQuantity(this)">
-                <i class="fa-solid fa-square-plus h4" style="color: #f35800;"></i>
-            </button>
-            </div>
-          </form> -->
-      </div>
+           </div>
     </div>
 </div>
 
@@ -249,7 +232,7 @@
 
     </div>
     <% if (cartData && cartData.products) { %>
-      <% cartData.products.forEach(item=> { %>
+     
     <div class="col-5 "> 
       <div class="px-5  mx-5" style=" border: 1px solid #f359004d; box-shadow: 0px 4px 8px rgba(82, 82, 82, 0.1);">
 
@@ -291,10 +274,12 @@
                           <% if(availableCoupon && availableCoupon.length > 0) { %>
                               <ul class="list-group">
                                   <% availableCoupon.forEach(coupon => { %>
+                                    <% if(coupon.minAmount<=cartData.total){%>
                                       <li class="list-group-item">
-                                          <input class="form-check-input me-1" type="checkbox" value="" id="selectedCoupon">
+                                          <input class="form-check-input me-1" type="checkbox" value="" id="selectedCoupon" name="code">
                                           <label class="form-check-label" for="<%= coupon.code %>Checkbox"><%= coupon.code %></label>
                                       </li>
+                                      <%}%>
                                   <% }) %>
                               </ul>
                           <% } else { %>
@@ -303,24 +288,23 @@
                       </div>
                       <hr class="" style="color:  #f35900d8 ;">
                       <div class="text-secondary">
-                        <div class="col-12">More Coupons </div>
-                        <div>
-                          <% if(couponData && couponData.length > 0){ %>
-                            <ul>
-                              <% couponData.forEach(coupon=> { %>
-                                <li class="list-group-item">
-                                  <h6><%= coupon.code %></h6>
-                              </li>
-
-                              <% }) %>
-
-                            </ul>
-                            <% } else { %>
-                              No Coupons are Available right now
-                          <% } %>
-                        </div>
+                          <div class="col-12">More Coupons </div>
+                          <div>
+                              <% if(couponData && couponData.length > 0){ %>
+                                  <ul>
+                                      <% couponData.forEach(coupon=> { %>
+                                          <li class="list-group-item">
+                                              <h6><%= coupon.code %></h6>
+                                          </li>
+                                      <% }) %>
+                                  </ul>
+                              <% } else { %>
+                                  No Coupons are Available right now
+                              <% } %>
+                          </div>
                       </div>
                   </div>
+                  
                   
                   
         
@@ -355,11 +339,11 @@
        
         <div class="d-flex ">
           <span class="d-flex" id="itemsCount" style="font-weight: bold;"> 
-            Items Price(<p class="fw-semibold" id="count"><%=item.quantity%></p>):</span>
+            Items Price(<p class="fw-semibold" id="count"><%=cartData.totalCount%></p>):</span>
 
           
           <span id="totalPrice" class="ms-4" style="padding-left: 200px; font-weight: bold;">
-            ₹ <%= calculateTotalPrice(cartData.products) %>
+            ₹ <%= cartData.total %>
           </span>
         </div>
         
@@ -374,7 +358,7 @@
         </div>
         <div class="d-flex gap-5">
           <h5 style="font-weight: bold;">Total Price:
-          <span class="mx-4" style="padding-left: 190px; font-weight: bold;">
+          <span class="ms-4 total-price" style="padding-left: 190px; font-weight: bold;" id="totalAmount">
             ₹ <%= totalPrice %>
            
           </span></h5>
@@ -394,7 +378,7 @@
    
     
     </div>
-  <% }) %>
+ 
     <% } else { %>
       <div>
         <a href="/" class="btn text-white btn-b ms-2 me-2" style="background: #f35800;font-weight: 600;">COUNTINUE SHOPPING</a>
@@ -463,11 +447,18 @@ myModal.addEventListener('shown.bs.modal', () => {
               success: function(response) {
                   // Handle the response from the server
                   if(response.success){
+                    console.log(response.userCart);
+                    let data = response.userCart
                     
-                    location.href = '/cart'
-                    // $("#currentQty").val(quantity);
+                    // location.href = '/cart'
+                    $("#currentQty").val(quantity);
                    
-                    // $('#count').text(quantity);
+                    $('#count').text(quantity);
+                    $('#totalPrice').text(data.total)
+                    let totalAmount = data.total+40
+                    
+                    $('#totalAmount').text( "₹"+totalAmount)
+
 
 
                   }
@@ -487,6 +478,50 @@ myModal.addEventListener('shown.bs.modal', () => {
       });
   });
 </script>
+
+<script>
+  $(document).ready(function () {
+      // Event listener for Apply button click
+      $("#couponApply").click(function () {
+          // Get the selected coupon checkbox
+          var selectedCouponCheckbox = $("input[name='code']:checked");
+
+          // Check if any coupon is selected
+          if (selectedCouponCheckbox.length > 0) {
+              // Get the selected coupon code
+              var selectedCouponCode = selectedCouponCheckbox.next().text();
+
+              // Set the selected coupon code in a hidden input field
+              $("#couponForm").append('<input type="hidden" name="selectedCouponCode" value="' + selectedCouponCode + '">');
+            console.log(selectedCouponCheckbox);
+              // Submit the form
+              $.ajax({
+  method: "POST",
+  url: "/cart/applyCoupon",
+  data: $("#couponForm").serializeArray(),
+  contentType: "application/json",
+  success: (response) => {
+    console.log(data);
+    console.log(response);
+    if (response.success) {
+      location.href='/cart'
+      console.log(response);
+    }
+  },
+  error: (error) => {
+    console.error(error);
+  }
+});
+
+          } else {
+              // No coupon selected, handle accordingly
+              alert("Please select a coupon before applying.");
+          }
+      });
+  });
+</script>
+
+
 
  
 

@@ -10,16 +10,16 @@
             class="list-group-item list-group-item-action py-2 ripple side" aria-current="true" style="color: #f35800; background: white;"
             
           >
-          <i class="fa-solid fa-box me-2" ></i><span>Order</span>
+          <i class="fa-solid fa-box me-2"  ></i><span>Order</span>
           </a>
-          <a href="#" class="list-group-item list-group-item-action py-2 ripple side">
+          <a href="/cart/wishlist" class="list-group-item list-group-item-action py-2 ripple side">
             <i class="fa-regular fa-heart me-2" style="color: #f35800;"></i><span>Wishlist</span>
           </a>
           <a href="/userProfile" class="list-group-item list-group-item-action py-2 ripple side" 
             ><i class="fa-solid fa-user me-2" style="color: #f35800;" ></i><span>Profile</span></a
           >
           <a href="/adrsPage" class="list-group-item list-group-item-action py-2 ripple side"
-            ><i class="fa-sharp fa-solid fa-map-location-dot me-2" ></i><span>Address</span></a
+            ><i class="fa-sharp fa-solid fa-map-location-dot me-2"  style="color: #f35800;" ></i><span>Address</span></a
           >
           <a href="/wallet" class="list-group-item list-group-item-action py-2 ripple side">
             <i class="fa-solid fa-wallet me-2" style="color: #f35800;"></i><span>Wallet</span>
@@ -101,7 +101,7 @@
                               </div>
                               <div class="ms-auto mt-4">
                                   <% if (product.orderStatus !== "Canceled" && product.orderStatus !== "Returned" && product.orderStatus !== "Delivered" ) { %>
-                                      <button onclick="conformDelete('<%= product._id %>')" class="my-2 btn text-white px-4" style="background: #f35800; font-weight: 600;">Cancel Order</button>
+                                      <button onclick="conformDelete('<%= product.productId %>')" class="my-2 btn text-white px-4" style="background: #f35800; font-weight: 600;">Cancel Order</button>
                                   <% } %>
                                   <div>
                                       <% if (product.orderStatus == "Delivered") { %>

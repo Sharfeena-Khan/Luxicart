@@ -43,7 +43,7 @@ cartRoute.use(session({
   // ***********************************  ADDRESS ******************************
 
   cartRoute.post("/add-address" , cartController.saveAdrs)
-  cartRoute.get("/address" ,isBlocked, cartController.getAddressPage)
+  cartRoute.get("/address" ,isLogin, cartController.getAddressPage)
    cartRoute.post("/payment",isBlocked, cartController.orderPlaced)
   cartRoute.get("/payment" ,isBlocked, cartController.getPaymentPage)
 
