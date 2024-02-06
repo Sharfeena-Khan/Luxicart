@@ -291,13 +291,52 @@ const unblockUser = async (req, res) => {
 const orderMngmnt = async(req,res)=>{
   try {
     const orderData = await Order.find()
-    .populate('user_id', 'FirstName') 
-    console.log(orderData);
+      .populate('user_id', 'Name') 
+      .exec();
+    console.log();
     res.render("view-OrderList", {title:`Luxicart-Orders` , orderData})
     
   } catch (error) {
     console.log(error);
   }
+}
+
+const statusUpdate = async(req,res)=>{
+  console.log("----------------------------   status update   --------------------");
+  console.log(req.body);
+  try {
+    const {  orderId, newStatus } = req.body
+let orderData = await Order.findOne(
+                    {'items._id': orderId},
+                    {'items.$':1}                    
+                    )
+    // console.log(orderData);
+   const updatedOrder = await Order.findOneAndUpdate(
+      {'items._id': orderId},
+      {$set : {
+        'items.$.orderStatus':newStatus
+      }},
+      {new :true}
+     
+    )
+    // console.log("------------------------------   updated  ----------------------", orderData);
+  //   if(updatedOrder){
+  //     res.json({success:true})
+  //   }
+
+
+    
+  } catch (error) {
+    console.log(error);
+    
+  }
+  // const {  orderId, newStatus } = req.body
+  // let orderData = await Order.findOneAndUpdate(
+  //   {'items._id' : orderId},
+  //   {$set : {'items.$.orderStatus' : newStatus}},
+  //   {new : true}
+  //   )
+  // console.log(orderData);
 }
 
 // ***********************   BANNER MANAGEMENT   ************************
@@ -335,6 +374,8 @@ const uploadBannerImg = async(req,res)=>{
 
 
 
+
+
 module.exports = {
   getAdmin,
   verifyAdmin,
@@ -349,6 +390,8 @@ module.exports = {
 
   getBanner,
   uploadBannerImg
+
+  ,statusUpdate
 
 
   

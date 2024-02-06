@@ -305,21 +305,23 @@ const updatePrd_Image = async (req, res) => {
         });
       }
 
-      for (const subImage of req.files["sub_Img"]) {
-        if (!isValidImage(subImage)) {
-          req.flash("error", "Invalid sub-image file type or size");
-          return res.render("editProduct", {
-            title: `Luxicart- Edit Products`,
-            products,
-            categories,
-            error: req.flash("error"),
-          });
-        }
-      }
+      // for (const subImage of req.files["sub_Img"]) {
+      //   if (!isValidImage(subImage)) {
+      //     req.flash("error", "Invalid sub-image file type or size");
+      //     return res.render("editProduct", {
+      //       title: `Luxicart- Edit Products`,
+      //       products,
+      //       categories,
+      //       error: req.flash("error"),
+      //     });
+      //   }
+      // }
 
       const product = await Product.findByIdAndUpdate(
         id,
-        { image: mainImage, images: subImages },
+        { image: mainImage, 
+          // images: subImages
+         },
         { new: true }
       ).exec();
 
@@ -359,17 +361,131 @@ const dltPdt = async (req, res) => {
   console.log("delete product1");
   try {
     console.log("delete product");
-    const pdtId = req.params.id;
-    const data = await Product.findOne({ _id: pdtId });
-    console.log("deleting item: ", data);
-    const result = await Product.findOneAndDelete({ _id: pdtId });
-    if (result) {
-      res.redirect("/admin/adminPanel/products");
+    const { Id} = req.body;
+    const data = await Product.findOne({ _id: Id });
+    console.log("deleting item: ", req.body);
+    if(data){
+      data.isDelete = true
+      await data.save()
+      console.log("done");
+      res.json({success : true})    
+  
     }
   } catch (error) {
     console.log(error);
   }
 };
+
+const unlistPdt = async(req, res)=>{
+  try {
+    console.log("-------------------------   UNLISTING PRDT   -------------------------");
+    const  { Id } = req.body
+    const prdtData = await Product.findOne({ _id : Id})
+    if(prdtData){
+      if(prdtData.active){
+        await Product.findOneAndUpdate(
+          {_id : Id},
+          {$set :{
+            active : false
+          }},
+          {new : true}
+          
+        )
+        
+        res.json({success :true})
+
+      }else{
+        await Product.findOneAndUpdate(
+          {_id : Id},
+          {$set :{
+            active : true
+          }},
+          {new : true}
+          
+        )
+        res.json({success :true})
+
+      }
+     
+    }
+
+    
+  } catch (error) {
+    
+  }
+
+}
+
+
+const delImg = async(req,res)=>{
+  try {
+    console.log("----------------------------------   single image deletion   ---------------");
+    console.log(req.body);
+    const { IMG_name, pdtId } = req.body
+    let productData = await Product.findOneAndUpdate(
+      { _id: pdtId},
+      { $pull : { images : IMG_name}},
+      {new: true}
+      )
+      if( productData){
+        res.redirect('/admin/adminPanel/products')
+
+        // res.redirect('/admin/adminPanel/products/edit-products/:pdtId')
+      }
+
+
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+
+const uploadSumImg = async (req, res) => {
+  console.log("--------------------------   ADDING SUB IMAGE   -------------------------");
+  console.log(req.files);
+  console.log(req.body);
+
+  try {
+    const { pdtId } = req.body;
+    const products = await Product.findById(pdtId);
+    const categories = await Category.find();
+    const subImages = req.files["sub_Img"]?.map((file) => file.filename) || [];
+
+    for (const subImage of req.files["sub_Img"]) {
+      if (!isValidImage(subImage)) {
+        req.flash("error", "Invalid sub-image file type or size");
+        return res.render("editProduct", {
+          title: `Luxicart- Edit Products`,
+          products,
+          categories,
+          error: req.flash("error"),
+        });
+      }
+    }
+
+    const product = await Product.findByIdAndUpdate(
+      pdtId,
+      { images: subImages },
+      { new: true }
+    ).exec();
+
+    if (!product) {
+      return res.status(404).send("Product not found");
+    }
+
+    res.redirect("/admin/adminPanel/products");
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+
+
+
+
+
 
 module.exports = {
   getProductPage,
@@ -377,6 +493,10 @@ module.exports = {
   insertProduct,
   editProducts,
   dltPdt,
+  unlistPdt,
   updateProduct,
   updatePrd_Image,
+  uploadSumImg,
+
+  delImg
 };

@@ -28,6 +28,7 @@ CouponRouter.use(session({
 
 CouponRouter.get('/', isLogin, CouponController.couponPage)
 CouponRouter.post('/create-Coupon', CouponController.genrateCoupon)
+CouponRouter.post('/couponDlt', CouponController.couponDlt)
 
 
  

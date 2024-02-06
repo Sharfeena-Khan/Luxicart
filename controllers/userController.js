@@ -50,12 +50,12 @@ const homePage = async (req, res) =>{
   
   try {
     const pro = await Product.find()
-    const  EthnicWear = await Product.find({ category:"Ethnic Wear" }).limit(8);
-    const  black = await Product.find({ category: "Black Beauty" }).limit(8);
-    const  CasualWear = await Product.find({ category: "Casual Wear" }).limit(8);
-    const  OfficeWear = await Product.find({ category: "Office Wear" }).limit(8);
-    const  WeddingWear = await Product.find({ category: "Wedding Wear" }).limit(8);
-    const  westernWear = await Product.find({ category: "Western Collection" }).limit(8);
+    const  EthnicWear = await Product.find({ category:"Ethnic Wear", active: true, isDelete: false }).limit(7);
+    const  black = await Product.find({ category: "Black Beauty" ,active: true, isDelete: false }).limit(7);
+    const  CasualWear = await Product.find({ category: "Casual Wear", active: true, isDelete: false }).limit(7);
+    const  OfficeWear = await Product.find({ category: "Office Wear", active: true, isDelete: false }).limit(7);
+    const  WeddingWear = await Product.find({ category: "Wedding Wear", active: true, isDelete: false }).limit(7);
+    const  westernWear = await Product.find({ category: "Western Collection", active: true, isDelete: false }).limit(7);
 
     const userId = req.session.user_id
     let userSession = req.session

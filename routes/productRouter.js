@@ -72,13 +72,17 @@ product_router.use(session({
  product_router.post("/", Upload.single("IMG"), productController.insertProduct); 
  product_router.post("/", Upload.fields([{ name: 'IMG', maxCount: 1 }]), productController.insertProduct); 
  product_router.get("/edit-products/:id" , isLogin, productController.editProducts)
- product_router.get("/dltPdt/:id" ,isLogin, productController.dltPdt)
+ product_router.delete("/dltPdt" ,isLogin, productController.dltPdt)
+ product_router.post('/unlistPdt', isLogin, productController.unlistPdt)
  product_router.post("/updatPrdt", productController.updateProduct)
 
  product_router.post("/updatPrdtImage" , Upload.fields([
   { name: 'main_IMG', maxCount: 1 },
-  { name: 'sub_Img', maxCount: 6 }, // Adjust maxCount as needed
+  // { name: 'sub_Img', maxCount: 6 }, // Adjust maxCount as needed
 ]), productController.updatePrd_Image)
+product_router.post("/updatPrdtSumImage", Upload.fields([ {name: "sub_Img", maxCount:6}]), productController.uploadSumImg)
+
+product_router.post("/delImg", isLogin, productController.delImg)
 
 
 

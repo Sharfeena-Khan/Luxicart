@@ -27,7 +27,7 @@
                 <col style="width: 70px;" />  <!-- Column for Price -->
                 <col style="width: 70px;" />  <!-- Column for Status -->
                
-                <col style="width: 50px;" /> <!-- Column for Action -->
+                <col style="width: 100px;" /> <!-- Column for Action -->
               </colgroup>
             <thead>
               <tr>
@@ -45,6 +45,7 @@
             </thead>
             <tbody>
               <% products.forEach(function(products) { %>
+                <% if(products.active && products.isDelete==false){ %>
                 <tr>
                   
                   <td colspan="1">
@@ -60,15 +61,82 @@
                   
                   <td class="pt-3">
                      <a href="/admin/adminPanel/products/edit-products/<%= products._id %>"><i class="fa-solid fa-pen-to-square" style="color: #4a5153;"></i></a>
-                     <button onclick="conformDelete('<%= products._id %>')" class="btn" style="margin-left: 20px;"><i class="fa-regular fa-trash-can ps-2" style="color: #f35800; font-size:medium;"></i></button>
+                     <button id="activeButton" onclick="conformUnlist('<%= products._id %>')" class="unlistButton btn ms-2" ><i class="fa-regular fa-circle-xmark" style="color: #4a5153;"></i></button>
+                     
+                     <button onclick="conformDelete('<%= products._id %>')" class="btn" style=""><i class="fa-regular fa-trash-can " style="color: #f35800; font-size:medium;"></i></button>
                     
                      
                   </td>
                 </tr>
+                <% }  %>
                 <% }); %>
         
             </tbody>
           </table>
+
+
+          <button class="btn text-white mt-4 mb-5" id="displayButton" style="background: #f35800;">Show Unlisted Products</button>
+
+          <div class="mt-3 unlisted-table" id="unlistedTableContainer" style="display: none;" >
+            <table class="table" >
+              <colgroup>
+                  
+                  <col style="width: 220px;" /> <!-- Column for Product -->
+                  <col style="width: 40px;" /> <!-- Column for SKU -->
+                  <col style="width: 90px;" /> <!-- Column for Category -->
+                  <col style="width: 20px;" />  <!-- Column for Stock -->
+                  <col style="width: 70px;" />  <!-- Column for Price -->
+                  <col style="width: 70px;" />  <!-- Column for Price -->
+                  <col style="width: 70px;" />  <!-- Column for Status -->
+                 
+                  <col style="width: 100px;" /> <!-- Column for Action -->
+                </colgroup>
+              <thead>
+                <tr>
+                  
+                  <th scope="col">Product</th>
+                  <th scope="col">SKU</th>
+                  <th scope="col">Category</th>
+                  <th scope="col">Stock</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">MRP</th>
+                  <th scope="col">Status</th>
+                  
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% products.forEach(function(products) { %>
+                  <% if(!products.active && products.isDelete==false){ %>
+                  <tr>
+                    
+                    <td colspan="1">
+                      <img src="/assests/productsUploads/<%= products.image %>" alt="" width="50" height="50" class="me-3">
+                      <%= products.name %>
+                    </td>
+                    <td class="pt-3"><%= products.sku %></td>
+                    <td class="pt-3"><%= products.category%></td>
+                    <td class="pt-3"><%= products.stock%></td>
+                    <td class="pt-3">₹ <%= products.price%></td>
+                    <td class="pt-3">₹ <%= products.salePrice %></td>
+                    <td class="pt-3"><%= products.status%></td>
+                    
+                    <td class="pt-3">
+                       <a href="/admin/adminPanel/products/edit-products/<%= products._id %>"><i class="fa-solid fa-pen-to-square" style="color: #4a5153;"></i></a>
+                       <button id="activeButton" onclick="conformUnlist('<%= products._id %>')" class="unlistButton btn ms-2" ><i class="fa-regular fa-circle-xmark" style="color: #4a5153;"></i></button>
+                       
+                       <button onclick="conformDelete('<%= products._id %>')" class="btn" ><i class="fa-regular fa-trash-can " style="color: #f35800; font-size:medium;"></i></button>
+                      
+                       
+                    </td>
+                  </tr>
+                  <% }  %>
+                  <% }); %>
+          
+              </tbody>
+            </table>
+          </div>
+
 
     </div>
    
@@ -80,12 +148,51 @@
 
 
 <script>
+  
   function conformDelete(pdt_id){
     if(confirm("Are you sure want to delete this item?")){
-      window.location.href="/admin/adminPanel/products/dltPdt/"+pdt_id;
+      $.ajax({
+    type: 'DELETE',
+      url: '/admin/adminPanel/products/dltPdt', 
+      data: { Id: pdt_id },
+      success : (response)=>{
+        location.href = '/admin/adminPanel/products'
+
+      }
+  })
+
+
     }
-  }
+ 
+}
+
+
+function conformUnlist(pdt_id){
+    if(confirm("Are you sure want to Unlist this item?")){
+      $.ajax({
+    type: 'post',
+      url: '/admin/adminPanel/products/unlistPdt', 
+      data: { Id: pdt_id },
+      success : (response)=>{
+        location.href = '/admin/adminPanel/products'
+
+      }
+  })
+
+
+    }
+ 
+}
+
+document.getElementById('displayButton').addEventListener('click', function() {
+    var unlistedTableContainer = document.getElementById('unlistedTableContainer');
+    unlistedTableContainer.style.display = (unlistedTableContainer.style.display === 'none') ? 'block' : 'none';
+  });
+
 </script>
+
+
+
 
 <script>
   $(document).ready( function () {

@@ -106,51 +106,6 @@
         </div>
         <!--  -->
 
-        <!-- <div class="mt-5">
-          <h6> <strong> Pricing</strong></h6>
-          <div class="container d-flex">
-           <div class="col-6 me-2">
-             <label for="product-rice"  class="form-label">Base Price</label>
-          <input type="text" class="form-control" id="productPrice" name="price"  value="<%= products.price %>">
-          
-           </div>
-           <div class="col-6 me-2">
-             <label for="product-rice"  class="form-label">Sale Price</label>
-          <input type="text" class="form-control" id="productPrice" name="salePrice"  value="<%= products.salePrice %>">
-          
-           </div>
-          </div>
-          <div class="container d-flex">
-            <div class="col-6 me-2">
-              <label for="product-discountType"  class="form-label mt-3">Offer Type</label>
-            <select class="form-select" name="discountType" aria-label="Default select example">
-              <option selected>Select</option>
-              <option value="Clearence Sale">Clearence Sale</option>
-              <option value="Season">Season</option>
-              <option value="Daily saver">Daily saver</option>
-              <option value="Nill">Nill</option>
-             
-            </select>
-        
-            </div>
-            <div class="col-6 ms-2">
-              <label for="product-diacountPercentage"  class="form-label mt-3">Discount Percentage</label>
-              <select class="form-select" name="percentage" aria-label="Default select example">
-               <option value="" <% if (products.discountPercentage === '') { %>selected<% } %>>Select</option>
-               <option value="1" <% if (products.discountPercentage === '1') { %>selected<% } %>>70% or more</option>
-               <option value="2" <% if (products.discountPercentage === '2') { %>selected<% } %>>60% or more</option>
-               <option value="3" <% if (products.discountPercentage === '3') { %>selected<% } %>>50% or more</option>
-               <option value="4" <% if (products.discountPercentage === '4') { %>selected<% } %>>40% or more</option>
-               <option value="5" <% if (products.discountPercentage === '5') { %>selected<% } %>>30% or more</option>
-               <option value="5" <% if (products.discountPercentage === '5') { %>selected<% } %>>30% or more</option>
-           </select>
-        
-            </div>
-            
-          </div>
-        </div> -->
-
-
         <!--  -->
         <div class="mt-5 mb-5 pb-5">
           <h6> <strong> Inventory</strong></h6>
@@ -228,15 +183,48 @@
               <strong>Add New Images</strong>
             </a>
             <div class="mt-5 mb-5">
-              <h6>Sub-Images</h6>
+             <div class="d-flex gap-3">
+              <h6>Sub-Images  </h6>
+
+              <form action="/admin/adminPanel/products/updatPrdtSumImage"  method="post" id="subImgForm" enctype="multipart/form-data">
+                <div class="d-flex mb-4 ">
+                <label class="btn" style="color: #f35800; margin-top: -8px;">
+                  <span class="material-symbols-outlined">
+                    add_to_photos
+                  </span>
+                  
+                   <input type="hidden" name="pdtId" value="<%= products._id %>"> 
+                  <!-- <input type="file" multiple="multiple" name="sub_Img" accept="image/jpeg, image/png, image/jpg" id="subImageInput"> -->
+                  <input type="file" multiple style="display: none;" id="subImageInput" onchange="preview(this)" name="sub_Img">
+                </label>
+                <div id="selectedImagesContainer">
+                  <!-- Display selected images here -->
+              </div>
+                <button type="submit" class="btn" style="color: #f35800; margin-top: -10px;"><i class="fa fa-upload" aria-hidden="true"></i></button>
+                  </div>
+
+              </form>
+             
+
+             
+
+
+             </div>             
                
               <% if (products.images && products.images.length > 0) { %>
                
+                   <div class="d-flex gap-5">
                     <% products.images.forEach(image => { %>
                         
-                            <img src="/assests/productsUploads/<%= image %>" width="80px" height="auto" alt="Product Image">
-                        
-                    <% }) %>
+                      <div class=" d-flex">
+                       <img src="/assests/productsUploads/<%= image %>" width="80px" height="auto" alt="Product Image">
+                       <div>
+                        <button  onclick="delIMG('<%= image %>')"  class="btn delButton" style="margin-top: -10px; margin-left: -20px;background: #ffffff ; color: #f35800;"><i class="fa fa-close fw-bolder" aria-hidden="true"></i></button>
+                       </div>
+                      </div>
+                   
+               <% }) %>
+                   </div>
                 
             <% } %>
              </div>
@@ -272,20 +260,7 @@
                               <% } %>
                               <input type="file" class="form-control" name="main_IMG" id="imageInput" onchange="previewMainImage(this)">
                             </span>
-                              <div class="col-md-12">
-                                <div class="btn-container mt-3">
-                                  <p>Click to add sub images</p>
-                                  <span class="upload-btn-wrapper">
-                                      <input type="file" multiple="multiple" name="sub_Img" accept="image/jpeg, image/png, image/jpg" id="subImageInput">
-                                  </span>
-                              </div>
-                              
-                              <div id="selectedImagesContainer">
-                                  <!-- Display selected images here -->
-                              </div>
-                            
-                              
-                          </div>
+                             
                          
                          
                          
@@ -310,6 +285,11 @@
               
             </div>
           </div>
+
+          <!-- SUB IMAG -->
+
+          
+          <!--  -->
 
         
         </div>
@@ -340,6 +320,10 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+
+
+ 
+
 <script>
     // Function to display selected images
     function displaySelectedImages() {
@@ -369,6 +353,22 @@
     // Add an event listener to the file input to trigger the displaySelectedImages function when files are selected
     const fileInput = document.getElementById('fileup');
     fileInput.addEventListener('change', displaySelectedImages);
+
+
+
+    function delIMG(image){
+    if(confirm("Are you sure want to Delete this image?")){
+      $.ajax({
+    type: 'post',
+      url: '/admin/adminPanel/products/delImg', 
+      data: { IMG_name: image, pdtId : '<%= products._id %>' },
+      success : (response)=>{
+        location.href = '/admin/adminPanel/products'
+
+      }
+  })
+}
+    }
 </script>
 
 
@@ -407,7 +407,7 @@ myInput.focus()
           // Display the selected images
           for (var i = 0; i < files.length; i++) {
               var url = URL.createObjectURL(files[i]);
-              $('#selectedImagesContainer').append('<img src="' + url + '" alt="Selected Image" width="50px" height="auto">');
+              $('#selectedImagesContainer').append('<img src="' + url + '" alt="Selected Image" width="100px" height="auto" class="mx-3">');
           }
       });
   });

@@ -14,6 +14,9 @@ admin_router.use(session({
 const noCache = nocache();
 admin_router.use(noCache);
 
+admin_router.use(express.json())
+admin_router.use(express.urlencoded({extended:true}))
+
 const multer = require('multer');
 
 
@@ -55,6 +58,7 @@ admin_router.post("/adminPanel/customer/unblock",  adminController.unblockUser);
 // *************************---------------- ORDER MANAGEMENT --------------------*********************************
 
 admin_router.get("/adminPanel/OrderList" ,isLogin, adminController.orderMngmnt)
+admin_router.post('/adminPanel/OrderList/updateStatus', isLogin, adminController.statusUpdate)
 
 // ***********  SALES REPORT   **********
 

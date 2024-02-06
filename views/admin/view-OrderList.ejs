@@ -40,50 +40,53 @@
             </thead>
             <tbody>
               <% orderData.forEach(function(product){ %>
-                <tr>
-                  <td class=" fw-bold">
-                    <a href="" style="text-decoration: none; color: #f35800;"> <%= String(product._id).slice(-5) %></a>
-                    </td>
-                  <td class="">
-                    <% product.items.forEach(function(product) { %>
-                      <ul style="list-style: none;">
-                        <li>
-                          <img src="/assests/productsUploads/<%= product.img1 %>" alt="" width="50" height="50" class="me-3">
-                        </li>
-                      </ul>
-                      <% }); %>
+
+                <% product.items.forEach( (pdt)=>{ %>
+                  <tr>
+                    
+                      <td class="fw-semibold">
+                        <a href="" style="text-decoration: none; color: #f35800;"> <%= String(pdt._id) %></a>
+                      </td>
+                      <td>
+                        <img src="/assests/productsUploads/<%= pdt.img1 %>" alt="" width="50" height="50" class="me-3">
+                      </td>
+                      <td>
+                        <% 
+                          const orderDate = new Date(product.orderDate); // Access item.OrderDate instead of orderData.OrderDate
+                          const formattedOrderDate = orderDate.toLocaleDateString();
+                        %>
+                        <%= formattedOrderDate %>
+                      </td>
+                      <td>
+                        <%= product.user_id?.Name %>
+                      </td>
+                                         
+                      <td>
+                        <%= pdt.price%>
+                      </td>
+
+                      <td>
+                        <select class="form-select status-select" data-order-id="<%= pdt._id %>" aria-label="Default select example">
+                          <option value="Order Confirmed" <% if (pdt.orderStatus === 'Order Confirmed') { %>selected<% } %>>Order Confirmed</option>
+                          <option value="Shipped" <% if (pdt.orderStatus === 'Shipped') { %>selected<% } %>>Shipped</option>
+                          <option value="Delivered" <% if (pdt.orderStatus === 'Delivered') { %>selected<% } %>>Delivered</option>
+                          <option value="On the Way" <% if (pdt.orderStatus === 'On the Way') { %>selected<% } %>>On the Way</option>
+                          <option value="Returned" <% if (pdt.orderStatus === 'Returned') { %>selected<% } %>>Returned</option>
+                          <option value="Canceled" <% if (pdt.orderStatus === 'Canceled') { %>selected<% } %>>Canceled</option>
+                        </select>
+                      </td>
                    
-                  </td>
+                  </tr>
                   
-                  <td>
-                    <% 
-                      const orderDate = new Date(product.orderDate); // Access item.OrderDate instead of orderData.OrderDate
-                      const formattedOrderDate = orderDate.toLocaleDateString();
-                    %>
-                    <%= formattedOrderDate %>
-                  </td>
-                  <td class="px-4"> <%= product.user_id?.FirstName %>
-                  </td>
+
+              <%  }) %>
+
                 
-                  <td> <% product.items.forEach(function(product){ %>
-                    <ul class="px-4" style="list-style: none;">
-                      <li class="mb-5 "> ₹ <%= product. price %></li>
-                    </ul>
-                 <%  }) %>
-                </td>
-                <td>
-                  <% 
-                    const deliveryDate = new Date(product.deliveryDate); // Use item.deliveryDate instead of orderData.deliveryDate
-                    const currentDate = new Date();
-                    const productStatus = deliveryDate < currentDate ? 'Delivered' : 'Out for Delivery';
-                  %>
-                  <%= productStatus %>
-                </td>
-                
-                 
-                </tr>
-              <% }) %>
+
+
+              <%})%>
             </tbody>
+           
             
           </table>
 
@@ -95,6 +98,31 @@
 </section>
 
 
+
+<script>
+  $(document).ready(function () {
+    $('.status-select').on('change', function () {
+      var orderId = $(this).data('order-id');
+      var newStatus = $(this).val();
+
+      // Make AJAX request to update order status
+      $.ajax({
+        url: '/admin/adminPanel/OrderList/updateStatus',
+        method: 'POST',
+        data: {
+          orderId: orderId,
+          newStatus: newStatus
+        },
+        success: function (response) {
+          console.log(response); // Handle success response
+        },
+        error: function (error) {
+          console.error(error); // Handle error
+        }
+      });
+    });
+  });
+</script>
 
 <script>
   function conformDelete(pdt_id){

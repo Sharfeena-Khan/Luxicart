@@ -130,16 +130,19 @@
                         <%= formatedcreateDate %>
                         </td>
                   <td > 
-                    <select class="form-select" name="status" aria-label="Default select example">
+                    <%= coupon.Status %>    
+                    <!-- <select class="form-select" name="status" aria-label="Default select example">
                      
                       <option value="Active" <% if (coupon.Status === 'Active') { %>selected<% } %>>Active</option>
                       <option value="Expire" <% if (coupon.Status === 'Expire') { %>selected<% } %>>Expire</option>
                       
-                  </select>
+                  </select> -->
                   
                   </td>
 
-                  <td> <i class="fa fa-trash" style="color: #f35800;" aria-hidden="true"></i> </td>
+                  <td> 
+                    
+                    <a href="" id="delButton" onclick="conformDlt('<%= coupon._id %>')" class="btn dltButton"><i class="fa fa-trash" style="color: #f35800;" aria-hidden="true"></i></a> </td>
                 </tr>
                 <% }); %>
             
@@ -194,4 +197,17 @@
     
 
   })
+
+
+  function conformDlt(Id) {
+    $.ajax({
+      type: 'POST',
+        url: '/admin/adminPanel/coupon/couponDlt', 
+        data: { Id: Id },
+        success : (response)=>{
+          location.href = '/admin/adminPanel/coupon'
+
+        }
+    })
+  }
 </script>
