@@ -380,16 +380,7 @@ const Payment = async (req, res) => {
 //     };
 
 
-//     const razorpayOrder = await RazorpayInstance.orders.create(options);
-        
-//         // Include orderId in the response to the frontend
-//         res.render("razorpay-checkout", {
-//           key_id: process.env.RAZORPAY_ID_KEY,
-//           amount: razorpayOrder.amount,
-//           currency: razorpayOrder.currency,
-//           orderId: razorpayOrder.id, // Include orderId
-//         });
-    
+//    
     
              
       
