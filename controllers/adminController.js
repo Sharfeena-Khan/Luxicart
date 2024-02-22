@@ -20,6 +20,7 @@ const fs = require('fs');
 
 
 const getAdminPanel = async (req, res) => {
+  console.log(req.body);
   try {
     const selectedDays = req.query?.selectedDays ?? 0;
 
