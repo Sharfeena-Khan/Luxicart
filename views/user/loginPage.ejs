@@ -1,88 +1,46 @@
-<%-include("../layout/userHeader.ejs")-%>
+<%- include("../layout/userHeader.ejs") -%>
 
-
-<section class="mt-5 mb-5">
-    <div class="col d-flex " style="padding-left: 150px"; >
-        <div class="col-4  ms-5 ps-5" >
-            <img class="ms-0 ps-0" src="/assests/loginPage.png" alt="" width="1050px">
+<section class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-md-6 ">
+            <img src="/assests/loginPage.png" alt="Login Image" class="img-fluid" width="900px">
         </div>
-        
-        <div class="col-8  ms-5 mt-5 pt-2  "  >
-          <div class="ms-5">
-            <%
-                                    if(typeof message !== 'undefined'){
-                                      %>
-                                      <h5 class="text-warning ms-5 " id="invalidUser-msg"><%= message %></h5>
-                                      <%
-                                    }
-                                    %>
-          </div>
-          <div>
-        
-          
-            <form action="/" method="post" >
-                <div class="form-group col-6 mb-3 ms-5  " style="padding-top:80px; ">
-                  <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" required>
-                </div>
-                <div class="form-group col-6 ms-5">
-                  <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="Password" required>
-                </div>
-                <div class="form-check col-6 mb-3 ms-5  mt-2 d-flex gap-5">
-                    <!-- <div class="me-5 pe-5">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                    <label class="form-check-label" for="flexCheckDefault" style="color: #f35800;">
-                      Remember Me
-                    </label>
-                    </div> -->
-                    <div class="ms-auto me-1">
-                      <a href="/forgotPSWLink" >Forgot Password?</a>
-                  </div>
-                  
-                  <!-- Modal -->
-                  
-                  </div>
-
-                  
-                <div class="ms-5 ps-3" style="padding-top:50px;">
+        <div class="col-md-6  mt-5 mt-md-0">
+            <% if(typeof message !== 'undefined'){ %>
+                <h5 class="text-warning"><%= message %></h5>
+            <% } %>
+            <form action="/" method="post">
+                <br><br>
+                  <div class="form-group col-md-8  mb-3 ms-5  mt-md-5 ">
+                
+                    <input type="email" name="email" class="form-control" placeholder="Enter email" required>
                     
-                
-                <div class="d-grid  col-6 mt-3 ">
-                    <button type="submit" class="btn text-white btn-b  ms-0" style="background: #f35800;"><strong>Login</strong></button>
-               
                 </div>
-
+                <div class="form-group col-md-8  mb-3 ms-5">
+                    <input type="password" name="password" class="form-control" placeholder="Password" required>
                 </div>
-                
+                <div class="form-check ms-4">
+                    <a href="/forgotPSWLink" class="text-decoration-none">Forgot Password?</a>
+                </div>
+                <button type="submit" class="btn text-white d-block mx-auto fw-bold   mt-3 px-5" style="background: #f35800;">Login</button>
               </form>
-              <div class=" " style=" color:  #f35800;margin-top: 80px; margin-left: 150px;">
-                New to Luxicart?<a style="color: #f35800;"  href="/register">  Create an account</a>
-              </div>
-
-              
+            <div class="text-center mt-3">
+                <p>New to Luxicart? <a href="/register" class="text-decoration-none">Create an account</a></p>
+            </div>
         </div>
     </div>
 </section>
 
 <script>
-  function userhidemsg(){
-const msg= document.getElementById("invalidUser-msg")
-if(msg){
-setTimeout(()=>{
-msg.style.display = "none"
-}, 4000)
-}
-}
-window.onload= userhidemsg;
+    function userhidemsg() {
+        const msg = document.getElementById("invalidUser-msg");
+        if (msg) {
+            setTimeout(() => {
+                msg.style.display = "none";
+            }, 4000);
+        }
+    }
+    window.onload = userhidemsg;
 </script>
 
-
-
-
-
-
-
-
-
-
-
-<%-include("../layout/userFooter.ejs")-%>
+<%- include("../layout/userFooter.ejs") -%>

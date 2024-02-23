@@ -2,199 +2,151 @@
 
 
 <section>
-    <div class="container-fluid ps-5 pe-5 pt-5 mb-5">
-      <div class="container-fluid d-flex">
-        <div class="col-2">
-            <% if (product.images && product.images.length > 0) { %>
-                <% product.images.forEach((image, index) => { %>
-                    <ul id="sub-img-list" style="list-style: none;">
-                        <li>
-                            <img
-                                src="/assests/productsUploads/<%= image %>"
-                                class="sub-img"
-                                width="80px"
-                                height="auto"
-                                alt="Product Image"
-                                data-index="<%= index %>"
-                            />
-                        </li>
-                    </ul>
-                <% }) %>
-            <% } %>
+  <div class="container-fluid ps-3 pe-3 pt-3 mb-3">
+    <div class="row">
+
+      <div>
+        <form id="addTCartForm" action="/cart/addtoCart/<%= product._id %>" method="post">
+
+          
+      </div>
+      <!-- Product Images Column -->
+      <div class="col-12 col-md-4">
+        <div class="d-flex justify-content-center">
+          <img src="/assests/productsUploads/<%= product.image %>"
+               id="main-img"
+               class="img-fluid rounded-2"
+               alt="User Image"/>
         </div>
-              
-              <div class="col-4">
-                <img
-                  src="/assests/productsUploads/<%= product.image %>"
-                  id="main-img"
-                  class="rounded-2"
-                  width="330px"
-                  height="500px"
-                  alt="User Image"
-                />
-
-                <form id="addTCartForm" action="/cart/addtoCart/<%= product._id %>" method="post">
-  
-                <div class="ms-2  gap-3 mt-3 d-flex">
-
-                  <% if(product.stock <= 0){ %>
-                    <span class="mx-5">
-                      <button type="submit" id="addtocartDis" name="addToCartDis"
-                         class="btn  text-white  px-5" style="background: #f35800;" disabled>
-                        <i class="fa-solid fa-cart-shopping me-1  "></i> ADD TO CART
-                    </button>
-                    </span>                    
-                <%  } else { %>
-                  <span class="mx-5">
-                    <button  type="submit" id="addtocart" name="addToCart" onclick="addToCart('<%= product._id %>')" class="btn  text-white  px-5" style="background: #f35800;">
-                      <i class="fa-solid fa-cart-shopping me-1  "></i> ADD TO CART
-                  </button>
-                  </span>   
-                  
-             <% } %>
-
-                 
-                 
-                </div>
-              
-            
-            <div class=" mt-3">
-                    
-    
+        <div class="d-flex justify-content-center mt-3">
+          <% if (product.images && product.images.length > 0) { %>
+            <div id="sub-img-list">
+              <% product.images.forEach((image, index) => { %>
+                <img src="/assests/productsUploads/<%= image %>"
+                     class="sub-img"
+                     width="80px"
+                     height="auto"
+                     alt="Product Image"
+                     data-index="<%= index %>"/>
+              <% }) %>
+            </div>
+          <% } %>
+        </div>
+      </div>
       
-    
-    
-    
+      
   
-     </div> 
 
-        </div>
-        <div class="col-6">
-            <div class="d-flex gap-4">
-              <span><h5><strong> <%= product.name %> </strong></h5>
-              </span>
-              <span>
-                <!-- Add these lines for debugging -->
-
-                <% if (wishListData && wishListData.length > 0) { %>
-                  <% wishListData.products.forEach(wishlistProduct => { %>
-                    <% if (wishlistProduct.product_id.toString() === product._id.toString()) { %>
-                      <!-- If the item is in the wishlist, show red heart -->
-                      <a href="#" class="btn text-white btn-b ms-0 px-3 wishlist-btn" 
-                        id="red" style="background: #e6e5e5;" data-product-id="<%= product._id %>">
-                        <i class="fa-sharp fa-solid fa-heart me-1" style="color: #f90404;"></i>
-                      </a>
-                    <% } else { %>
-                      <!-- If the item is not in the wishlist, show white heart -->
-                      <a href="#" class="btn text-white btn-b ms-0 px-3 wishlist-btn" 
-                        id="white" style="background: #f37c05;" data-product-id="<%= product._id %>">
-                        <i class="fa-sharp fa-solid fa-heart me-1" style="color: #ffffff;"></i>
-                      </a>
-                    <% } %>
-                  <% }); %>
+      <!-- Product Details Column -->
+      <div class="col-12 col-md-4">
+        <h5><strong><%= product.name %></strong></h5>
+        <div class="d-flex gap-4 align-items-center">
+          <div>
+            <% if (wishListData && wishListData.length > 0) { %>
+              <% wishListData.products.forEach(wishlistProduct => { %>
+                <% if (wishlistProduct.product_id.toString() === product._id.toString()) { %>
+                  <!-- If the item is in the wishlist, show red heart -->
+                  <a href="#" class="btn text-white btn-b px-3 wishlist-btn" 
+                    id="red" style="background: #e6e5e5;" data-product-id="<%= product._id %>">
+                    <i class="fa-sharp fa-solid fa-heart me-1" style="color: #f90404;"></i>
+                  </a>
                 <% } else { %>
-                  <!-- If wishlist is empty, show white heart -->
-                  <a href="#" class="btn text-white btn-b ms-0 px-3 wishlist-btn" 
-                    id="white" style="background: #f87d01;" data-product-id="<%= product._id %>">
+                  <!-- If the item is not in the wishlist, show white heart -->
+                  <a href="#" class="btn text-white btn-b px-3 wishlist-btn" 
+                    id="white" style="background: #f37c05;" data-product-id="<%= product._id %>">
                     <i class="fa-sharp fa-solid fa-heart me-1" style="color: #ffffff;"></i>
                   </a>
                 <% } %>
-                
-               
-                 
-                   
-              </span>
-              
-              
-            </div>
-
-           
-
+              <% }); %>
+            <% } else { %>
+              <!-- If wishlist is empty, show white heart -->
+              <a href="#" class="btn text-white btn-b px-3 wishlist-btn" 
+                id="white" style="background: #f87d01;" data-product-id="<%= product._id %>">
+                <i class="fa-sharp fa-solid fa-heart me-1" style="color: #ffffff;"></i>
+              </a>
+            <% } %>
+          </div>
+          
+          <!-- Price and Offers -->
+          <div>
             <% if(product.discountType == "Nill"){ %>
               <h6>Base Price</h6>
               <p><strong> ₹ <%= product.price %> </strong> </p>
-              <!-- <p class="fw-bold opacity-50">Sorry! No offers Available for now. </p> -->
-              
-          <%  } else{ %>
-            <h6>Base Price</h6>
-            <p class="fw-bold fs-5"> ₹ <%= product.price - (product.price * product.discountPercentage / 100) %> <span class="opacity-50 fs-6 fw-semibold ps-2"> <del>₹ <%= product.price %> </del> </span>   </p>
-            <div class="pt-4">
-              <h6 style="font-weight: 600;">Available Offer</h6>
-             
-             <div class="d-flex gap-3">
-              <i class="fa-sharp fa-solid fa-tag" style="color: #f35800; width: 5px; height: auto;"></i> <p style="font-size: x-small;"><span style="color: #f35800; font-weight: bold;"><%= product.discountType %> offer :</span> With this offer you can save <%= product.discountPercentage %>% of your money</p>
-             </div>
-
-             
-          </div> 
-          <% }%>
-
-
-           
-           
-          <div class="d-flex pt-5">
-            <span>
-              <h6 class="pe-5 pt-2">Size:</h6>
-          </span>
-         
-
-              <!-- ********************************************************** -->
-
-              <!-- <div class="d-flex gap-3 ps-5 text-center"> -->
-                
-                <select class="ms-2 text-center" id="sizeDropdown" name="size" style="background-color: rgba(241, 239, 238, 0.75);
-                                                        border: 2px solid #f161079b;
-                                                        padding: 5px;
-                                                        
-                                                        font-weight: bold;">
-                  <option value="S">S</option>
-                  <option value="M">M</option>
-                  <option value="L">L</option>
-                  <option value="XL">XL</option>
-                  <option value="XXL">XXL</option>
-                </select>
-          </div>
-            
-
-          <div class="d-flex pt-5">
-              <% if(product.stock <= 0){ %>
-                <div class="p-2 fs-4" style="background: #f37c0522; color: #f35800; font-weight: bold;"> Sorry! Out of stock </div>
-                
-
-             <% } else { %>
-              
-                <span>
-                  <h6 class=" pt-2 pe-2">Quantity:</h6>
-              </span>
-             
-                <div class="quantity-input">
-                    <button type="button" class="quantity-button btn" onclick="decrementQuantity(this)" ><i class="fa-solid fa-square-minus h4" style="color: #f35800;"></i></button>
-                    <input type="number" style="border: 1px solid #f359007d; padding: 2px; width: 50px;" id="quantity" name="qty" value="1"  min="1" max="<%= product.stock %>">
-                    <button type="button" class="quantity-button btn" onclick="incrementQuantity(this)" ><i class="fa-solid fa-square-plus h4" style="color: #f35800;"></i></button>
+            <%  } else{ %>
+              <h6>Discounted Price</h6>
+              <p class="fw-bold fs-5"> ₹ <%= product.price - (product.price * product.discountPercentage / 100) %> 
+                <span class="opacity-50 fs-6 fw-semibold ps-2"> 
+                  <del>₹ <%= product.price %> </del> 
+                </span>
+              </p>
+              <div class="pt-4">
+                <h6 style="font-weight: 600;">Available Offer</h6>
+                <div class="d-flex gap-3">
+                  <i class="fa-sharp fa-solid fa-tag" style="color: #f35800;"></i> 
+                  <p style="font-size: x-small;">
+                    <span style="color: #f35800; font-weight: bold;"><%= product.discountType %> offer :</span> 
+                    With this offer you can save <%= product.discountPercentage %>% of your money
+                  </p>
                 </div>
-
               </div>
-            
-          <% } %>
-
-            
-            
+            <% }%>
           </div>
-           
-                
-
-
-
-
-<!-- ****************************************************************************** -->
-              <!-- </div> -->
-            </form>
-        
-    <!-- </div>  -->
-   
         </div>
-    </div>
 
+        <!-- Size Selector -->
+        <div class="d-flex align-items-center pt-5">
+          <h6 class="pe-2">Size:</h6>
+          <select class="form-select" id="sizeDropdown" name="size">
+            <option value="S">S</option>
+            <option value="M">M</option>
+            <option value="L">L</option>
+            <option value="XL">XL</option>
+            <option value="XXL">XXL</option>
+          </select>
+        </div>
+
+        <!-- Quantity Selector -->
+        <div class="d-flex align-items-center pt-3">
+          <% if(product.stock <= 0){ %>
+            <div class="p-2 fs-4" style="background: #f37c0522; color: #f35800; font-weight: bold;"> 
+              Sorry! Out of stock 
+            </div>
+          <% } else { %>
+            <h6 class="pe-2">Quantity:</h6>
+            <div class="quantity-input">
+              <button type="button" class="quantity-button btn" onclick="decrementQuantity(this)">
+                <i class="fa-solid fa-square-minus h4" style="color: #f35800;"></i>
+              </button>
+              <input type="number" class="form-control" id="quantity" name="qty" value="1" min="1" max="<%= product.stock %>">
+              <button type="button" class="quantity-button btn" onclick="incrementQuantity(this)">
+                <i class="fa-solid fa-square-plus h4" style="color: #f35800;"></i>
+              </button>
+            </div>
+          <% } %>
+        </div>
+
+        <!-- Add to Cart Button -->
+        <div class="d-flex justify-content-center mt-4">
+          <% if(product.stock <= 0){ %>
+            <button type="submit" id="addtocartDis" name="addToCartDis" class="btn text-white px-5" style="background: #f35800;" disabled>
+              <i class="fa-solid fa-cart-shopping me-1"></i> ADD TO CART
+            </button>
+          <%  } else { %>
+            <button type="submit" id="addtocart" name="addToCart" onclick="addToCart('<%= product._id %>')" class="btn text-white px-5" style="background: #f35800;">
+              <i class="fa-solid fa-cart-shopping me-1"></i> ADD TO CART
+            </button>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Additional Information Column (Optional) -->
+      <div class="col-12 col-md-4">
+        <!-- Additional Information Goes Here -->
+      </div>
+
+   
+  </div>
+  </div>
 </section>
 
 

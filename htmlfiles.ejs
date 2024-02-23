@@ -1,213 +1,315 @@
-<%-include("../layout/adminHeader.ejs")-%>
+<%-include("../layout/userHeader.ejs")-%>
+
 
 <section>
-  <div class="content">
-    <div class="row" style="margin-top: 10px;">
-      <div class="container d-flex mb-5 mt-0">
-        <div>
-          <h4><strong> Dashboard</strong> </h4>
+    <div class="container-fluid ps-5 pe-5 pt-5 mb-5">
+      <div class="container-fluid d-flex">
+        <div class="col-2">
+            <% if (product.images && product.images.length > 0) { %>
+                <% product.images.forEach((image, index) => { %>
+                    <ul id="sub-img-list" style="list-style: none;">
+                        <li>
+                            <img
+                                src="/assests/productsUploads/<%= image %>"
+                                class="sub-img"
+                                width="80px"
+                                height="auto"
+                                alt="Product Image"
+                                data-index="<%= index %>"
+                            />
+                        </li>
+                    </ul>
+                <% }) %>
+            <% } %>
         </div>
-        <div class="ms-auto me-5 mb-2 d-flex gap-4">
-          <span>
-            <button class="btn text-white" style="background: #f35800;">Export</button>
+              
+              <div class="col-4">
+                <img
+                  src="/assests/productsUploads/<%= product.image %>"
+                  id="main-img"
+                  class="rounded-2"
+                  width="330px"
+                  height="500px"
+                  alt="User Image"
+                />
+
+                <form id="addTCartForm" action="/cart/addtoCart/<%= product._id %>" method="post">
+  
+                <div class="ms-2  gap-3 mt-3 d-flex">
+
+                  <% if(product.stock <= 0){ %>
+                    <span class="mx-5">
+                      <button type="submit" id="addtocartDis" name="addToCartDis"
+                         class="btn  text-white  px-5" style="background: #f35800;" disabled>
+                        <i class="fa-solid fa-cart-shopping me-1  "></i> ADD TO CART
+                    </button>
+                    </span>                    
+                <%  } else { %>
+                  <span class="mx-5">
+                    <button  type="submit" id="addtocart" name="addToCart" onclick="addToCart('<%= product._id %>')" class="btn  text-white  px-5" style="background: #f35800;">
+                      <i class="fa-solid fa-cart-shopping me-1  "></i> ADD TO CART
+                  </button>
+                  </span>   
+                  
+             <% } %>
+
+                 
+                 
+                </div>
+              
+            
+            <div class=" mt-3">
+                    
+    
+      
+    
+    
+    
+  
+     </div> 
+
+        </div>
+        <div class="col-6">
+            <div class="d-flex gap-4">
+              <span><h5><strong> <%= product.name %> </strong></h5>
+              </span>
+              <span>
+                <!-- Add these lines for debugging -->
+
+                <% if (wishListData && wishListData.length > 0) { %>
+                  <% wishListData.products.forEach(wishlistProduct => { %>
+                    <% if (wishlistProduct.product_id.toString() === product._id.toString()) { %>
+                      <!-- If the item is in the wishlist, show red heart -->
+                      <a href="#" class="btn text-white btn-b ms-0 px-3 wishlist-btn" 
+                        id="red" style="background: #e6e5e5;" data-product-id="<%= product._id %>">
+                        <i class="fa-sharp fa-solid fa-heart me-1" style="color: #f90404;"></i>
+                      </a>
+                    <% } else { %>
+                      <!-- If the item is not in the wishlist, show white heart -->
+                      <a href="#" class="btn text-white btn-b ms-0 px-3 wishlist-btn" 
+                        id="white" style="background: #f37c05;" data-product-id="<%= product._id %>">
+                        <i class="fa-sharp fa-solid fa-heart me-1" style="color: #ffffff;"></i>
+                      </a>
+                    <% } %>
+                  <% }); %>
+                <% } else { %>
+                  <!-- If wishlist is empty, show white heart -->
+                  <a href="#" class="btn text-white btn-b ms-0 px-3 wishlist-btn" 
+                    id="white" style="background: #f87d01;" data-product-id="<%= product._id %>">
+                    <i class="fa-sharp fa-solid fa-heart me-1" style="color: #ffffff;"></i>
+                  </a>
+                <% } %>
+                
+               
+                 
+                   
+              </span>
+              
+              
+            </div>
+
+           
+
+            <% if(product.discountType == "Nill"){ %>
+              <h6>Base Price</h6>
+              <p><strong> ₹ <%= product.price %> </strong> </p>
+              <!-- <p class="fw-bold opacity-50">Sorry! No offers Available for now. </p> -->
+              
+          <%  } else{ %>
+            <h6>Base Price</h6>
+            <p class="fw-bold fs-5"> ₹ <%= product.price - (product.price * product.discountPercentage / 100) %> <span class="opacity-50 fs-6 fw-semibold ps-2"> <del>₹ <%= product.price %> </del> </span>   </p>
+            <div class="pt-4">
+              <h6 style="font-weight: 600;">Available Offer</h6>
+             
+             <div class="d-flex gap-3">
+              <i class="fa-sharp fa-solid fa-tag" style="color: #f35800; width: 5px; height: auto;"></i> <p style="font-size: x-small;"><span style="color: #f35800; font-weight: bold;"><%= product.discountType %> offer :</span> With this offer you can save <%= product.discountPercentage %>% of your money</p>
+             </div>
+
+             
+          </div> 
+          <% }%>
+
+
+           
+           
+          <div class="d-flex pt-5">
+            <span>
+              <h6 class="pe-5 pt-2">Size:</h6>
           </span>
-          <span>
-            <select class="form-select" aria-label="Default select example" id="selectionButton">
-              <option selected value="0">Select</option>
-              <option value="0">Today</option>
-              <option value="7">7 Days</option>
-              <option value="30">30 Days</option>
-              <option value="365">365 Days</option>
-            </select>
-          </span>
-        </div>
-      </div>
+         
 
-      <div class="d-flex gap-5 mt-5">
-        <!-- Total Sales Chart -->
-        <div class="d-flex gap-4">
-          <div>
-            Total Sales : <br>
-            <span class="fw-bold fs-3" id="salesDataDisplay">₹<%= salesData %> </span>
-          </div>
-          <div class="p-2" style="margin-top: -80px;">
-            <canvas id="myTotalSalesChart" width="160px"></canvas>
-          </div>
-        </div>
+              <!-- ********************************************************** -->
 
-        <!-- Total Revenue Chart -->
-        <div class="d-flex gap-4 mx-4">
-          <div class="">
-            Total Revenue : <br>
-            <span class="fw-bold fs-3" id="revenueDataDisplay"> ₹<%=  revenueData %></span>
+              <!-- <div class="d-flex gap-3 ps-5 text-center"> -->
+                
+                <select class="ms-2 text-center" id="sizeDropdown" name="size" style="background-color: rgba(241, 239, 238, 0.75);
+                                                        border: 2px solid #f161079b;
+                                                        padding: 5px;
+                                                        
+                                                        font-weight: bold;">
+                  <option value="S">S</option>
+                  <option value="M">M</option>
+                  <option value="L">L</option>
+                  <option value="XL">XL</option>
+                  <option value="XXL">XXL</option>
+                </select>
           </div>
-          <div class="p-2" style="margin-top: -80px;">
-            <canvas id="myChart" width="160px"></canvas>
-          </div>
-        </div>
+            
 
-        <!-- User Count Chart -->
-        <div class="d-flex gap-4 mx-4">
-          <div>
-            User Count : <br>
-            <span class="fw-bold fs-3" id="usrCount"> <%= userCount %></span>
+          <div class="d-flex pt-5">
+              <% if(product.stock <= 0){ %>
+                <div class="p-2 fs-4" style="background: #f37c0522; color: #f35800; font-weight: bold;"> Sorry! Out of stock </div>
+                
+
+             <% } else { %>
+              
+                <span>
+                  <h6 class=" pt-2 pe-2">Quantity:</h6>
+              </span>
+             
+                <div class="quantity-input">
+                    <button type="button" class="quantity-button btn" onclick="decrementQuantity(this)" ><i class="fa-solid fa-square-minus h4" style="color: #f35800;"></i></button>
+                    <input type="number" style="border: 1px solid #f359007d; padding: 2px; width: 50px;" id="quantity" name="qty" value="1"  min="1" max="<%= product.stock %>">
+                    <button type="button" class="quantity-button btn" onclick="incrementQuantity(this)" ><i class="fa-solid fa-square-plus h4" style="color: #f35800;"></i></button>
+                </div>
+
+              </div>
+            
+          <% } %>
+
+            
+            
           </div>
-          <div class="p-2" style="margin-top: -80px;">
-            <canvas id="userCountChart" width="160px"></canvas>
-          </div>
+           
+                
+
+
+
+
+<!-- ****************************************************************************** -->
+              <!-- </div> -->
+            </form>
+        
+    <!-- </div>  -->
+   
         </div>
-      </div>
     </div>
 
-    <div class="row" style="margin-top: 90px;">
-      <div class="container mb-5 mt-0">
-        <h5 class="fw-bold">Most Sold Product</h5>
-        <div class="col-9 mt-4 p-2" style="margin-top: -80px; margin-left: 50px;">
-          <canvas id="mostSoldChart" width="300" height="150"></canvas>
-        </div>
-      </div>
-    </div>
-  </div>
 </section>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 
 
 <script>
-  document.addEventListener('DOMContentLoaded', async () => {
-    // Fetch initial data and update charts
-    await fetchAndUpdateCharts();
-    // Add event listener for selection change
-    const selectionButton = document.getElementById('selectionButton');
-    selectionButton.addEventListener('change', async () => {
-      await fetchAndUpdateCharts();
-    });
-  });
+    function incrementQuantity(button) {
+      var input = button.parentNode.querySelector('input');
+        var maxQuantity = parseInt(input.getAttribute('max'));
 
-  async function fetchAndUpdateCharts() {
-    try {
-      const selectedDays = Number(document.getElementById('selectionButton').value);
-      const url = `/admin/adminPanel?selectedDays=${encodeURIComponent(selectedDays)}`;
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-      });
-
-      if (response.ok) {
-        const sales = await response.json();
-
-        // Update the dashboard elements
-        document.getElementById('salesDataDisplay').innerText = `₹ ${sales.salesData}`;
-        document.getElementById('revenueDataDisplay').innerText = `₹ ${sales.revenueData}`;
-        document.getElementById('usrCount').innerText = sales.userCount;
-
-        // Update or initialize the doughnut charts
-        updateOrInitializeDoughnutChart('myTotalSalesChart', sales.salesData);
-        updateOrInitializeDoughnutChart('myChart', sales.revenueData);
-        updateOrInitializeDoughnutChart('userCountChart', sales.userCount);
-
-        // Update or initialize the bar chart
-        updateOrInitializeBarChart('mostSoldChart', sales.mostSoldData);
-
-        
-      } else {
-        console.error('Error fetching data:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Fetch error:', error);
-    }
-  }
-
-  
-
-  function updateOrInitializeDoughnutChart(canvasId, data) {
-    const ctx = document.getElementById(canvasId);
-    if (Chart.getChart(ctx)) {
-      // If chart exists, update it
-      Chart.getChart(ctx).data.datasets[0].data = [data, 900];
-      Chart.getChart(ctx).update();
-    } else {
-      // If chart doesn't exist, initialize it
-      new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: ['Label'],
-          datasets: [{
-            data: [data, 900],
-            backgroundColor: ['rgb(243, 88, 0)', 'rgb(214, 214, 214)'],
-            hoverOffset: 4
-          }]
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
+        if (parseInt(input.value) < maxQuantity) {
+            input.stepUp();
+        } else {
+            alert("Maximum quantity reached!");
         }
-      });
     }
-  }
 
-  function updateOrInitializeBarChart(canvasId, mostSoldData) {
-    const ctx = document.getElementById(canvasId);
-    if (Chart.getChart(ctx)) {
-      // If chart exists, update it
-      const labels = mostSoldData.map(item => item._id);
-      const dataValues = mostSoldData.map(item => item.totalQty);
-      Chart.getChart(ctx).data.labels = labels;
-      Chart.getChart(ctx).data.datasets[0].data = dataValues;
-      Chart.getChart(ctx).update();
-    } else {
-      // If chart doesn't exist, initialize it
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: mostSoldData.map(item => item._id),
-          datasets: [{
-            label: 'Label',
-            data: mostSoldData.map(item => item.totalQty),
-            backgroundColor: 'rgba(243, 88, 0, 0.2)',
-            borderColor: 'rgba(243, 88, 0, 1)',
-            borderWidth: 1
-          }]
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
-        }
-      });
+    function decrementQuantity(button) {
+        var input = button.parentNode.querySelector('input');
+        input.stepDown();
     }
-  }
 </script>
 
 
 
-<!-- const url = `http://localhost:8080/admin/adminPanel?selectedDays=${encodeURIComponent(selectedDays)}`; -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
 
 
-
-function conformUnlist(Id) {
-  $.ajax({
-    type: 'DELETE',
-      url: '/admin/adminPanel/category/softDel-category', 
-      data: { Id: Id },
-      success : (response)=>{
-        location.href = '/admin/adminPanel/category'
-
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+      // Function to update the main image
+      function updateMainImage(index) {
+        var mainImage = $('#main-img');
+        var subImages = $('.sub-img');
+  
+        var newSrc = subImages.eq(index).attr('src');
+        mainImage.attr('src', newSrc);
       }
-  })
-}
+  
+      // Hover event for sub-images
+      $('.sub-img').hover(function () {
+        var index = $(this).data('index');
+        updateMainImage(index);
+      });
+  
+      // Click event for sub-images
+      $('.sub-img').click(function () {
+        var index = $(this).data('index');
+        updateMainImage(index);
+      });
+    });
+  </script>
 
 
 
-<button id="delButton"  onclick="softDeleteCategory('<%= category._id %>')" class=" btn softDel"><i class="fa fa-trash ms-4" style="color: #4a5153;" aria-hidden="true"></i></a> </td>
-                    
+
+
+
+<script>
+$(document).ready(function() {
+  $('.wishlist-btn').on('click', function(e) {
+    e.preventDefault();
+
+    var productId = $(this).data('product-id');
+    var wishlistUrl = "/cart/Wishlist/" + productId; // Adjust the URL based on your server implementation
+    
+    $.ajax({
+      type: 'get',
+      url: wishlistUrl,
+      success: function(response) {
+        if (response.success) {
+          console.log(response.updatedWishlist);
+          alert('Added to wishlist');
+          location.href = '/itemDisplay/<%= product._id %>';
+
+          // Check if the product is already in the wishlist
+          var isProductInWishlist = response.updatedWishlist.products.some(item => item.product_id == productId);
+          
+          if (isProductInWishlist) {
+            // If the product is already in the wishlist, set the color here
+            // $(e.target).css('background', '#e3e2e1'); // Change to your desired color
+            // $(e.target).find('i').css('color', '#f20707');
+            alert('Added to wishlist');
+            return;
+          }
+          
+          // Update the heart icon color after successful addition
+          // $(e.target).css('background', '#e3e2e1'); // Change to your desired color
+          // $(e.target).find('i').css('color', '#f20707');
+          
+          
+        } else {
+          alert('Already added.');
+        }
+      },
+      error: function(err) {
+        console.error('Error adding item to wishlist:', err);
+        alert('Failed to add item to wishlist.');
+      }
+    });
+  });
+});
+</script>
+
+<!-- Include jQuery library -->
+
+
+
+
+
+
+
+
+
+
+<%-include("../layout/userFooter.ejs")-%>
