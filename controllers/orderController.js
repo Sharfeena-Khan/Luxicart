@@ -9,7 +9,7 @@ const fs = require('fs');
 const mongoose = require('mongoose');
 
 
-const Razorpay = require('razorpay');
+// const Razorpay = require('razorpay');
 
 const dotenv = require("dotenv");
 // const { response } = require("../routes/OrderRouter");
@@ -18,12 +18,13 @@ dotenv.config()
 
 console.log(process.env.RAZORPAY_ID_KEY);
 console.log(process.env.RAZORPAY_SECRET_KEY);
+const Razorpay = require('razorpay');
 
 const RazorpayInstance = new Razorpay({
     key_id: process.env.RAZORPAY_ID_KEY,
     key_secret: process.env.RAZORPAY_SECRET_KEY
-    
-  });
+});
+
 
 
 
