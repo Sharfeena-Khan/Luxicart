@@ -16,9 +16,13 @@ const dotenv = require("dotenv");
 
 dotenv.config()
 
+console.log(process.env.RAZORPAY_ID_KEY);
+console.log(process.env.RAZORPAY_SECRET_KEY);
+
 const RazorpayInstance = new Razorpay({
     key_id: process.env.RAZORPAY_ID_KEY,
     key_secret: process.env.RAZORPAY_SECRET_KEY
+    
   });
 
 
@@ -288,117 +292,6 @@ const Payment = async (req, res) => {
 };
 
 
-// const RazorOrder = async(req,res)=>{
-//   console.log("Razorpay Action Block");
-//   const total = req.body.total;
-//   try {
-//     const userId = req.session.user_id;
-//     const cart = await Cart.findOne({ user_id: userId });
-//     const adrs = await UserAddress.findOne({ user_id: userId, 'Addresses.mainAdrs': true });
-//     const currentAdrs =  adrs._id
-    
-//     let orderData = await Order.findOne({ user_id: userId }).populate('items.productId');
-    
-//     if (!orderData) {
-//       const mainAdrs = adrs.Addresses.find((address) => address.mainAdrs);
-    
-//       orderData = new Order({
-//         user_id: userId,
-//         address: {
-//           _id: currentAdrs,
-//           name: mainAdrs.name,
-//           adrs: mainAdrs.Adrs,
-//           pincode: mainAdrs.pincode,
-//           landmark: mainAdrs.landmark,
-//           city: mainAdrs.city,
-//           state: mainAdrs.state,
-//           phoneNum: mainAdrs.phoneNum,
-//         },
-//         items: [], // You may need to map items from the cart to here.
-//       });
-//     } else if (orderData.address._id !== currentAdrs) {
-//       // Update the existing order's address
-//       const mainAdrs = adrs.Addresses.find((address) => address.mainAdrs);
-
-//       orderData.address = {
-//         _id: currentAdrs,
-//         name: mainAdrs.name,
-//         adrs: mainAdrs.Adrs,
-//         pincode: mainAdrs.pincode,
-//         landmark: mainAdrs.landmark,
-//         city: mainAdrs.city,
-//         state: mainAdrs.state,
-//         phoneNum: mainAdrs.phoneNum,
-//       };
-//     }
-    
-//     console.log("      ");
-   
-//     if (cart && cart.products.length > 0) {
-//       console.log("Adding to order Db");
-//       let deliveryDate = new Date();
-//       deliveryDate.setDate(deliveryDate.getDate() ); // Set deliveryDate to tomorrow
-
-//       for (const cartProduct of cart.products) {
-//         const product = await Product.findOne({ _id: cartProduct.product_id });
-
-//         let productStatus = "Order Confirmed";
-
-//         if (product.status !== "Canceled") {
-//           const currentDate = new Date();
-//           productStatus = deliveryDate <= currentDate ? "Delivered" : "Out for Delivery";
-//         }
-
-//         // if(orderData.address)
-
-//         let newOrder = {
-//           productId: cartProduct.product_id,
-//           productName: product.name,
-//           price: product.price,
-//           category: product.category,
-//           img1: product.image,
-//           size: cartProduct.size,
-//           quantity: cartProduct.quantity,
-//           orderStatus: productStatus,
-//         };
-
-//         orderData.items.push(newOrder);
-//       }
-
-//       await orderData.save();
-//       await Cart.findOneAndDelete({ _id: cart._id });
-//       console.log("cart is deleted");
-
-  
-//     console.log("razorpay");
-//     const orderAmountInPaise = total * 100;
-
-//     let options = {
-//       amount: total*100,
-//       currency: "INR",
-//       // receipt: orderData.id
-//     };
-
-
-//    
-    
-             
-      
-//     // Handle Cash On Delivery
-//     // res.redirect("/orderList/orderConformed")
-//     // res.render("orderConformed" , { title:`Luxicart-OrderConformed`, userAuthenticated, } )
-//    }
-
-    
-//     else {
-//       res.status(404).send("No products in the cart");
-//    }
-
-//   }
-//   catch (error) {
-//       console.log(error.message);
-//   }
-// }
 
 const razorpayPaymentConfrm = async(req,res)=>{
   console.log("helloooo");
